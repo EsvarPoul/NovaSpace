@@ -1,0 +1,47 @@
+---
+import Button from "../ui/Button.astro";
+---
+
+<section class="hero hero--vr reveal">
+  <div class="hero__copy">
+    <span class="eyebrow">VR Control App</span>
+    <h1>Запусти простір як гру, не як сторінку.</h1>
+    <p>Nova VR працює як легкий командний центр: обери сценарій, кількість гравців, темп сесії та переходь до бронювання без зайвого шуму.</p>
+    <div class="actions">
+      <Button href="#games" label="Відкрити модулі" />
+      <Button href="#pricing" label="Сесії" variant="ghost" />
+    </div>
+    <div class="vr-status-strip" aria-label="Статус VR-простору">
+      <span><strong>Online</strong> арена</span>
+      <span><strong>2-6</strong> гравців</span>
+      <span><strong>60+</strong> хвилин</span>
+    </div>
+  </div>
+  <aside class="hero-visual vr-console vr-app-console" aria-label="Панель запуску Nova VR">
+    <div class="vr-app-window">
+      <div class="vr-app-window__top">
+        <span>Nova OS</span>
+        <strong>Session ready</strong>
+      </div>
+      <div class="vr-radar">
+        <span class="vr-radar__ring"></span>
+        <span class="vr-radar__ring"></span>
+        <span class="vr-radar__core"></span>
+        <span class="vr-radar__dot vr-radar__dot--one"></span>
+        <span class="vr-radar__dot vr-radar__dot--two"></span>
+        <span class="vr-radar__dot vr-radar__dot--three"></span>
+      </div>
+      <div class="vr-launch-panel">
+        <span>Launch queue</span>
+        <strong>Velocity Arena</strong>
+        <div class="vr-progress" aria-hidden="true"><span></span></div>
+      </div>
+      <div class="vr-mode-grid" aria-hidden="true">
+        <span>Co-op</span>
+        <span>Action</span>
+        <span>Story</span>
+        <span>Event</span>
+      </div>
+    </div>
+  </aside>
+</section>

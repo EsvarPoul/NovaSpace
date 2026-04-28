@@ -1,0 +1,40 @@
+---
+import StudioPanel from "./StudioPanel.astro";
+import VRPanel from "./VRPanel.astro";
+---
+
+<main class="gateway" data-gateway>
+  <div class="ambient-grid" aria-hidden="true"></div>
+  <header class="gateway-brand" aria-label="Nova Gateway">
+    <span class="gateway-brand__rail">NOVA</span>
+    <div>
+      <span class="gateway-brand__kicker">Оберіть простір</span>
+      <strong>Nova <em>Gateway</em></strong>
+      <p>Фотографічна тиша Studio або технологічне занурення VR. Два різні настрої, один преміальний вхід.</p>
+    </div>
+    <span class="gateway-brand__rail">Бровари</span>
+  </header>
+  <div class="gateway-split">
+    <StudioPanel />
+    <VRPanel />
+  </div>
+  <div class="gateway-line" aria-hidden="true"></div>
+</main>
+
+<script>
+  document.body.classList.add("is-loaded");
+
+  const gateway = document.querySelector("[data-gateway]");
+  const panels = document.querySelectorAll("[data-panel]");
+
+  panels.forEach((panel) => {
+    const name = panel.getAttribute("data-panel");
+    const activate = () => name && gateway?.setAttribute("data-active", name);
+    const reset = () => gateway?.removeAttribute("data-active");
+
+    panel.addEventListener("mouseenter", activate);
+    panel.addEventListener("focus", activate);
+    panel.addEventListener("mouseleave", reset);
+    panel.addEventListener("blur", reset);
+  });
+</script>

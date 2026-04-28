@@ -1,0 +1,16 @@
+---
+import { vrEvents } from "../../data/vr.js";
+import Section from "../ui/Section.astro";
+---
+
+<Section
+  id="events"
+  eyebrow="Scenario builder"
+  title="Збери формат події як сценарій."
+  text="Сторінка поводиться не як каталог послуг, а як панель вибору: хто грає, який темп потрібен і наскільки інтенсивним має бути досвід."
+  className="vr-app-section vr-scenarios"
+>
+  <ul class="event-list vr-scenario-list">
+    {vrEvents.map((item, index) => <li><span>Scenario 0{index + 1}</span><strong>{item}</strong></li>)}
+  </ul>
+</Section>

@@ -1,0 +1,364 @@
+---
+const fallbackServices = [
+  { slug: "vr-first-dive", name: "VR First Dive", area: "vr", duration_minutes: 60, min_people: 1, max_people: 2 },
+  { slug: "vr-squad", name: "VR Squad", area: "vr", duration_minutes: 75, min_people: 3, max_people: 6 },
+  { slug: "vr-event", name: "VR Event", area: "event", duration_minutes: 150, min_people: 4, max_people: 12 },
+  { slug: "studio-light", name: "Studio Light", area: "studio", duration_minutes: 60, min_people: 1, max_people: 4 },
+  { slug: "studio-story", name: "Studio Story", area: "studio", duration_minutes: 120, min_people: 1, max_people: 6 },
+  { slug: "studio-brand", name: "Studio Brand", area: "event", duration_minutes: 240, min_people: 1, max_people: 10 }
+];
+
+interface Props {
+  allowedServiceSlugs?: string[];
+  defaultServiceSlug?: string;
+  variant?: "default" | "studio";
+  introTitle?: string;
+  introText?: string;
+}
+
+const {
+  allowedServiceSlugs = [],
+  defaultServiceSlug = "",
+  variant = "default",
+  introTitle = "Нове бронювання",
+  introText = "Оберіть формат, дату і вільний слот. Заявка потрапить менеджеру на підтвердження."
+} = Astro.props;
+
+const initialServices = allowedServiceSlugs.length
+  ? fallbackServices.filter((service) => allowedServiceSlugs.includes(service.slug))
+  : fallbackServices;
+
+const selectedService = defaultServiceSlug || initialServices[0]?.slug || "";
+---
+
+<section
+  class={`booking-shell booking-widget booking-widget--${variant}`}
+  aria-label="Форма бронювання"
+  data-booking-widget
+  data-allowed-services={JSON.stringify(allowedServiceSlugs)}
+  data-default-service={selectedService}
+>
+  <form class="booking-panel booking-form" data-booking-form>
+    <div class="booking-panel__head">
+      <span>Запит на бронювання</span>
+      <h2>{introTitle}</h2>
+      <p>{introText}</p>
+    </div>
+
+    <label class="booking-field">
+      <span>Послуга</span>
+      <select name="service" data-service-select>
+        {initialServices.map((service) => (
+          <option
+            value={service.slug}
+            data-min={service.min_people}
+            data-max={service.max_people}
+            data-duration={service.duration_minutes}
+            selected={service.slug === selectedService}
+          >
+            {service.name} · {service.duration_minutes} хв
+          </option>
+        ))}
+      </select>
+    </label>
+
+    <div class="booking-grid">
+      <label class="booking-field">
+        <span>Дата</span>
+        <input name="date" type="date" data-booking-date required />
+      </label>
+      <label class="booking-field">
+        <span>Кількість людей</span>
+        <input name="party_size" type="number" min="1" max="12" value="2" data-party-size required />
+      </label>
+    </div>
+
+    <div class="booking-slots">
+      <div class="booking-slots__head">
+        <span>Вільні слоти</span>
+        <button type="button" data-refresh-slots>Оновити</button>
+      </div>
+      <div class="booking-slot-list" data-slot-list>
+        <p>Оберіть дату, щоб побачити доступний час.</p>
+      </div>
+    </div>
+
+    <div class="booking-grid">
+      <label class="booking-field">
+        <span>Ім'я</span>
+        <input name="customer_name" type="text" autocomplete="name" required />
+      </label>
+      <label class="booking-field">
+        <span>Телефон</span>
+        <input name="customer_phone" type="tel" autocomplete="tel" required />
+      </label>
+    </div>
+
+    <label class="booking-field">
+      <span>Email, якщо зручно</span>
+      <input name="customer_email" type="email" autocomplete="email" />
+    </label>
+
+    <label class="booking-field">
+      <span>Коментар</span>
+      <textarea name="comment" rows="4" placeholder="Бажана атмосфера, кількість образів, деталі зйомки або особливі побажання"></textarea>
+    </label>
+
+    <input type="hidden" name="slot_start" data-selected-slot />
+    <button class="booking-submit" type="submit">Надіслати заявку</button>
+    <p class="booking-status" data-booking-status role="status"></p>
+  </form>
+
+  <aside class="booking-panel booking-summary">
+    <div class="booking-panel__head">
+      <span>Як це працює</span>
+      <h2>Менеджер підтвердить час після заявки</h2>
+    </div>
+    <ol>
+      <li>Сервіс визначає тривалість, буфер і потрібні ресурси.</li>
+      <li>Календар перевіряє перетини з pending та confirmed бронюваннями.</li>
+      <li>Якщо слот вільний, створюється pending-заявка і простір тримається до рішення менеджера.</li>
+    </ol>
+    <a class="booking-admin-link" href="/admin/bookings">Відкрити адмінку</a>
+  </aside>
+</section>
+
+<script>
+  import { isSupabaseConfigured, supabase } from "../../lib/supabaseClient";
+
+  interface BookingService {
+    slug: string;
+    name: string;
+    area: string;
+    duration_minutes: number;
+    min_people: number;
+    max_people: number;
+    sort_order?: number;
+  }
+
+  interface Slot {
+    slot_start: string;
+    slot_end: string;
+  }
+
+  const fallbackServices: BookingService[] = [
+    { slug: "vr-first-dive", name: "VR First Dive", area: "vr", duration_minutes: 60, min_people: 1, max_people: 2 },
+    { slug: "vr-squad", name: "VR Squad", area: "vr", duration_minutes: 75, min_people: 3, max_people: 6 },
+    { slug: "vr-event", name: "VR Event", area: "event", duration_minutes: 150, min_people: 4, max_people: 12 },
+    { slug: "studio-light", name: "Studio Light", area: "studio", duration_minutes: 60, min_people: 1, max_people: 4 },
+    { slug: "studio-story", name: "Studio Story", area: "studio", duration_minutes: 120, min_people: 1, max_people: 6 },
+    { slug: "studio-brand", name: "Studio Brand", area: "event", duration_minutes: 240, min_people: 1, max_people: 10 }
+  ];
+
+  const formatTime = (value: string) => new Intl.DateTimeFormat("uk-UA", {
+    hour: "2-digit",
+    minute: "2-digit",
+    timeZone: "Europe/Kyiv"
+  }).format(new Date(value));
+
+  const setupBookingWidget = async (root: HTMLElement) => {
+    const form = root.querySelector<HTMLFormElement>("[data-booking-form]");
+    const serviceSelect = root.querySelector<HTMLSelectElement>("[data-service-select]");
+    const dateInput = root.querySelector<HTMLInputElement>("[data-booking-date]");
+    const partySizeInput = root.querySelector<HTMLInputElement>("[data-party-size]");
+    const slotInput = root.querySelector<HTMLInputElement>("[data-selected-slot]");
+    const slotList = root.querySelector<HTMLElement>("[data-slot-list]");
+    const status = root.querySelector<HTMLElement>("[data-booking-status]");
+    const refreshButton = root.querySelector<HTMLButtonElement>("[data-refresh-slots]");
+    const allowed = JSON.parse(root.dataset.allowedServices || "[]") as string[];
+    const defaultService = root.dataset.defaultService || "";
+
+    const filterServices = (services: BookingService[]) => (
+      allowed.length ? services.filter((service) => allowed.includes(service.slug)) : services
+    );
+
+    const setStatus = (message: string, state = "idle") => {
+      if (!status) return;
+      status.textContent = message;
+      status.dataset.state = state;
+    };
+
+    const setSelectedSlot = (button: HTMLButtonElement) => {
+      root.querySelectorAll("[data-slot]").forEach((item) => item.classList.remove("is-selected"));
+      button.classList.add("is-selected");
+      if (slotInput) slotInput.value = button.dataset.slot || "";
+    };
+
+    const renderSlots = (slots: Slot[]) => {
+      if (!slotList) return;
+      if (slotInput) slotInput.value = "";
+
+      if (!slots.length) {
+        slotList.innerHTML = "<p>На цю дату немає вільних слотів для вибраної послуги.</p>";
+        return;
+      }
+
+      slotList.innerHTML = slots.map((slot) => `
+        <button type="button" data-slot="${slot.slot_start}">
+          <strong>${formatTime(slot.slot_start)}</strong>
+          <span>${formatTime(slot.slot_end)}</span>
+        </button>
+      `).join("");
+
+      slotList.querySelectorAll<HTMLButtonElement>("[data-slot]").forEach((button) => {
+        button.addEventListener("click", () => setSelectedSlot(button));
+      });
+    };
+
+    const syncPartyBounds = () => {
+      const option = serviceSelect?.selectedOptions[0];
+      if (!option || !partySizeInput) return;
+
+      const min = option.dataset.min || "1";
+      const max = option.dataset.max || "12";
+      partySizeInput.min = min;
+      partySizeInput.max = max;
+
+      const current = Number(partySizeInput.value || min);
+      partySizeInput.value = String(Math.min(Math.max(current, Number(min)), Number(max)));
+    };
+
+    const populateServices = (services: BookingService[]) => {
+      if (!serviceSelect) return;
+      const filtered = filterServices(services);
+
+      if (!filtered.length) {
+        serviceSelect.innerHTML = "";
+        setStatus("Немає доступних послуг для цього блоку бронювання.", "error");
+        return;
+      }
+
+      serviceSelect.innerHTML = filtered.map((service) => `
+        <option
+          value="${service.slug}"
+          data-min="${service.min_people}"
+          data-max="${service.max_people}"
+          data-duration="${service.duration_minutes}"
+          ${service.slug === defaultService ? "selected" : ""}
+        >
+          ${service.name} · ${service.duration_minutes} хв
+        </option>
+      `).join("");
+
+      if (defaultService && filtered.some((service) => service.slug === defaultService)) {
+        serviceSelect.value = defaultService;
+      }
+
+      syncPartyBounds();
+    };
+
+    const loadServices = async () => {
+      if (!isSupabaseConfigured || !supabase || !serviceSelect) {
+        populateServices(fallbackServices);
+        setStatus("Supabase ще не налаштовано. Після додавання env-змінних і SQL migration тут з'являться живі слоти.", "warning");
+        return;
+      }
+
+      const { data, error } = await supabase
+        .from("services")
+        .select("slug,name,area,duration_minutes,min_people,max_people,sort_order")
+        .eq("active", true)
+        .order("sort_order", { ascending: true });
+
+      if (error || !data?.length) {
+        populateServices(fallbackServices);
+        setStatus(error?.message || "Не вдалося завантажити послуги, показуємо локальний список.", "warning");
+        return;
+      }
+
+      populateServices(data as BookingService[]);
+      setStatus("");
+    };
+
+    const loadSlots = async () => {
+      syncPartyBounds();
+
+      if (!slotList || !serviceSelect || !dateInput || !partySizeInput) return;
+      if (!dateInput.value) {
+        renderSlots([]);
+        slotList.innerHTML = "<p>Оберіть дату, щоб побачити доступний час.</p>";
+        return;
+      }
+
+      if (!isSupabaseConfigured || !supabase) {
+        slotList.innerHTML = "<p>Живі слоти з'являться після підключення Supabase.</p>";
+        setStatus("Supabase ще не налаштовано. Форма готова, але календар поки працює без реальних слотів.", "warning");
+        return;
+      }
+
+      slotList.innerHTML = "<p>Завантажуємо слоти...</p>";
+      const { data, error } = await supabase.rpc("get_available_slots", {
+        p_service_slug: serviceSelect.value,
+        p_date: dateInput.value,
+        p_party_size: Number(partySizeInput.value),
+        p_step_minutes: 30
+      });
+
+      if (error) {
+        slotList.innerHTML = "<p>Не вдалося завантажити слоти.</p>";
+        setStatus(error.message, "error");
+        return;
+      }
+
+      renderSlots((data || []) as Slot[]);
+      setStatus("");
+    };
+
+    form?.addEventListener("submit", async (event) => {
+      event.preventDefault();
+
+      if (!isSupabaseConfigured || !supabase) {
+        setStatus("Спершу підключіть Supabase env-змінні.", "error");
+        return;
+      }
+
+      if (!slotInput?.value) {
+        setStatus("Оберіть вільний слот.", "error");
+        return;
+      }
+
+      const formData = new FormData(form);
+      setStatus("Створюємо pending-бронювання...", "loading");
+
+      const { error } = await supabase.rpc("create_pending_booking", {
+        p_service_slug: String(formData.get("service")),
+        p_start_at: slotInput.value,
+        p_customer_name: String(formData.get("customer_name") || ""),
+        p_customer_phone: String(formData.get("customer_phone") || ""),
+        p_party_size: Number(formData.get("party_size")),
+        p_customer_email: String(formData.get("customer_email") || ""),
+        p_comment: String(formData.get("comment") || "")
+      });
+
+      if (error) {
+        setStatus(error.message, "error");
+        await loadSlots();
+        return;
+      }
+
+      form.reset();
+      syncPartyBounds();
+      await loadSlots();
+      setStatus("Заявку створено. Менеджер підтвердить бронювання.", "success");
+    });
+
+    const today = new Date();
+    today.setMinutes(today.getMinutes() - today.getTimezoneOffset());
+    if (dateInput) {
+      dateInput.min = today.toISOString().slice(0, 10);
+      dateInput.value = today.toISOString().slice(0, 10);
+    }
+
+    serviceSelect?.addEventListener("change", loadSlots);
+    dateInput?.addEventListener("change", loadSlots);
+    partySizeInput?.addEventListener("change", loadSlots);
+    refreshButton?.addEventListener("click", loadSlots);
+
+    await loadServices();
+    await loadSlots();
+  };
+
+  document.querySelectorAll<HTMLElement>("[data-booking-widget]").forEach((widget) => {
+    setupBookingWidget(widget);
+  });
+</script>

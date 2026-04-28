@@ -1,0 +1,17 @@
+---
+interface Props {
+  eyebrow?: string;
+  title: string;
+  text?: string;
+  className?: string;
+}
+
+const { eyebrow = "", title, text = "", className = "" } = Astro.props;
+---
+
+<article class={`card ${className}`}>
+  {eyebrow && <span class="eyebrow">{eyebrow}</span>}
+  <h3>{title}</h3>
+  {text && <p>{text}</p>}
+  <slot />
+</article>

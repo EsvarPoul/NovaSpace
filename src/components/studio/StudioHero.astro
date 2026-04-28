@@ -1,0 +1,22 @@
+---
+import Button from "../ui/Button.astro";
+---
+
+<section class="hero hero--studio studio-hero reveal">
+  <div class="hero__copy">
+    <span class="eyebrow">Private photo studio</span>
+    <h1>NOVA Studio</h1>
+    <p>Світла фотостудія, де преміальність відчувається не блиском, а тишею, фактурами і простором. Тут легко видихнути, зібрати образ і побачити себе в кадрі природно.</p>
+    <div class="actions">
+      <Button href="#booking" label="Забронювати студію" />
+      <Button href="#portfolio" label="Побачити простір" variant="ghost" />
+    </div>
+  </div>
+  <aside class="hero-visual studio-hero__visual" aria-label="Світла домашня фотостудія NOVA Studio">
+    <img src="/studio/studio-hero.png" alt="Світла домашня фотостудія з м'яким денним світлом" loading="eager" />
+    <div class="studio-hero__note">
+      <span>Денне світло</span>
+      <strong>м'який приватний простір</strong>
+    </div>
+  </aside>
+</section>

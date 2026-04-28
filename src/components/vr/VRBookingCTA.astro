@@ -1,0 +1,25 @@
+---
+import { faqItems } from "../../data/faq.js";
+import Button from "../ui/Button.astro";
+---
+
+<section id="faq" class="section reveal vr-app-section vr-help">
+  <div class="section__head">
+    <div>
+      <span class="eyebrow">System help</span>
+      <h2>Короткі відповіді перед стартом.</h2>
+    </div>
+    <Button href="/booking" label="Забронювати VR" />
+  </div>
+  <div class="faq-list">
+    {faqItems.map((item, index) => (
+      <article class={`faq-item ${index === 0 ? "is-open" : ""}`}>
+        <button type="button" aria-expanded={index === 0 ? "true" : "false"}>
+          <span>{item.question}</span>
+          <strong>+</strong>
+        </button>
+        <div><p>{item.answer}</p></div>
+      </article>
+    ))}
+  </div>
+</section>

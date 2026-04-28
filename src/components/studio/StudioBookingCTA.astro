@@ -1,0 +1,18 @@
+---
+import BookingWidget from "../booking/BookingWidget.astro";
+---
+
+<section id="booking" class="studio-booking-section reveal">
+  <div class="studio-booking-intro">
+    <span class="eyebrow">Бронювання студії</span>
+    <h2>Забронюємо світло, фон і темп під вашу історію.</h2>
+    <p>Форма нижче показує тільки студійні пакети. Оберіть дату, зручний слот і залиште деталі зйомки, а менеджер підтвердить бронювання.</p>
+  </div>
+  <BookingWidget
+    allowedServiceSlugs={["studio-light", "studio-story", "studio-brand"]}
+    defaultServiceSlug="studio-story"
+    variant="studio"
+    introTitle="Студійна бронь"
+    introText="Оберіть формат зйомки, дату і час. Ми підготуємо простір, світло і фон перед вашим приходом."
+  />
+</section>

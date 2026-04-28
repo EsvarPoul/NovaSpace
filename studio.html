@@ -3,32 +3,56 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Nova — Фотостудія</title>
+  <title>Nova - Studia</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&family=Cormorant+Garamond:wght@500;600;700&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="styles.css" />
 </head>
 <body class="inner-page studio-theme">
   <div class="noise"></div>
   <header class="page-header">
-    <a class="back-link" href="index.html">← Назад</a>
-    <a class="brand-link" href="index.html">NOVA SPACE</a>
+    <a class="back-link" href="index.html">Назад</a>
+    <a class="brand-link" href="index.html">NOVA STUDIA</a>
   </header>
 
   <main class="inner-shell">
-    <section class="inner-hero">
-      <span class="section-tag">ФОТОСТУДІЯ</span>
-      <h1>Простір для кадру, світла та ідеї</h1>
-      <p>
-        Це стартова сторінка розділу фотостудії. Тут згодом можна додати
-        пакети послуг, галерею, бронювання, опис залів та ціни.
-      </p>
-
-      <div class="cta-row">
-        <a href="#" class="primary-btn">Переглянути зали</a>
-        <a href="#" class="ghost-btn">Бронювання</a>
+    <section class="showcase-shell reveal-on-load">
+      <div class="showcase-copy">
+        <span class="section-tag">PRIVATE PORTFOLIO</span>
+        <h1>Простір, де головний кадр говорить сам за себе.</h1>
+        <p>Один великий образ, а навколо нього серія сцен, які відкривають характер світла, матеріалів і тиші NOVA STUDIA.</p>
       </div>
+
+      <section class="showcase-module studio-showcase is-studio-scene-1" data-showcase>
+        <div class="showcase-stage">
+          <div class="showcase-visual" data-showcase-visual></div>
+          <div class="showcase-overlay">
+            <span class="showcase-label">NOVA STUDIA</span>
+            <h2 data-showcase-title>Editorial Silence</h2>
+            <p data-showcase-text>М’який направлений світловий жест, глибокі тіні та тепла фактура для fashion і портретних серій.</p>
+          </div>
+        </div>
+
+        <div class="showcase-thumbs" role="tablist" aria-label="Портфоліо студії">
+          <button class="showcase-thumb is-active" type="button" data-target-class="is-studio-scene-1" data-title="Editorial Silence" data-text="М’який направлений світловий жест, глибокі тіні та тепла фактура для fashion і портретних серій.">
+            <span class="thumb-preview studio-thumb-1"></span>
+            <span class="thumb-meta"><strong>01</strong><small>Portrait</small></span>
+          </button>
+          <button class="showcase-thumb" type="button" data-target-class="is-studio-scene-2" data-title="Monolith Set" data-text="Графічна сцена з архітектурним світлом, дзеркальними поверхнями та відчуттям галерейної постановки.">
+            <span class="thumb-preview studio-thumb-2"></span>
+            <span class="thumb-meta"><strong>02</strong><small>Set design</small></span>
+          </button>
+          <button class="showcase-thumb" type="button" data-target-class="is-studio-scene-3" data-title="Warm Minimal" data-text="Спокійна предметна композиція для beauty, jewelry та брендів, де важлива кожна текстура й повітря між об'єктами.">
+            <span class="thumb-preview studio-thumb-3"></span>
+            <span class="thumb-meta"><strong>03</strong><small>Product</small></span>
+          </button>
+          <button class="showcase-thumb" type="button" data-target-class="is-studio-scene-4" data-title="Night Session" data-text="Темна кінематографічна сцена для відео й music visuals з глибоким контрастом та контрольованими рефлексами.">
+            <span class="thumb-preview studio-thumb-4"></span>
+            <span class="thumb-meta"><strong>04</strong><small>Motion</small></span>
+          </button>
+        </div>
+      </section>
     </section>
   </main>
 

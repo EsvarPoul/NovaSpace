@@ -1,0 +1,19 @@
+{
+  "name": "nova-site-modern",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "dev": "astro dev --host 127.0.0.1 --port 4173",
+    "dev:lan": "astro dev --host 0.0.0.0 --port 4174",
+    "build": "astro check && astro build",
+    "preview": "astro preview --host 127.0.0.1 --port 4173",
+    "check": "astro check"
+  },
+  "dependencies": {
+    "@astrojs/check": "^0.9.4",
+    "@supabase/supabase-js": "^2.104.1",
+    "astro": "^5.7.8",
+    "typescript": "^5.8.3"
+  }
+}

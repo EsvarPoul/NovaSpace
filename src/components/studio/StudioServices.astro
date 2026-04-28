@@ -1,0 +1,22 @@
+---
+import { studioServices, studioBenefits } from "../../data/studio.js";
+import Card from "../ui/Card.astro";
+import Section from "../ui/Section.astro";
+---
+
+<Section
+  id="services"
+  eyebrow="Послуги"
+  title="Зйомки, у яких є місце для людини, світла і тиші."
+  text="NOVA Studio працює як приватний простір: без поспіху, з уважною підготовкою і сценарієм, який підлаштовується під вашу історію."
+  className="studio-section"
+>
+  <div class="grid grid--4">
+    {studioServices.map((item, index) => (
+      <Card eyebrow={`0${index + 1}`} title={item.title} text={item.text} />
+    ))}
+  </div>
+  <ul class="benefit-row studio-benefits">
+    {studioBenefits.map((item) => <li>{item}</li>)}
+  </ul>
+</Section>

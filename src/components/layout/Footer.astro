@@ -1,0 +1,29 @@
+---
+interface Props {
+  brand?: string;
+  mode?: string;
+}
+
+const { brand = "NOVA", mode = "Studio + VR" } = Astro.props;
+---
+
+<footer id="contacts" class="footer reveal">
+  <div>
+    <a class="brand" href="/">
+      <span>{brand}</span>
+      <small>{mode}</small>
+    </a>
+    <p>Преміальний простір у Броварах для зйомок, VR-сценаріїв, приватних зустрічей і подій.</p>
+  </div>
+  <address>
+    <strong>Контакти</strong>
+    <span>Бровари, Київська область</span>
+    <a href="tel:+380XXXXXXXXX">+38 (0XX) XXX-XX-XX</a>
+    <span>Щодня 10:00-21:00</span>
+  </address>
+  <div class="footer__links">
+    <a href="/studio/">Nova Studio</a>
+    <a href="/vr/">Nova VR</a>
+    <a href="/">Gateway</a>
+  </div>
+</footer>

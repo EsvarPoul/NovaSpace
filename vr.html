@@ -3,32 +3,56 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Nova — VR кімната</title>
+  <title>Nova - VR</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&family=Cormorant+Garamond:wght@500;600;700&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="styles.css" />
 </head>
 <body class="inner-page vr-theme">
   <div class="noise"></div>
   <header class="page-header">
-    <a class="back-link" href="index.html">← Назад</a>
-    <a class="brand-link" href="index.html">NOVA SPACE</a>
+    <a class="back-link" href="index.html">Назад</a>
+    <a class="brand-link" href="index.html">NOVA VR</a>
   </header>
 
   <main class="inner-shell">
-    <section class="inner-hero">
-      <span class="section-tag">VR КІМНАТА</span>
-      <h1>Інший рівень занурення та руху</h1>
-      <p>
-        Це стартова сторінка розділу VR. Пізніше тут можна розмістити
-        сценарії ігор, бронювання, правила, технічні можливості та тарифи.
-      </p>
-
-      <div class="cta-row">
-        <a href="#" class="primary-btn">Обрати гру</a>
-        <a href="#" class="ghost-btn">Забронювати сеанс</a>
+    <section class="showcase-shell reveal-on-load">
+      <div class="showcase-copy">
+        <span class="section-tag">IMMERSIVE COLLECTION</span>
+        <h1>Пристрої та ігри як одна вивірена immersive-сцена.</h1>
+        <p>Великий центральний фокус показує головний досвід, а нижні модулі перемикають акцент між hardware, режимами гри та просторовими сценаріями.</p>
       </div>
+
+      <section class="showcase-module vr-showcase is-vr-scene-1" data-showcase>
+        <div class="showcase-stage">
+          <div class="showcase-visual" data-showcase-visual></div>
+          <div class="showcase-overlay">
+            <span class="showcase-label">NOVA VR</span>
+            <h2 data-showcase-title>Signature Headset</h2>
+            <p data-showcase-text>Флагманський сетап з м’яким трекінгом, чистою картинкою та приватною зоною занурення для індивідуальних сеансів.</p>
+          </div>
+        </div>
+
+        <div class="showcase-thumbs" role="tablist" aria-label="Колекція VR">
+          <button class="showcase-thumb is-active" type="button" data-target-class="is-vr-scene-1" data-title="Signature Headset" data-text="Флагманський сетап з м’яким трекінгом, чистою картинкою та приватною зоною занурення для індивідуальних сеансів.">
+            <span class="thumb-preview vr-thumb-1"></span>
+            <span class="thumb-meta"><strong>01</strong><small>Hardware</small></span>
+          </button>
+          <button class="showcase-thumb" type="button" data-target-class="is-vr-scene-2" data-title="Arena Play" data-text="Командний режим з відкритою ареною, глибоким просторовим світлом і відчуттям керованого хаосу всередині гри.">
+            <span class="thumb-preview vr-thumb-2"></span>
+            <span class="thumb-meta"><strong>02</strong><small>Arena</small></span>
+          </button>
+          <button class="showcase-thumb" type="button" data-target-class="is-vr-scene-3" data-title="Racing Chamber" data-text="Швидкісний симулятор із кінематографічним неоном, акцентом на рух та максимальну фокусну присутність.">
+            <span class="thumb-preview vr-thumb-3"></span>
+            <span class="thumb-meta"><strong>03</strong><small>Racing</small></span>
+          </button>
+          <button class="showcase-thumb" type="button" data-target-class="is-vr-scene-4" data-title="Deep Quest" data-text="Пригодницька сцена з атмосферою далекого космосу, м’яким звуком і відчуттям повного відриву від повсякденності.">
+            <span class="thumb-preview vr-thumb-4"></span>
+            <span class="thumb-meta"><strong>04</strong><small>Quest</small></span>
+          </button>
+        </div>
+      </section>
     </section>
   </main>
 

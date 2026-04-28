@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>NOVA VR - Ігри</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&family=Cormorant+Garamond:wght@500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="assets/css/vr.css" />
+</head>
+<body>
+  <div class="vr-app">
+    <header class="vr-header">
+      <div class="vr-shell vr-header__bar">
+        <a class="vr-brand" href="index.html"><span class="vr-brand__mark">NOVA VR</span><span class="vr-brand__sub">Immersive experience platform</span></a>
+        <nav class="vr-nav" aria-label="Основна навігація">
+          <ul class="vr-nav__list">
+            <li><a class="vr-nav__link" href="index.html">Головна</a></li>
+            <li><a class="vr-nav__link is-active" href="games.html">Ігри</a></li>
+            <li><a class="vr-nav__link" href="prices.html">Ціни</a></li>
+            <li><a class="vr-nav__link" href="booking.html">Бронювання</a></li>
+            <li><a class="vr-nav__link" href="events.html">Для компаній / свят</a></li>
+            <li><a class="vr-nav__link" href="about.html">Про нас</a></li>
+            <li><a class="vr-nav__link" href="faq.html">FAQ</a></li>
+            <li><a class="vr-nav__link" href="contacts.html">Контакти</a></li>
+            <li><a class="vr-nav__link" href="rules.html">Правила</a></li>
+            <li><a class="vr-nav__link" href="reviews.html">Відгуки</a></li>
+          </ul>
+        </nav>
+        <div class="vr-actions">
+          <a class="vr-button vr-button--primary" href="booking.html">Забронювати</a>
+          <button class="vr-menu-toggle" type="button" aria-label="Відкрити меню" aria-expanded="false" data-menu-toggle>Меню</button>
+        </div>
+      </div>
+    </header>
+
+    <main class="vr-main">
+      <div class="vr-shell">
+        <section class="page-hero reveal">
+          <div class="page-hero__grid">
+            <div>
+              <span class="section-kicker">Games catalog</span>
+              <h1>Каталог ігор для різних темпів, команд і рівнів досвіду.</h1>
+              <p>Структура сторінки вже готова до майбутньої фільтрації, нових жанрів і додавання карток без змін базового layout.</p>
+            </div>
+            <aside class="page-hero__aside">
+              <div class="page-hero__visual"></div>
+              <div class="tag-row">
+                <span class="tag">Новачкам</span>
+                <span class="tag">Кооператив</span>
+                <span class="tag">Активні</span>
+                <span class="tag">Хорор</span>
+                <span class="tag">Сімейні</span>
+              </div>
+            </aside>
+          </div>
+        </section>
+
+        <section class="content-section reveal">
+          <div class="section-header section-header--split">
+            <div>
+              <span class="section-kicker">Фільтри</span>
+              <h2>Оберіть настрій гри.</h2>
+            </div>
+          </div>
+          <div class="filter-row" style="margin-top: 20px;">
+            <button class="filter-chip is-active" type="button" data-filter="all">Усі</button>
+            <button class="filter-chip" type="button" data-filter="novice">Для новачків</button>
+            <button class="filter-chip" type="button" data-filter="coop">Кооперативні</button>
+            <button class="filter-chip" type="button" data-filter="active">Активні</button>
+            <button class="filter-chip" type="button" data-filter="horror">Хорор</button>
+            <button class="filter-chip" type="button" data-filter="family">Сімейні</button>
+          </div>
+          <div class="games-grid" style="margin-top: 24px;">
+            <article class="game-card" data-game-category="novice coop family">
+              <div class="game-card__cover"></div><div class="game-card__meta"><span>2-4 гравці</span><span>40-60 хв</span></div><h3>Skyline Rescue</h3><p>Кооперативна пригода для м’якого входу в VR з простими задачами й красивою сценою.</p><div class="game-tags"><span class="game-tag">Новачкам</span><span class="game-tag">Сімейні</span></div>
+            </article>
+            <article class="game-card" data-game-category="coop active">
+              <div class="game-card__cover"></div><div class="game-card__meta"><span>2-6 гравців</span><span>50 хв</span></div><h3>Velocity Arena</h3><p>Швидкісний матч із динамікою арени, де важлива координація та рух.</p><div class="game-tags"><span class="game-tag">Активні</span><span class="game-tag">Команда</span></div>
+            </article>
+            <article class="game-card" data-game-category="horror coop">
+              <div class="game-card__cover"></div><div class="game-card__meta"><span>2-4 гравці</span><span>55 хв</span></div><h3>Black Echo</h3><p>Атмосферний хорор з тиском простору, темрявою й сильним емоційним ефектом.</p><div class="game-tags"><span class="game-tag">Хорор</span><span class="game-tag">Кооператив</span></div>
+            </article>
+            <article class="game-card" data-game-category="family novice">
+              <div class="game-card__cover"></div><div class="game-card__meta"><span>2-3 гравці</span><span>45 хв</span></div><h3>Wonder Garden</h3><p>Спокійна сімейна пригода з кольором, м’яким темпом і легкими механіками.</p><div class="game-tags"><span class="game-tag">Сімейні</span><span class="game-tag">Новачкам</span></div>
+            </article>
+            <article class="game-card" data-game-category="active coop">
+              <div class="game-card__cover"></div><div class="game-card__meta"><span>2-8 гравців</span><span>30 хв</span></div><h3>Pulse Strike</h3><p>Інтенсивний командний формат для тих, хто любить темп і короткі матчі.</p><div class="game-tags"><span class="game-tag">Активні</span><span class="game-tag">Команда</span></div>
+            </article>
+            <article class="game-card" data-game-category="novice family coop">
+              <div class="game-card__cover"></div><div class="game-card__meta"><span>2-5 гравців</span><span>50 хв</span></div><h3>Moonbase Friends</h3><p>Доброзичливий кооператив із космічною атмосферою та ясним сценарієм гри.</p><div class="game-tags"><span class="game-tag">Новачкам</span><span class="game-tag">Сімейні</span></div>
+            </article>
+          </div>
+        </section>
+
+        <footer class="footer-panel reveal">
+          <div class="footer-grid">
+            <div class="footer-copy"><div class="vr-brand"><span class="vr-brand__mark">NOVA VR</span><span class="vr-brand__sub">Immersive experience platform</span></div><p>Тестові картки ігор знаходяться прямо в `vr/games.html` і вже розмічені `data-game-category` для подальшої JS-фільтрації.</p></div>
+            <div><h3 class="footer-heading">Навігація</h3><div class="footer-links"><a href="prices.html">Ціни</a><a href="booking.html">Бронювання</a><a href="events.html">Для компаній / свят</a></div></div>
+            <div><h3 class="footer-heading">Контакт</h3><ul class="footer-meta"><li>Бровари, Київська область</li><li>+38 (0XX) XXX-XX-XX</li><li>Щодня 10:00-21:00</li></ul></div>
+          </div>
+        </footer>
+      </div>
+    </main>
+  </div>
+  <script src="assets/js/vr.js"></script>
+</body>
+</html>

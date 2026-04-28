@@ -1,0 +1,25 @@
+---
+import { studioPortfolio } from "../../data/studio.js";
+import Section from "../ui/Section.astro";
+---
+
+<Section
+  id="portfolio"
+  eyebrow="Атмосфера"
+  title="Простір виглядає дорого, але поводиться по-домашньому."
+  text="Кожна зона зібрана навколо м'якого світла, чистих фактур і відчуття, що перед камерою можна залишатися собою."
+  className="studio-section studio-mood"
+>
+  <div class="studio-mood-grid">
+    {studioPortfolio.map((item) => (
+      <article class="studio-mood-card">
+        <img src={item.image} alt={`${item.title} у NOVA Studio`} loading="lazy" />
+        <div>
+          <span>{item.type}</span>
+          <h3>{item.title}</h3>
+          <p>{item.text}</p>
+        </div>
+      </article>
+    ))}
+  </div>
+</Section>

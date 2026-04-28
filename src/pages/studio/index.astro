@@ -1,0 +1,61 @@
+---
+import BaseLayout from "../../layouts/BaseLayout.astro";
+import Header from "../../components/layout/Header.astro";
+import Footer from "../../components/layout/Footer.astro";
+import StudioHero from "../../components/studio/StudioHero.astro";
+import StudioServices from "../../components/studio/StudioServices.astro";
+import StudioPortfolio from "../../components/studio/StudioPortfolio.astro";
+import StudioPricing from "../../components/studio/StudioPricing.astro";
+import StudioBookingCTA from "../../components/studio/StudioBookingCTA.astro";
+import { studioNav } from "../../data/studio.js";
+---
+
+<BaseLayout
+  title="NOVA Studio"
+  description="NOVA Studio: преміальна домашня фотостудія для портретів, брендів, beauty та предметної зйомки."
+>
+  <div class="app-shell studio-page">
+    <Header brand="NOVA STUDIO" sub="Photo studio" nav={studioNav} ctaHref="#booking" ctaLabel="Забронювати" />
+    <main>
+      <StudioHero />
+      <StudioServices />
+      <StudioPortfolio />
+      <StudioPricing />
+      <StudioBookingCTA />
+    </main>
+    <Footer brand="NOVA STUDIO" mode="Photo studio" />
+  </div>
+</BaseLayout>
+
+<script>
+  const header = document.querySelector("[data-header]");
+  const toggle = document.querySelector("[data-menu-toggle]");
+
+  toggle?.addEventListener("click", () => {
+    const isOpen = header?.classList.toggle("is-menu-open") || false;
+    toggle.setAttribute("aria-expanded", String(isOpen));
+  });
+
+  const items = document.querySelectorAll(".reveal");
+  const observer = new IntersectionObserver((entries) => {
+    entries.forEach((entry) => {
+      if (entry.isIntersecting) {
+        entry.target.classList.add("is-visible");
+        observer.unobserve(entry.target);
+      }
+    });
+  }, { threshold: 0.12 });
+
+  items.forEach((item) => observer.observe(item));
+
+  document.querySelectorAll("[data-service-link]").forEach((link) => {
+    link.addEventListener("click", () => {
+      const service = link.getAttribute("data-service-link");
+      const select = document.querySelector("[data-booking-widget] [data-service-select]");
+      if (service && select instanceof HTMLSelectElement) {
+        select.value = service;
+        select.dispatchEvent(new Event("change", { bubbles: true }));
+      }
+    });
+  });
+</script>

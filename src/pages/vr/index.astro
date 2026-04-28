@@ -1,0 +1,626 @@
+---
+import BaseLayout from "../../layouts/BaseLayout.astro";
+import { faqItems } from "../../data/faq.js";
+import { vrEvents, vrGames, vrNav, vrPricing } from "../../data/vr.js";
+
+const gamesJson = JSON.stringify(vrGames);
+---
+
+<BaseLayout
+  title="Nova VR"
+  description="Nova VR: інтерактивний VR-застосунок для ігор, команд, свят і корпоративних сценаріїв."
+>
+  <main class="vr-os" aria-label="Nova VR control application">
+    <script is:inline type="application/json" id="vr-games-data" set:html={gamesJson}></script>
+
+    <aside class="vr-os__sidebar" aria-label="VR navigation">
+      <a class="vr-os__brand" href="/">
+        <span>NOVA VR</span>
+        <small>Control app</small>
+      </a>
+      <nav class="vr-os__nav" aria-label="VR screens">
+        {vrNav.map((item) => <a href={item.href} data-vr-nav={item.href.replace("#", "")}>{item.label}</a>)}
+      </nav>
+      <button class="vr-os__launch" type="button" data-start-onboarding>Створити шлях</button>
+    </aside>
+
+    <section class="vr-os__main">
+      <header class="vr-os__topbar">
+        <div>
+          <span>Nova OS</span>
+          <strong data-vr-title>Dashboard</strong>
+        </div>
+        <div class="vr-os__status" aria-label="Статус простору">
+          <span>Online</span>
+          <span data-loadout-status>Free mode</span>
+          <span>60 min</span>
+        </div>
+      </header>
+
+      <div class="vr-os__viewport">
+        <section class="vr-screen is-active" id="dashboard" data-vr-screen="dashboard" aria-labelledby="dashboard-title">
+          <div class="vr-screen__copy">
+            <span class="vr-os__eyebrow">Ready player mode</span>
+            <h1 id="dashboard-title">Керуй простором як ігровою сесією.</h1>
+            <p>Створи короткий VR-шлях: нік, команда, настрій і формат. Або відкрий бібліотеку ігор у вільному режимі.</p>
+            <div class="vr-quick-actions">
+              <button type="button" data-start-onboarding>Почати шлях</button>
+              <a href="#games">Наші ігри</a>
+            </div>
+          </div>
+          <div class="vr-command-panel" aria-label="Nova VR status panel">
+            <div class="vr-command-panel__head">
+              <span>Player loadout</span>
+              <strong data-player-name>Guest</strong>
+            </div>
+            <div class="vr-arena-map" aria-hidden="true">
+              <span class="vr-arena-map__ring"></span>
+              <span class="vr-arena-map__ring"></span>
+              <span class="vr-arena-map__core"></span>
+              <span class="vr-arena-map__node vr-arena-map__node--a"></span>
+              <span class="vr-arena-map__node vr-arena-map__node--b"></span>
+              <span class="vr-arena-map__node vr-arena-map__node--c"></span>
+            </div>
+            <div class="vr-command-panel__grid">
+              <span><strong data-loadout-players>2-6</strong> гравців</span>
+              <span><strong data-loadout-vibe>Any</strong> режим</span>
+              <span><strong data-loadout-event>Free</strong> формат</span>
+            </div>
+          </div>
+        </section>
+
+        <section class="vr-screen" id="games" data-vr-screen="games" aria-labelledby="games-title">
+          <div class="vr-screen__head vr-games-head">
+            <div>
+              <span class="vr-os__eyebrow">Game library</span>
+              <h2 id="games-title">Наші ігри</h2>
+            </div>
+            <p>Каталог у форматі launcher: фільтри, сторінки, швидка деталка і бронювання без виходу із застосунку.</p>
+          </div>
+
+          <div class="vr-games-toolbar" aria-label="Фільтри ігор">
+            <div class="vr-filter-group" aria-label="Жанр">
+              <span>Жанр</span>
+              <button class="is-active" type="button" data-filter-group="genre" data-filter-value="all">Усі</button>
+              <button type="button" data-filter-group="genre" data-filter-value="action">Екшен</button>
+              <button type="button" data-filter-group="genre" data-filter-value="coop">Co-op</button>
+              <button type="button" data-filter-group="genre" data-filter-value="story">Сюжет</button>
+              <button type="button" data-filter-group="genre" data-filter-value="horror">Horror</button>
+            </div>
+            <div class="vr-filter-group" aria-label="Кількість гравців">
+              <span>Гравці</span>
+              <button class="is-active" type="button" data-filter-group="players" data-filter-value="all">Усі</button>
+              <button type="button" data-filter-group="players" data-filter-value="1-4">1-4</button>
+              <button type="button" data-filter-group="players" data-filter-value="2-4">2-4</button>
+              <button type="button" data-filter-group="players" data-filter-value="2-6">2-6</button>
+            </div>
+            <div class="vr-filter-group" aria-label="Тривалість">
+              <span>Час</span>
+              <button class="is-active" type="button" data-filter-group="duration" data-filter-value="all">Усі</button>
+              <button type="button" data-filter-group="duration" data-filter-value="30-45">30-45</button>
+              <button type="button" data-filter-group="duration" data-filter-value="45-60">45-60</button>
+              <button type="button" data-filter-group="duration" data-filter-value="60">60</button>
+            </div>
+            <button class="vr-filter-reset" type="button" data-filter-reset>Скинути</button>
+          </div>
+
+          <div class="vr-games-grid" data-games-grid>
+            {vrGames.map((game) => (
+              <button
+                class={`vr-game-tile vr-game-tile--${game.mediaTone}`}
+                type="button"
+                data-game-open={game.slug}
+                data-game-genre={game.genreKey}
+                data-game-players={game.playerKey}
+                data-game-duration={game.durationKey}
+              >
+                <span class="vr-game-tile__media" aria-hidden="true"><span></span></span>
+                <span class="vr-game-tile__title">{game.title}</span>
+                <span class="vr-game-tile__meta">
+                  <strong>{game.genre}</strong>
+                  <small>{game.players} | {game.duration}</small>
+                </span>
+                <span class="vr-game-tile__tags">
+                  {game.tags.slice(0, 2).map((tag) => <em>{tag}</em>)}
+                </span>
+              </button>
+            ))}
+          </div>
+          <p class="vr-games-empty" data-games-empty hidden>Під ці фільтри поки немає гри. Спробуй інший жанр або час.</p>
+          <div class="vr-games-pagination" data-games-pagination aria-label="Сторінки каталогу ігор"></div>
+        </section>
+
+        <section class="vr-screen" id="game-detail" data-vr-screen="game-detail" aria-labelledby="game-detail-title" hidden>
+          <div class="vr-game-detail">
+            <div class="vr-game-detail__media" data-detail-tone aria-hidden="true">
+              <span></span>
+              <i></i>
+            </div>
+            <article class="vr-game-detail__panel">
+              <button class="vr-back-button" type="button" data-game-back>Назад</button>
+              <span class="vr-os__eyebrow" data-detail-genre>Game</span>
+              <h2 id="game-detail-title" data-detail-title>Game title</h2>
+              <p data-detail-description></p>
+              <div class="vr-game-detail__tags" data-detail-tags></div>
+              <dl class="vr-game-detail__stats">
+                <div><dt>Гравці</dt><dd data-detail-players></dd></div>
+                <div><dt>Час</dt><dd data-detail-duration></dd></div>
+                <div><dt>Рівень</dt><dd data-detail-level></dd></div>
+              </dl>
+              <div class="vr-game-detail__features" data-detail-features></div>
+              <div class="vr-game-detail__gallery" aria-label="Прев'ю гри">
+                <span></span><span></span><span></span>
+              </div>
+              <div class="vr-game-detail__video">
+                <span>Video preview</span>
+                <strong data-detail-video-title>Session trailer</strong>
+              </div>
+              <div class="vr-game-detail__actions">
+                <a href="tel:+380XXXXXXXXX">Забронювати</a>
+                <button type="button" data-game-back>До ігор</button>
+              </div>
+            </article>
+          </div>
+        </section>
+
+        <section class="vr-screen" id="modules" data-vr-screen="modules" aria-labelledby="modules-title">
+          <div class="vr-screen__head">
+            <span class="vr-os__eyebrow">Quick modes</span>
+            <h2 id="modules-title">Швидкі режими</h2>
+          </div>
+          <div class="vr-app-grid vr-app-grid--modules">
+            {vrGames.slice(0, 4).map((game) => (
+              <article class="vr-app-card">
+                <div class="vr-app-card__cover" aria-hidden="true"><span></span></div>
+                <div class="vr-app-card__meta"><span>{game.genre}</span><span>{game.players}</span></div>
+                <h3>{game.title}</h3>
+                <strong>{game.level}</strong>
+                <p>{game.shortText}</p>
+              </article>
+            ))}
+          </div>
+        </section>
+
+        <section class="vr-screen" id="sessions" data-vr-screen="sessions" aria-labelledby="sessions-title">
+          <div class="vr-screen__head">
+            <span class="vr-os__eyebrow">Session presets</span>
+            <h2 id="sessions-title">Пресети запуску</h2>
+          </div>
+          <div class="vr-app-grid vr-app-grid--presets">
+            {vrPricing.map((item) => (
+              <article class="vr-app-card vr-app-card--preset">
+                <span>{item.meta}</span>
+                <h3>{item.name}</h3>
+                <strong>{item.price}</strong>
+                <ul>{item.features.map((feature) => <li>{feature}</li>)}</ul>
+              </article>
+            ))}
+          </div>
+        </section>
+
+        <section class="vr-screen" id="scenarios" data-vr-screen="scenarios" aria-labelledby="scenarios-title">
+          <div class="vr-screen__head">
+            <span class="vr-os__eyebrow">Scenario builder</span>
+            <h2 id="scenarios-title">Формати подій</h2>
+          </div>
+          <div class="vr-scenario-board">
+            {vrEvents.map((event, index) => (
+              <article>
+                <span>Scenario 0{index + 1}</span>
+                <strong>{event}</strong>
+              </article>
+            ))}
+          </div>
+        </section>
+
+        <section class="vr-screen" id="help" data-vr-screen="help" aria-labelledby="help-title">
+          <div class="vr-screen__head">
+            <span class="vr-os__eyebrow">System help</span>
+            <h2 id="help-title">Перед стартом</h2>
+          </div>
+          <div class="vr-help-board">
+            {faqItems.map((item) => (
+              <article>
+                <h3>{item.question}</h3>
+                <p>{item.answer}</p>
+              </article>
+            ))}
+          </div>
+        </section>
+      </div>
+    </section>
+
+    <nav class="vr-os__mobile-nav" aria-label="VR mobile screens">
+      {vrNav.map((item) => <a href={item.href} data-vr-nav={item.href.replace("#", "")}>{item.label}</a>)}
+    </nav>
+
+    <section class="vr-onboarding" data-onboarding aria-labelledby="vr-onboarding-title">
+      <div class="vr-onboarding__shell">
+        <div class="vr-onboarding__hud" aria-hidden="true">
+          <span data-step-dot="0"></span>
+          <span data-step-dot="1"></span>
+          <span data-step-dot="2"></span>
+          <span data-step-dot="3"></span>
+          <span data-step-dot="4"></span>
+        </div>
+
+        <div class="vr-onboarding__step is-active" data-step="0">
+          <span class="vr-os__eyebrow">Player init</span>
+          <h2 id="vr-onboarding-title">Введи нік для VR-шляху.</h2>
+          <p>Можна пройти короткий конструктор і зібрати готовий формат бронювання. Або пропустити і одразу користуватися застосунком.</p>
+          <label class="vr-nick-field">
+            <span>Нік</span>
+            <input type="text" name="nickname" data-nickname placeholder="Наприклад: NovaPilot" autocomplete="nickname" maxlength="18" />
+          </label>
+          <div class="vr-onboarding__actions">
+            <button type="button" data-next-step>Почати</button>
+            <button type="button" data-skip-onboarding>Пропустити</button>
+          </div>
+        </div>
+
+        <div class="vr-onboarding__step" data-step="1" hidden>
+          <span class="vr-os__eyebrow">Squad size</span>
+          <h2>Скільки вас буде?</h2>
+          <div class="vr-choice-grid">
+            <button type="button" data-choice="players" data-value="2">2 гравці</button>
+            <button type="button" data-choice="players" data-value="3-4">3-4 гравці</button>
+            <button type="button" data-choice="players" data-value="5-6">5-6 гравців</button>
+          </div>
+          <div class="vr-onboarding__actions">
+            <button type="button" data-prev-step>Назад</button>
+            <button type="button" data-next-step>Далі</button>
+          </div>
+        </div>
+
+        <div class="vr-onboarding__step" data-step="2" hidden>
+          <span class="vr-os__eyebrow">Game mood</span>
+          <h2>Який вайб шукаємо?</h2>
+          <div class="vr-choice-grid">
+            <button type="button" data-choice="vibe" data-value="Co-op">Командний</button>
+            <button type="button" data-choice="vibe" data-value="Action">Екшен</button>
+            <button type="button" data-choice="vibe" data-value="Story">Сюжет</button>
+            <button type="button" data-choice="vibe" data-value="Horror">Напруга</button>
+          </div>
+          <div class="vr-onboarding__actions">
+            <button type="button" data-prev-step>Назад</button>
+            <button type="button" data-next-step>Далі</button>
+          </div>
+        </div>
+
+        <div class="vr-onboarding__step" data-step="3" hidden>
+          <span class="vr-os__eyebrow">Event type</span>
+          <h2>Для чого збираємо сесію?</h2>
+          <div class="vr-choice-grid">
+            <button type="button" data-choice="event" data-value="Birthday">День народження</button>
+            <button type="button" data-choice="event" data-value="Corporate">Корпоратив</button>
+            <button type="button" data-choice="event" data-value="Date">Для двох</button>
+            <button type="button" data-choice="event" data-value="Free">Просто гра</button>
+          </div>
+          <div class="vr-onboarding__actions">
+            <button type="button" data-prev-step>Назад</button>
+            <button type="button" data-next-step>Зібрати</button>
+          </div>
+        </div>
+
+        <div class="vr-onboarding__step" data-step="4" hidden>
+          <span class="vr-os__eyebrow">Loadout ready</span>
+          <h2>Шлях зібрано.</h2>
+          <div class="vr-loadout-card">
+            <span>Player</span><strong data-summary-nick>Guest</strong>
+            <span>Squad</span><strong data-summary-players>2-6</strong>
+            <span>Mode</span><strong data-summary-vibe>Any</strong>
+            <span>Format</span><strong data-summary-event>Free</strong>
+          </div>
+          <div class="vr-onboarding__actions">
+            <a href="/booking">Перейти до броні</a>
+            <button type="button" data-finish-onboarding>Вільний режим</button>
+          </div>
+        </div>
+      </div>
+    </section>
+  </main>
+</BaseLayout>
+
+<script>
+  interface VRGame {
+    slug: string;
+    title: string;
+    genre: string;
+    genreKey: string;
+    tags: string[];
+    players: string;
+    playerKey: string;
+    duration: string;
+    durationKey: string;
+    level: string;
+    shortText: string;
+    description: string;
+    features: string[];
+    recommendedFor: string;
+    mediaTone: string;
+  }
+
+  const screens = Array.from(document.querySelectorAll<HTMLElement>("[data-vr-screen]"));
+  const navItems = Array.from(document.querySelectorAll<HTMLElement>("[data-vr-nav]"));
+  const title = document.querySelector("[data-vr-title]");
+  const onboarding = document.querySelector("[data-onboarding]");
+  const steps = Array.from(document.querySelectorAll<HTMLElement>("[data-step]"));
+  const dots = Array.from(document.querySelectorAll<HTMLElement>("[data-step-dot]"));
+  const nicknameInput = document.querySelector<HTMLInputElement>("[data-nickname]");
+  const gamesData = document.querySelector("#vr-games-data")?.textContent || "[]";
+  const games = JSON.parse(gamesData) as VRGame[];
+  const gameTiles = Array.from(document.querySelectorAll<HTMLElement>("[data-game-open]"));
+  const filterButtons = Array.from(document.querySelectorAll<HTMLElement>("[data-filter-group]"));
+  const pagination = document.querySelector<HTMLElement>("[data-games-pagination]");
+  const emptyState = document.querySelector<HTMLElement>("[data-games-empty]");
+
+  const config = {
+    nick: "Guest",
+    players: "2-6",
+    vibe: "Any",
+    event: "Free"
+  };
+
+  const gameFilters = {
+    genre: "all",
+    players: "all",
+    duration: "all"
+  };
+
+  let currentStep = 0;
+  let currentGamePage = 1;
+
+  const setText = (selector: string, value: string) => {
+    document.querySelectorAll(selector).forEach((item) => {
+      item.textContent = value;
+    });
+  };
+
+  const getGamesPageSize = () => (window.matchMedia("(max-width: 760px)").matches ? 4 : 8);
+
+  const matchesGameFilters = (game: VRGame) => {
+    const byGenre = gameFilters.genre === "all" || game.genreKey === gameFilters.genre;
+    const byPlayers = gameFilters.players === "all" || game.playerKey === gameFilters.players;
+    const byDuration = gameFilters.duration === "all" || game.durationKey === gameFilters.duration;
+    return byGenre && byPlayers && byDuration;
+  };
+
+  const renderGames = () => {
+    const filteredGames = games.filter(matchesGameFilters);
+    const pageSize = getGamesPageSize();
+    const totalPages = Math.max(1, Math.ceil(filteredGames.length / pageSize));
+    currentGamePage = Math.min(Math.max(currentGamePage, 1), totalPages);
+    const pageStart = (currentGamePage - 1) * pageSize;
+    const pageSlugs = new Set(filteredGames.slice(pageStart, pageStart + pageSize).map((game) => game.slug));
+
+    gameTiles.forEach((tile) => {
+      const slug = tile.getAttribute("data-game-open") || "";
+      tile.toggleAttribute("hidden", !pageSlugs.has(slug));
+    });
+
+    if (emptyState) emptyState.toggleAttribute("hidden", filteredGames.length > 0);
+
+    if (pagination) {
+      pagination.innerHTML = `
+        <button type="button" data-games-prev ${currentGamePage === 1 ? "disabled" : ""}>Назад</button>
+        <span>${filteredGames.length} ігор</span>
+        ${Array.from({ length: totalPages }, (_, index) => {
+          const page = index + 1;
+          return `<button type="button" data-games-page="${page}" class="${page === currentGamePage ? "is-active" : ""}" aria-label="Сторінка ${page}">${page}</button>`;
+        }).join("")}
+        <button type="button" data-games-next ${currentGamePage === totalPages ? "disabled" : ""}>Далі</button>
+      `;
+    }
+  };
+
+  const resetFilters = () => {
+    gameFilters.genre = "all";
+    gameFilters.players = "all";
+    gameFilters.duration = "all";
+    currentGamePage = 1;
+    filterButtons.forEach((button) => {
+      button.classList.toggle("is-active", button.getAttribute("data-filter-value") === "all");
+    });
+    renderGames();
+  };
+
+  const setActiveScreen = (screen: HTMLElement, activeId: string) => {
+    screens.forEach((item) => {
+      const isActive = item === screen;
+      item.classList.toggle("is-active", isActive);
+      item.toggleAttribute("hidden", !isActive);
+    });
+
+    navItems.forEach((item) => {
+      const isActive = item.getAttribute("data-vr-nav") === activeId;
+      item.classList.toggle("is-active", isActive);
+      item.setAttribute("aria-current", isActive ? "page" : "false");
+    });
+  };
+
+  const openGameDetail = (slug: string, updateHistory = true) => {
+    const game = games.find((item) => item.slug === slug) || games[0];
+    const detailScreen = document.querySelector<HTMLElement>('[data-vr-screen="game-detail"]');
+    if (!game || !detailScreen) return;
+
+    setActiveScreen(detailScreen, "games");
+    if (title) title.textContent = game.title;
+    document.querySelector("[data-detail-tone]")?.setAttribute("class", `vr-game-detail__media vr-game-detail__media--${game.mediaTone}`);
+    setText("[data-detail-genre]", game.genre);
+    setText("[data-detail-title]", game.title);
+    setText("[data-detail-description]", game.description);
+    setText("[data-detail-players]", game.players);
+    setText("[data-detail-duration]", game.duration);
+    setText("[data-detail-level]", game.level);
+    setText("[data-detail-video-title]", `${game.title} preview`);
+
+    const tags = document.querySelector("[data-detail-tags]");
+    if (tags) {
+      tags.innerHTML = game.tags.map((tag) => `<span>${tag}</span>`).join("");
+    }
+
+    const features = document.querySelector("[data-detail-features]");
+    if (features) {
+      features.innerHTML = `
+        <strong>Кому підійде: ${game.recommendedFor}</strong>
+        <ul>${game.features.map((feature) => `<li>${feature}</li>`).join("")}</ul>
+      `;
+    }
+
+    if (updateHistory) {
+      history.pushState(null, "", `#game-${game.slug}`);
+    }
+  };
+
+  const activateScreen = (rawId: string) => {
+    const id = rawId || "dashboard";
+    if (id.startsWith("game-")) {
+      openGameDetail(id.replace("game-", ""), false);
+      return;
+    }
+
+    const screen = screens.find((item) => item.getAttribute("data-vr-screen") === id) || screens[0];
+    const activeId = screen?.getAttribute("data-vr-screen") || "dashboard";
+    setActiveScreen(screen, activeId);
+
+    if (activeId === "games") renderGames();
+    if (title) title.textContent = activeId.charAt(0).toUpperCase() + activeId.slice(1);
+  };
+
+  const updateLoadout = () => {
+    const nick = config.nick || "Guest";
+    setText("[data-player-name], [data-summary-nick]", nick);
+    setText("[data-loadout-players], [data-summary-players]", config.players);
+    setText("[data-loadout-vibe], [data-summary-vibe]", config.vibe);
+    setText("[data-loadout-event], [data-summary-event]", config.event);
+    setText("[data-loadout-status]", `${config.players} / ${config.vibe}`);
+  };
+
+  const setStep = (nextStep: number) => {
+    currentStep = Math.max(0, Math.min(nextStep, steps.length - 1));
+    steps.forEach((item) => {
+      const isActive = item.getAttribute("data-step") === String(currentStep);
+      item.classList.toggle("is-active", isActive);
+      item.toggleAttribute("hidden", !isActive);
+    });
+    dots.forEach((item) => {
+      const step = Number(item.getAttribute("data-step-dot"));
+      item.classList.toggle("is-active", step === currentStep);
+      item.classList.toggle("is-complete", step < currentStep);
+    });
+    updateLoadout();
+  };
+
+  const openOnboarding = () => {
+    onboarding?.classList.remove("is-dismissed");
+    onboarding?.removeAttribute("hidden");
+    setStep(0);
+    nicknameInput?.focus();
+  };
+
+  const closeOnboarding = () => {
+    onboarding?.classList.add("is-dismissed");
+    onboarding?.setAttribute("hidden", "");
+    activateScreen(location.hash.replace("#", "") || "dashboard");
+  };
+
+  navItems.forEach((item) => {
+    item.addEventListener("click", (event: Event) => {
+      const id = item.getAttribute("data-vr-nav");
+      if (!id) return;
+      event.preventDefault();
+      history.pushState(null, "", `#${id}`);
+      activateScreen(id);
+    });
+  });
+
+  gameTiles.forEach((item) => {
+    item.addEventListener("click", () => {
+      const slug = item.getAttribute("data-game-open");
+      if (slug) openGameDetail(slug);
+    });
+  });
+
+  filterButtons.forEach((button) => {
+    button.addEventListener("click", () => {
+      const group = button.getAttribute("data-filter-group") as keyof typeof gameFilters | null;
+      const value = button.getAttribute("data-filter-value") || "all";
+      if (!group) return;
+      gameFilters[group] = value;
+      currentGamePage = 1;
+      filterButtons
+        .filter((item) => item.getAttribute("data-filter-group") === group)
+        .forEach((item) => item.classList.toggle("is-active", item === button));
+      renderGames();
+    });
+  });
+
+  pagination?.addEventListener("click", (event) => {
+    const target = event.target as HTMLElement;
+    if (target.matches("[data-games-prev]")) currentGamePage -= 1;
+    if (target.matches("[data-games-next]")) currentGamePage += 1;
+    const page = target.getAttribute("data-games-page");
+    if (page) currentGamePage = Number(page);
+    renderGames();
+  });
+
+  document.querySelector("[data-filter-reset]")?.addEventListener("click", resetFilters);
+
+  document.querySelectorAll("[data-game-back]").forEach((item) => {
+    item.addEventListener("click", () => {
+      history.pushState(null, "", "#games");
+      activateScreen("games");
+    });
+  });
+
+  document.querySelectorAll("[data-start-onboarding]").forEach((item) => {
+    item.addEventListener("click", openOnboarding);
+  });
+
+  document.querySelectorAll("[data-next-step]").forEach((item) => {
+    item.addEventListener("click", () => {
+      if (currentStep === 0) {
+        const nick = nicknameInput?.value.trim();
+        config.nick = nick || "Guest";
+      }
+      setStep(currentStep + 1);
+    });
+  });
+
+  document.querySelectorAll("[data-prev-step]").forEach((item) => {
+    item.addEventListener("click", () => setStep(currentStep - 1));
+  });
+
+  document.querySelectorAll("[data-choice]").forEach((item) => {
+    item.addEventListener("click", () => {
+      const key = item.getAttribute("data-choice");
+      const value = item.getAttribute("data-value") || "";
+      if (key === "players") config.players = value;
+      if (key === "vibe") config.vibe = value;
+      if (key === "event") config.event = value;
+      document.querySelectorAll(`[data-choice="${key}"]`).forEach((choice) => {
+        choice.classList.toggle("is-selected", choice === item);
+      });
+      updateLoadout();
+    });
+  });
+
+  document.querySelector("[data-skip-onboarding]")?.addEventListener("click", () => {
+    closeOnboarding();
+    history.replaceState(null, "", "#games");
+    activateScreen("games");
+  });
+
+  document.querySelector("[data-finish-onboarding]")?.addEventListener("click", () => {
+    closeOnboarding();
+    history.replaceState(null, "", "#dashboard");
+    activateScreen("dashboard");
+  });
+
+  window.addEventListener("popstate", () => activateScreen(location.hash.replace("#", "")));
+  window.addEventListener("hashchange", () => activateScreen(location.hash.replace("#", "")));
+  window.addEventListener("resize", renderGames);
+
+  activateScreen(location.hash.replace("#", ""));
+  setStep(0);
+</script>

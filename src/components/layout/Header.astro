@@ -1,0 +1,38 @@
+---
+import Button from "../ui/Button.astro";
+
+interface NavItem {
+  label: string;
+  href: string;
+}
+
+interface Props {
+  brand: string;
+  sub?: string;
+  nav?: NavItem[];
+  ctaHref?: string;
+  ctaLabel?: string;
+}
+
+const {
+  brand,
+  sub = "Studio + VR",
+  nav = [],
+  ctaHref = "/booking",
+  ctaLabel = "Бронювання"
+} = Astro.props;
+---
+
+<header class="site-header" data-header>
+  <a class="brand" href="/" aria-label="На головну">
+    <span>{brand}</span>
+    <small>{sub}</small>
+  </a>
+  <nav class="site-nav" aria-label="Основна навігація">
+    {nav.map((item) => <a href={item.href}>{item.label}</a>)}
+  </nav>
+  <div class="header-actions">
+    <Button href={ctaHref} label={ctaLabel} variant="small" />
+    <button class="menu-button" type="button" aria-label="Відкрити меню" aria-expanded="false" data-menu-toggle>Меню</button>
+  </div>
+</header>

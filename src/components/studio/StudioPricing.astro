@@ -1,0 +1,23 @@
+---
+import { studioPricing } from "../../data/studio.js";
+import Card from "../ui/Card.astro";
+import Section from "../ui/Section.astro";
+---
+
+<Section
+  id="pricing"
+  eyebrow="Пакети"
+  title="Три формати, які напряму відповідають бронюванню."
+  text="Можна почати з короткої портретної зйомки, зібрати особисту історію або забронювати пів дня під бренд."
+  className="studio-section"
+>
+  <div class="grid grid--3 studio-pricing-grid">
+    {studioPricing.map((item) => (
+      <Card eyebrow={item.meta} title={item.name} className="price-card studio-price-card">
+        <strong>{item.price}</strong>
+        <ul>{item.features.map((feature) => <li>{feature}</li>)}</ul>
+        <a href={`#booking`} data-service-link={item.slug}>Обрати пакет</a>
+      </Card>
+    ))}
+  </div>
+</Section>
