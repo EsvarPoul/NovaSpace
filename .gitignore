@@ -8,4 +8,7 @@ dist/
 .vercel/
 .env
 .env.*
+!.env.example
+!booking-bot/.env.example
 *.log
+booking-bot/authorized-chats.json

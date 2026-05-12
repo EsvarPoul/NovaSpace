@@ -75,3 +75,49 @@ After the first Vercel deployment, test:
 - `/admin/bookings`
 
 Create a test booking and confirm it appears in Supabase. Also verify that the manager page only exposes the data intended by your Supabase RLS policies.
+
+## Telegram booking bot
+
+The quick notification bot lives in `booking-bot/`. It has no manager actions: users enter the password once, then the bot forwards every new booking posted to its HTTP endpoint.
+
+1. Create a Telegram bot through BotFather and copy its token.
+2. Copy the bot env example:
+
+```bash
+cd booking-bot
+cp .env.example .env
+```
+
+3. Fill `TELEGRAM_BOT_TOKEN` and `BOT_WEBHOOK_SECRET`. `BOT_PASSWORD` defaults to `0912`.
+4. Start it:
+
+```bash
+npm start
+```
+
+5. In Telegram, open the bot, send `/start`, then enter `0912`.
+6. Send new bookings to:
+
+```bash
+POST http://localhost:8787/booking
+X-Booking-Secret: your_secret
+Content-Type: application/json
+```
+
+Example body:
+
+```json
+{
+  "record": {
+    "service_name": "VR Squad",
+    "customer_name": "Олена",
+    "customer_phone": "+380501112233",
+    "party_size": 4,
+    "start_at": "2026-05-12T15:00:00+03:00",
+    "end_at": "2026-05-12T16:15:00+03:00",
+    "comment": "День народження"
+  }
+}
+```
+
+For Supabase, create a Database Webhook on inserts into `public.bookings` and point it to the public URL of `/booking`. Add the same secret as the `X-Booking-Secret` header.
