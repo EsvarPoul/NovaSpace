@@ -1,0 +1,576 @@
+---
+import BaseLayout from "../../layouts/BaseLayout.astro";
+---
+
+<BaseLayout
+  title="NOVA VR Games CMS"
+  description="Manager CMS for NOVA VR game previews."
+>
+  <main class="booking-admin vr-games-admin" data-vr-games-admin>
+    <header class="booking-admin__top">
+      <a class="booking-brand" href="/vr">
+        <span>NOVA VR</span>
+        <small>Games CMS</small>
+      </a>
+      <div class="booking-admin__auth" data-auth-panel>
+        <a class="booking-admin-link" href="/admin/bookings">Bookings</a>
+        <input type="email" placeholder="manager@email.com" autocomplete="email" data-login-email />
+        <input type="password" placeholder="Пароль" autocomplete="current-password" data-login-password />
+        <button type="button" data-login-button>Увійти</button>
+        <button type="button" data-logout-button hidden>Вийти</button>
+      </div>
+    </header>
+
+    <section class="booking-admin__layout vr-games-admin__layout">
+      <div class="booking-panel">
+        <div class="booking-panel__head">
+          <span>Catalog</span>
+          <h1>VR-ігри</h1>
+          <p>Активні ігри показуються на сторінці `/vr`; неактивні залишаються тільки тут.</p>
+        </div>
+        <div class="vr-games-admin__list" data-games-list>
+          <p>Увійдіть менеджером, щоб редагувати каталог.</p>
+        </div>
+      </div>
+
+      <aside class="booking-panel">
+        <div class="booking-panel__head">
+          <span data-form-mode>New game</span>
+          <h2>Картка гри</h2>
+        </div>
+        <form class="booking-form vr-game-form" data-game-form>
+          <input type="hidden" name="id" data-game-id />
+          <input type="hidden" name="preview_image_path" data-preview-path />
+
+          <div class="booking-grid">
+            <label class="booking-field">
+              <span>Назва</span>
+              <input name="title" required data-title-input />
+            </label>
+            <label class="booking-field">
+              <span>Slug</span>
+              <input name="slug" required data-slug-input />
+            </label>
+          </div>
+
+          <div class="booking-grid">
+            <label class="booking-field">
+              <span>Жанр</span>
+              <input name="genre" required />
+            </label>
+            <label class="booking-field">
+              <span>Ключ жанру</span>
+              <select name="genre_key" required>
+                <option value="arcade">arcade</option>
+                <option value="coop">coop</option>
+                <option value="action">action</option>
+                <option value="story">story</option>
+                <option value="horror">horror</option>
+                <option value="quest">quest</option>
+              </select>
+            </label>
+          </div>
+
+          <div class="booking-grid">
+            <label class="booking-field">
+              <span>Гравці</span>
+              <input name="players" required placeholder="2-4" />
+            </label>
+            <label class="booking-field">
+              <span>Ключ гравців</span>
+              <select name="player_key" required>
+                <option value="solo">solo</option>
+                <option value="coop">coop</option>
+                <option value="online">online</option>
+              </select>
+            </label>
+          </div>
+
+          <div class="booking-grid">
+            <label class="booking-field">
+              <span>Тривалість</span>
+              <input name="duration" required placeholder="45-60 хв" />
+            </label>
+            <label class="booking-field">
+              <span>Ключ тривалості</span>
+              <input name="duration_key" required placeholder="45-60" />
+            </label>
+          </div>
+
+          <div class="booking-grid">
+            <label class="booking-field">
+              <span>Рівень</span>
+              <input name="level" required />
+            </label>
+            <label class="booking-field">
+              <span>Тон fallback</span>
+              <select name="media_tone" required>
+                <option value="cyan">cyan</option>
+                <option value="blue">blue</option>
+                <option value="violet">violet</option>
+                <option value="magenta">magenta</option>
+                <option value="pink">pink</option>
+                <option value="green">green</option>
+                <option value="gold">gold</option>
+                <option value="ice">ice</option>
+              </select>
+            </label>
+          </div>
+
+          <label class="booking-field">
+            <span>Короткий опис</span>
+            <textarea name="short_text" required rows="3"></textarea>
+          </label>
+
+          <label class="booking-field">
+            <span>Детальний опис</span>
+            <textarea name="description" required rows="5"></textarea>
+          </label>
+
+          <label class="booking-field">
+            <span>Теги через кому або з нового рядка</span>
+            <textarea name="tags" required rows="3"></textarea>
+          </label>
+
+          <label class="booking-field">
+            <span>Особливості з нового рядка</span>
+            <textarea name="features" required rows="3"></textarea>
+          </label>
+
+          <label class="booking-field">
+            <span>Кому підійде</span>
+            <textarea name="recommended_for" required rows="3"></textarea>
+          </label>
+
+          <div class="booking-grid">
+            <label class="booking-field">
+              <span>Порядок</span>
+              <input name="sort_order" type="number" value="100" required />
+            </label>
+            <label class="booking-field booking-field--check">
+              <span>Показувати на сайті</span>
+              <input name="active" type="checkbox" checked />
+            </label>
+          </div>
+
+          <label class="booking-field">
+            <span>Preview image</span>
+            <input name="preview_file" type="file" accept="image/png,image/jpeg,image/webp,image/gif" data-preview-file />
+          </label>
+
+          <div class="vr-game-preview" data-preview-shell hidden>
+            <img alt="" data-preview-image />
+            <button type="button" data-clear-preview>Прибрати preview</button>
+          </div>
+
+          <div class="vr-game-form__actions">
+            <button class="booking-submit" type="submit" data-save-game>Зберегти</button>
+            <button type="button" data-reset-form>Нова картка</button>
+          </div>
+          <p class="booking-status" data-admin-status role="status"></p>
+        </form>
+      </aside>
+    </section>
+  </main>
+</BaseLayout>
+
+<script>
+  import { isSupabaseConfigured, supabase } from "../../lib/supabaseClient";
+
+  interface VRGameRow {
+    id: string;
+    slug: string;
+    title: string;
+    genre: string;
+    genre_key: string;
+    tags: string[];
+    players: string;
+    player_key: string;
+    duration: string;
+    duration_key: string;
+    level: string;
+    short_text: string;
+    description: string;
+    features: string[];
+    recommended_for: string;
+    media_tone: string;
+    preview_image_path?: string | null;
+    active: boolean;
+    sort_order: number;
+  }
+
+  const PREVIEW_BUCKET = "vr-game-previews";
+
+  const emailInput = document.querySelector<HTMLInputElement>("[data-login-email]");
+  const passwordInput = document.querySelector<HTMLInputElement>("[data-login-password]");
+  const loginButton = document.querySelector<HTMLButtonElement>("[data-login-button]");
+  const logoutButton = document.querySelector<HTMLButtonElement>("[data-logout-button]");
+  const list = document.querySelector<HTMLElement>("[data-games-list]");
+  const form = document.querySelector<HTMLFormElement>("[data-game-form]");
+  const formMode = document.querySelector<HTMLElement>("[data-form-mode]");
+  const status = document.querySelector<HTMLElement>("[data-admin-status]");
+  const idInput = document.querySelector<HTMLInputElement>("[data-game-id]");
+  const titleInput = document.querySelector<HTMLInputElement>("[data-title-input]");
+  const slugInput = document.querySelector<HTMLInputElement>("[data-slug-input]");
+  const previewPathInput = document.querySelector<HTMLInputElement>("[data-preview-path]");
+  const previewFileInput = document.querySelector<HTMLInputElement>("[data-preview-file]");
+  const previewShell = document.querySelector<HTMLElement>("[data-preview-shell]");
+  const previewImage = document.querySelector<HTMLImageElement>("[data-preview-image]");
+
+  let games: VRGameRow[] = [];
+  let slugEdited = false;
+
+  const setStatus = (message: string, state = "idle") => {
+    if (!status) return;
+    status.textContent = message;
+    status.dataset.state = state;
+  };
+
+  const formatAuthError = (message: string) => {
+    const normalized = message.toLowerCase();
+    if (normalized.includes("invalid login credentials")) return "Невірний email або пароль.";
+    if (normalized.includes("email not confirmed")) return "Email менеджера ще не підтверджено в Supabase Auth.";
+    return message;
+  };
+
+  const formatAdminError = (message: string) => (
+    message.includes("Manager access required") || message.includes("row-level security")
+      ? "Користувач увійшов, але його UUID не додано в public.manager_users або не застосована CMS migration."
+      : message
+  );
+
+  const escapeHtml = (value: unknown) => String(value ?? "")
+    .replaceAll("&", "&amp;")
+    .replaceAll("<", "&lt;")
+    .replaceAll(">", "&gt;")
+    .replaceAll('"', "&quot;")
+    .replaceAll("'", "&#039;");
+
+  const toSlug = (value: string) => value
+    .trim()
+    .toLowerCase()
+    .normalize("NFKD")
+    .replace(/[\u0300-\u036f]/g, "")
+    .replace(/[^a-z0-9]+/g, "-")
+    .replace(/^-+|-+$/g, "")
+    .slice(0, 80);
+
+  const normalizeList = (value: FormDataEntryValue | null) => String(value || "")
+    .split(/[\n,;]+/)
+    .map((item) => item.trim())
+    .filter(Boolean);
+
+  const getPreviewUrl = (path?: string | null) => {
+    if (!path || !supabase) return "";
+    return supabase.storage.from(PREVIEW_BUCKET).getPublicUrl(path).data.publicUrl;
+  };
+
+  const renderPreview = (path?: string | null) => {
+    if (!previewShell || !previewImage) return;
+    const url = getPreviewUrl(path);
+    previewShell.toggleAttribute("hidden", !url);
+    previewImage.src = url;
+  };
+
+  const resetForm = () => {
+    form?.reset();
+    if (idInput) idInput.value = "";
+    if (previewPathInput) previewPathInput.value = "";
+    if (formMode) formMode.textContent = "New game";
+    if (previewFileInput) previewFileInput.value = "";
+    slugEdited = false;
+    renderPreview("");
+    setStatus("");
+  };
+
+  const fillForm = (game: VRGameRow) => {
+    if (!form) return;
+    const fields = form.elements as typeof form.elements & {
+      id: HTMLInputElement;
+      slug: HTMLInputElement;
+      title: HTMLInputElement;
+      genre: HTMLInputElement;
+      genre_key: HTMLSelectElement;
+      tags: HTMLTextAreaElement;
+      players: HTMLInputElement;
+      player_key: HTMLSelectElement;
+      duration: HTMLInputElement;
+      duration_key: HTMLInputElement;
+      level: HTMLInputElement;
+      short_text: HTMLTextAreaElement;
+      description: HTMLTextAreaElement;
+      features: HTMLTextAreaElement;
+      recommended_for: HTMLTextAreaElement;
+      media_tone: HTMLSelectElement;
+      preview_image_path: HTMLInputElement;
+      active: HTMLInputElement;
+      sort_order: HTMLInputElement;
+    };
+
+    fields.id.value = game.id;
+    fields.slug.value = game.slug;
+    fields.title.value = game.title;
+    fields.genre.value = game.genre;
+    fields.genre_key.value = game.genre_key;
+    fields.tags.value = (game.tags || []).join("\n");
+    fields.players.value = game.players;
+    fields.player_key.value = game.player_key;
+    fields.duration.value = game.duration;
+    fields.duration_key.value = game.duration_key;
+    fields.level.value = game.level;
+    fields.short_text.value = game.short_text;
+    fields.description.value = game.description;
+    fields.features.value = (game.features || []).join("\n");
+    fields.recommended_for.value = game.recommended_for;
+    fields.media_tone.value = game.media_tone;
+    fields.preview_image_path.value = game.preview_image_path || "";
+    fields.active.checked = game.active;
+    fields.sort_order.value = String(game.sort_order);
+    if (previewFileInput) previewFileInput.value = "";
+    if (formMode) formMode.textContent = "Edit game";
+    slugEdited = true;
+    renderPreview(game.preview_image_path);
+    setStatus("");
+  };
+
+  const renderList = () => {
+    if (!list) return;
+
+    if (!games.length) {
+      list.innerHTML = "<p>Ігор у CMS ще немає. Створіть першу картку праворуч.</p>";
+      return;
+    }
+
+    list.innerHTML = games.map((game) => {
+      const previewUrl = getPreviewUrl(game.preview_image_path);
+      return `
+        <article class="vr-game-admin-card" data-game-id="${escapeHtml(game.id)}">
+          ${previewUrl ? `<img src="${escapeHtml(previewUrl)}" alt="" />` : `<span class="vr-game-admin-card__tone">${escapeHtml(game.media_tone)}</span>`}
+          <div>
+            <span class="booking-board-card__status" data-status="${game.active ? "confirmed" : "cancelled"}">${game.active ? "active" : "hidden"}</span>
+            <h2>${escapeHtml(game.title)}</h2>
+            <p>${escapeHtml(game.genre)} · ${escapeHtml(game.players)} · ${escapeHtml(game.duration)}</p>
+          </div>
+          <div class="booking-board-card__actions">
+            <button type="button" data-edit-game="${escapeHtml(game.id)}">Редагувати</button>
+            <button type="button" data-toggle-game="${escapeHtml(game.id)}">${game.active ? "Сховати" : "Показати"}</button>
+          </div>
+        </article>
+      `;
+    }).join("");
+  };
+
+  const updateAuthUi = async () => {
+    if (!isSupabaseConfigured || !supabase) {
+      setStatus("Додайте PUBLIC_SUPABASE_URL і PUBLIC_SUPABASE_ANON_KEY.", "warning");
+      return false;
+    }
+
+    const { data } = await supabase.auth.getSession();
+    const isLoggedIn = Boolean(data.session);
+    loginButton?.toggleAttribute("hidden", isLoggedIn);
+    emailInput?.toggleAttribute("hidden", isLoggedIn);
+    passwordInput?.toggleAttribute("hidden", isLoggedIn);
+    logoutButton?.toggleAttribute("hidden", !isLoggedIn);
+    return isLoggedIn;
+  };
+
+  const loadGames = async () => {
+    if (!supabase || !list) return;
+
+    list.innerHTML = "<p>Завантажуємо ігри...</p>";
+    const { data, error } = await supabase
+      .from("vr_games")
+      .select("*")
+      .order("sort_order", { ascending: true })
+      .order("title", { ascending: true });
+
+    if (error) {
+      list.innerHTML = "<p>Не вдалося завантажити каталог.</p>";
+      setStatus(formatAdminError(error.message), "error");
+      return;
+    }
+
+    games = (data || []) as VRGameRow[];
+    renderList();
+    setStatus("");
+  };
+
+  const uploadPreview = async (slug: string, previousPath: string) => {
+    const file = previewFileInput?.files?.[0];
+    if (!file || !supabase) return previousPath;
+
+    const safeName = file.name.toLowerCase().replace(/[^a-z0-9.]+/g, "-").replace(/^-+|-+$/g, "");
+    const path = `${slug}/${Date.now()}-${safeName || "preview.jpg"}`;
+    const { error } = await supabase.storage.from(PREVIEW_BUCKET).upload(path, file, {
+      cacheControl: "3600",
+      upsert: false
+    });
+
+    if (error) throw new Error(error.message);
+    return path;
+  };
+
+  const saveGame = async () => {
+    if (!form || !supabase) return;
+
+    const formData = new FormData(form);
+    const id = String(formData.get("id") || "");
+    const slug = toSlug(String(formData.get("slug") || formData.get("title") || ""));
+    const previousPath = String(formData.get("preview_image_path") || "");
+
+    if (!slug) {
+      setStatus("Додайте slug або назву гри.", "error");
+      return;
+    }
+
+    setStatus("Зберігаємо гру...", "loading");
+
+    let previewPath = previousPath;
+    try {
+      previewPath = await uploadPreview(slug, previousPath);
+    } catch (error) {
+      setStatus(`Preview не завантажено: ${error instanceof Error ? error.message : "невідома помилка"}`, "error");
+      return;
+    }
+
+    const payload = {
+      slug,
+      title: String(formData.get("title") || "").trim(),
+      genre: String(formData.get("genre") || "").trim(),
+      genre_key: String(formData.get("genre_key") || "arcade"),
+      tags: normalizeList(formData.get("tags")),
+      players: String(formData.get("players") || "").trim(),
+      player_key: String(formData.get("player_key") || "coop"),
+      duration: String(formData.get("duration") || "").trim(),
+      duration_key: String(formData.get("duration_key") || "").trim(),
+      level: String(formData.get("level") || "").trim(),
+      short_text: String(formData.get("short_text") || "").trim(),
+      description: String(formData.get("description") || "").trim(),
+      features: normalizeList(formData.get("features")),
+      recommended_for: String(formData.get("recommended_for") || "").trim(),
+      media_tone: String(formData.get("media_tone") || "cyan"),
+      preview_image_path: previewPath || null,
+      active: formData.get("active") === "on",
+      sort_order: Number(formData.get("sort_order") || 100)
+    };
+
+    const request = id
+      ? supabase.from("vr_games").update(payload).eq("id", id)
+      : supabase.from("vr_games").insert(payload);
+    const { error } = await request;
+
+    if (error) {
+      setStatus(formatAdminError(error.message), "error");
+      return;
+    }
+
+    if (previousPath && previewPath && previousPath !== previewPath) {
+      await supabase.storage.from(PREVIEW_BUCKET).remove([previousPath]);
+    }
+
+    resetForm();
+    await loadGames();
+    setStatus("Гру збережено.", "success");
+  };
+
+  loginButton?.addEventListener("click", async () => {
+    if (!isSupabaseConfigured || !supabase) return;
+
+    const email = emailInput?.value.trim() || "";
+    const password = passwordInput?.value || "";
+    if (!email || !password) {
+      setStatus("Введіть email і пароль.", "error");
+      return;
+    }
+
+    loginButton.disabled = true;
+    setStatus("Входимо в CMS...", "loading");
+    const { error } = await supabase.auth.signInWithPassword({ email, password });
+    loginButton.disabled = false;
+
+    if (error) {
+      setStatus(formatAuthError(error.message), "error");
+      return;
+    }
+
+    if (passwordInput) passwordInput.value = "";
+    await updateAuthUi();
+    await loadGames();
+    setStatus("Вхід виконано.", "success");
+  });
+
+  [emailInput, passwordInput].forEach((input) => {
+    input?.addEventListener("keydown", (event) => {
+      if (event.key === "Enter") loginButton?.click();
+    });
+  });
+
+  logoutButton?.addEventListener("click", async () => {
+    await supabase?.auth.signOut();
+    await updateAuthUi();
+    resetForm();
+    games = [];
+    if (list) list.innerHTML = "<p>Увійдіть менеджером, щоб редагувати каталог.</p>";
+  });
+
+  titleInput?.addEventListener("input", () => {
+    if (!slugInput || slugEdited) return;
+    slugInput.value = toSlug(titleInput.value);
+  });
+
+  slugInput?.addEventListener("input", () => {
+    slugEdited = true;
+  });
+
+  previewFileInput?.addEventListener("change", () => {
+    const file = previewFileInput.files?.[0];
+    if (!file || !previewShell || !previewImage) return;
+    previewImage.src = URL.createObjectURL(file);
+    previewShell.removeAttribute("hidden");
+  });
+
+  document.querySelector("[data-clear-preview]")?.addEventListener("click", () => {
+    if (previewPathInput) previewPathInput.value = "";
+    if (previewFileInput) previewFileInput.value = "";
+    renderPreview("");
+  });
+
+  document.querySelector("[data-reset-form]")?.addEventListener("click", resetForm);
+
+  form?.addEventListener("submit", async (event) => {
+    event.preventDefault();
+    await saveGame();
+  });
+
+  list?.addEventListener("click", async (event) => {
+    const target = event.target as HTMLElement;
+    const editId = target.getAttribute("data-edit-game");
+    const toggleId = target.getAttribute("data-toggle-game");
+
+    if (editId) {
+      const game = games.find((item) => item.id === editId);
+      if (game) fillForm(game);
+      return;
+    }
+
+    if (toggleId && supabase) {
+      const game = games.find((item) => item.id === toggleId);
+      if (!game) return;
+      setStatus("Оновлюємо видимість...", "loading");
+      const { error } = await supabase
+        .from("vr_games")
+        .update({ active: !game.active })
+        .eq("id", game.id);
+      if (error) {
+        setStatus(formatAdminError(error.message), "error");
+        return;
+      }
+      await loadGames();
+      setStatus("Видимість оновлено.", "success");
+    }
+  });
+
+  const isLoggedIn = await updateAuthUi();
+  if (isLoggedIn) await loadGames();
+</script>

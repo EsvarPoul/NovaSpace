@@ -48,6 +48,16 @@ Vercel also provides `VERCEL_PROJECT_PRODUCTION_URL`; if `SITE_URL` is missing, 
 
 Public users can read services and create bookings through the booking RPC. Manager actions require an authenticated user listed in `manager_users`.
 
+## VR games CMS
+
+Run `supabase/migrations/0002_vr_games_cms.sql` after the booking core migration to add:
+
+- `public.vr_games` for the `/vr` games catalog
+- the public `vr-game-previews` Storage bucket
+- manager-only write policies for game rows and preview uploads
+
+Managers can edit the catalog at `/admin/vr-games` with the same Supabase Auth user used for `/admin/bookings`.
+
 ## Pre-deploy check
 
 Run:

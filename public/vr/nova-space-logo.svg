@@ -1,0 +1,66 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 720 720" role="img" aria-labelledby="title desc">
+  <title id="title">NOVA SPACE logo</title>
+  <desc id="desc">Dark NOVA SPACE mark with a crystal, VR headset, and camera.</desc>
+  <defs>
+    <radialGradient id="glow" cx="50%" cy="43%" r="44%">
+      <stop offset="0" stop-color="#c9ffd6" stop-opacity=".95"/>
+      <stop offset=".18" stop-color="#63ff9a" stop-opacity=".78"/>
+      <stop offset=".48" stop-color="#0e7d50" stop-opacity=".24"/>
+      <stop offset="1" stop-color="#000" stop-opacity="0"/>
+    </radialGradient>
+    <linearGradient id="metal" x1="0" x2="1" y1="0" y2="1">
+      <stop offset="0" stop-color="#f4fff1"/>
+      <stop offset=".24" stop-color="#7fd894"/>
+      <stop offset=".52" stop-color="#0c5d45"/>
+      <stop offset=".78" stop-color="#051810"/>
+      <stop offset="1" stop-color="#b8ffd0"/>
+    </linearGradient>
+    <linearGradient id="word" x1="0" x2="1">
+      <stop offset="0" stop-color="#ffffff"/>
+      <stop offset=".52" stop-color="#dce9e0"/>
+      <stop offset="1" stop-color="#9cb7a7"/>
+    </linearGradient>
+    <filter id="softGlow" x="-40%" y="-40%" width="180%" height="180%">
+      <feGaussianBlur stdDeviation="8" result="blur"/>
+      <feMerge>
+        <feMergeNode in="blur"/>
+        <feMergeNode in="SourceGraphic"/>
+      </feMerge>
+    </filter>
+  </defs>
+  <rect width="720" height="720" fill="#020403"/>
+  <circle cx="360" cy="300" r="250" fill="url(#glow)" opacity=".34"/>
+
+  <g transform="translate(208 128)">
+    <path d="M152 0 248 82 285 260 165 356 32 260 70 82Z" fill="#04120d" stroke="#123e2c" stroke-width="2"/>
+    <path d="M152 0 72 82 38 258 145 330 140 48Z" fill="url(#metal)" opacity=".82"/>
+    <path d="M172 0 248 82 278 258 176 330 184 48Z" fill="url(#metal)" opacity=".78"/>
+    <path d="M150 52 87 110 64 248 142 304Z" fill="#061912" stroke="#9dfbbb" stroke-opacity=".45" stroke-width="3"/>
+    <path d="M176 52 236 110 258 248 180 304Z" fill="#061912" stroke="#9dfbbb" stroke-opacity=".45" stroke-width="3"/>
+    <path d="M162 8 160 344" stroke="#d7ffd6" stroke-width="9" stroke-linecap="round"/>
+    <path d="M162 118 162 310" stroke="#44e783" stroke-width="3" stroke-linecap="round"/>
+    <g filter="url(#softGlow)">
+      <circle cx="162" cy="176" r="17" fill="#eaffdf"/>
+      <path d="M162 122v108M108 176h108" stroke="#dfffcb" stroke-width="5" stroke-linecap="round"/>
+    </g>
+  </g>
+
+  <g transform="translate(58 236)" opacity=".9">
+    <path d="M18 70c19-34 83-47 132-24 23 11 33 28 30 56-2 27-19 44-48 50l-82 3c-29-5-47-20-52-44-3-15 3-30 20-41Z" fill="#020706" stroke="#c9ffe0" stroke-width="5"/>
+    <path d="M42 81c22-17 76-27 118-12 11 4 17 12 18 25-39 18-87 23-154 15-1-10 5-20 18-28Z" fill="url(#metal)" opacity=".9"/>
+    <path d="M172 64c21-2 35 3 44 15" fill="none" stroke="#d7ffe3" stroke-width="4" stroke-linecap="round"/>
+  </g>
+
+  <g transform="translate(510 237)" opacity=".9">
+    <path d="M16 41h34l15-19h66l17 20h35c18 0 31 13 31 31v72c0 18-13 31-31 31H16c-18 0-31-13-31-31V72c0-18 13-31 31-31Z" fill="#040908" stroke="#a9fbd0" stroke-width="4"/>
+    <circle cx="126" cy="108" r="57" fill="#030706" stroke="#b6ffd8" stroke-width="5"/>
+    <circle cx="126" cy="108" r="37" fill="none" stroke="#277a5c" stroke-width="10"/>
+    <circle cx="126" cy="108" r="10" fill="#e8ffd9" filter="url(#softGlow)"/>
+    <rect x="36" y="31" width="34" height="14" rx="7" fill="#d9ffe4"/>
+  </g>
+
+  <g transform="translate(104 435)">
+    <text x="256" y="78" text-anchor="middle" font-family="Arial Black, Arial, sans-serif" font-size="92" font-weight="900" letter-spacing="-4" fill="url(#word)">NOVA</text>
+    <text x="256" y="130" text-anchor="middle" font-family="Arial, sans-serif" font-size="34" font-weight="700" letter-spacing="23" fill="#b7d9c3">SPACE</text>
+  </g>
+</svg>
