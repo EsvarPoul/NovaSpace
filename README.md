@@ -95,6 +95,13 @@ cp .env.example .env
 npm start
 ```
 
+Or run it with Docker:
+
+```bash
+cp authorized-chats.example.json authorized-chats.json
+docker compose up -d --build
+```
+
 5. In Telegram, open the bot, send `/start`, then enter `0912`.
 6. Send new bookings to:
 

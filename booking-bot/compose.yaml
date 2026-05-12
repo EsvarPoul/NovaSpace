@@ -1,0 +1,12 @@
+services:
+  booking-bot:
+    build: .
+    container_name: nova-booking-bot
+    restart: unless-stopped
+    env_file:
+      - path: .env
+        required: false
+    ports:
+      - "${PORT:-8787}:${PORT:-8787}"
+    volumes:
+      - ./authorized-chats.json:/app/authorized-chats.json
