@@ -1,17 +1,33 @@
 ---
 import { vrPricing } from "../../data/vr.js";
-import Card from "../ui/Card.astro";
 import Section from "../ui/Section.astro";
 ---
 
-<Section id="pricing" eyebrow="Session presets" title="Пресети запуску для різних команд." className="vr-app-section vr-presets">
-  <div class="grid grid--3 vr-preset-grid">
-    {vrPricing.map((item) => (
-      <Card eyebrow={item.meta} title={item.name} className="price-card price-card--vr vr-preset-card">
-        <strong>{item.price}</strong>
-        <ul>{item.features.map((feature) => <li>{feature}</li>)}</ul>
-        <a href="tel:+380XXXXXXXXX" class="vr-preset-action">Запустити</a>
-      </Card>
+<Section id="pricing" eyebrow="Формати та вартість" title="М'яка сітка цін для VR, PS5, кімнат і свят." className="vr-app-section vr-presets">
+  <div class="vr-price-board">
+    {vrPricing.map((group: any) => (
+      <article class="vr-price-card">
+        <div>
+          <span>{group.note}</span>
+          <strong>{group.title}</strong>
+        </div>
+        <table>
+          <thead>
+            <tr>
+              <th>Формат</th>
+              {group.columns.map((column: string) => <th>{column}</th>)}
+            </tr>
+          </thead>
+          <tbody>
+            {group.rows.map((row: any) => (
+              <tr>
+                <th>{row.label}</th>
+                {row.values.map((value: string) => <td>{value}</td>)}
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </article>
     ))}
   </div>
 </Section>
