@@ -1,7 +1,7 @@
 ---
 import BaseLayout from "../../layouts/BaseLayout.astro";
 import { faqItems } from "../../data/faq.js";
-import { vrContacts, vrGames, vrNav, vrPricing, vrRules, vrScenarios } from "../../data/vr.js";
+import { vrContacts, vrGames, vrNav, vrPricing, vrPricingNotes, vrRules, vrScenarios } from "../../data/vr.js";
 
 const gamesJson = JSON.stringify(vrGames);
 const scenariosJson = JSON.stringify(vrScenarios);
@@ -208,6 +208,14 @@ const scenariosJson = JSON.stringify(vrScenarios);
                     ))}
                   </tbody>
                 </table>
+              </article>
+            ))}
+          </div>
+          <div class="vr-pricing-notes">
+            {vrPricingNotes.map((note) => (
+              <article>
+                <strong>{note.title}</strong>
+                <p>{note.text}</p>
               </article>
             ))}
           </div>

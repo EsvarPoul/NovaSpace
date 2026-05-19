@@ -1,12 +1,5 @@
 ---
-const fallbackServices = [
-  { slug: "vr-first-dive", name: "VR First Dive", area: "vr", duration_minutes: 60, min_people: 1, max_people: 2 },
-  { slug: "vr-squad", name: "VR Squad", area: "vr", duration_minutes: 75, min_people: 3, max_people: 6 },
-  { slug: "vr-event", name: "VR Event", area: "event", duration_minutes: 150, min_people: 4, max_people: 12 },
-  { slug: "studio-light", name: "Studio Light", area: "studio", duration_minutes: 60, min_people: 1, max_people: 4 },
-  { slug: "studio-story", name: "Studio Story", area: "studio", duration_minutes: 120, min_people: 1, max_people: 6 },
-  { slug: "studio-brand", name: "Studio Brand", area: "event", duration_minutes: 240, min_people: 1, max_people: 10 }
-];
+import { bookingServices as fallbackServices } from "../../data/bookingServices.js";
 
 interface Props {
   allowedServiceSlugs?: string[];
@@ -23,6 +16,8 @@ const {
   introTitle = "Нове бронювання",
   introText = "Оберіть формат, дату і вільний слот. Заявка потрапить менеджеру на підтвердження."
 } = Astro.props;
+
+const showSummary = variant !== "studio";
 
 const initialServices = allowedServiceSlugs.length
   ? fallbackServices.filter((service) => allowedServiceSlugs.includes(service.slug))
@@ -54,13 +49,17 @@ const selectedService = defaultServiceSlug || initialServices[0]?.slug || "";
             data-min={service.min_people}
             data-max={service.max_people}
             data-duration={service.duration_minutes}
+            data-price-day={service.price_day}
+            data-price-evening={service.price_evening}
+            data-price-note={service.price_note}
             selected={service.slug === selectedService}
           >
-            {service.name} · {service.duration_minutes} хв
+            {service.name}
           </option>
         ))}
       </select>
     </label>
+    <p class="booking-price-note" data-booking-price>Оберіть формат і слот, щоб побачити актуальний тариф.</p>
 
     <div class="booking-grid">
       <label class="booking-field">
@@ -95,13 +94,13 @@ const selectedService = defaultServiceSlug || initialServices[0]?.slug || "";
     </div>
 
     <label class="booking-field">
-      <span>Email, якщо зручно</span>
+      <span>Email (необов'язково)</span>
       <input name="customer_email" type="email" autocomplete="email" />
     </label>
 
     <label class="booking-field">
       <span>Коментар</span>
-      <textarea name="comment" rows="4" placeholder="Бажана атмосфера, кількість образів, деталі зйомки або особливі побажання"></textarea>
+      <textarea name="comment" rows="4" placeholder="Формат події, вік дітей, побажання щодо PS5/фотографа, знижка УБД або інші деталі"></textarea>
     </label>
 
     <input type="hidden" name="slot_start" data-selected-slot />
@@ -109,21 +108,24 @@ const selectedService = defaultServiceSlug || initialServices[0]?.slug || "";
     <p class="booking-status" data-booking-status role="status"></p>
   </form>
 
-  <aside class="booking-panel booking-summary">
-    <div class="booking-panel__head">
-      <span>Як це працює</span>
-      <h2>Менеджер підтвердить час після заявки</h2>
-    </div>
-    <ol>
-      <li>Сервіс визначає тривалість, буфер і потрібні ресурси.</li>
-      <li>Календар перевіряє перетини з pending та confirmed бронюваннями.</li>
-      <li>Якщо слот вільний, створюється pending-заявка і простір тримається до рішення менеджера.</li>
-    </ol>
-    <a class="booking-admin-link" href="/admin/bookings">Відкрити адмінку</a>
-  </aside>
+  {showSummary && (
+    <aside class="booking-panel booking-summary">
+      <div class="booking-panel__head">
+        <span>Як це працює</span>
+        <h2>Менеджер підтвердить час, тариф і формат.</h2>
+      </div>
+      <ol>
+        <li>День — Пн-Чт до 17:00. Вечір — після 17:00 та весь Пт-Нд.</li>
+        <li>ДР бронюється на 3 години. Від 6 гостей це повна оренда VR клубу з 6 шоломами, PS5 і двома адміністраторами.</li>
+        <li>УБД мають -20% на свою гру при показі посвідчення. На ДР знижки не діють.</li>
+        <li>Скретч-карти після гри у Пн-Ср працюють на наступний візит протягом місяця.</li>
+      </ol>
+    </aside>
+  )}
 </section>
 
 <script>
+  import { bookingServicePricing, bookingServices as fallbackServices } from "../../data/bookingServices.js";
   import { isSupabaseConfigured, supabase } from "../../lib/supabaseClient";
 
   interface BookingService {
@@ -134,6 +136,9 @@ const selectedService = defaultServiceSlug || initialServices[0]?.slug || "";
     min_people: number;
     max_people: number;
     sort_order?: number;
+    price_day?: string;
+    price_evening?: string;
+    price_note?: string;
   }
 
   interface Slot {
@@ -141,20 +146,21 @@ const selectedService = defaultServiceSlug || initialServices[0]?.slug || "";
     slot_end: string;
   }
 
-  const fallbackServices: BookingService[] = [
-    { slug: "vr-first-dive", name: "VR First Dive", area: "vr", duration_minutes: 60, min_people: 1, max_people: 2 },
-    { slug: "vr-squad", name: "VR Squad", area: "vr", duration_minutes: 75, min_people: 3, max_people: 6 },
-    { slug: "vr-event", name: "VR Event", area: "event", duration_minutes: 150, min_people: 4, max_people: 12 },
-    { slug: "studio-light", name: "Studio Light", area: "studio", duration_minutes: 60, min_people: 1, max_people: 4 },
-    { slug: "studio-story", name: "Studio Story", area: "studio", duration_minutes: 120, min_people: 1, max_people: 6 },
-    { slug: "studio-brand", name: "Studio Brand", area: "event", duration_minutes: 240, min_people: 1, max_people: 10 }
-  ];
+  const bookingWebhookSecret = import.meta.env.PUBLIC_BOOKING_WEBHOOK_SECRET ?? "";
 
   const formatTime = (value: string) => new Intl.DateTimeFormat("uk-UA", {
     hour: "2-digit",
     minute: "2-digit",
     timeZone: "Europe/Kyiv"
   }).format(new Date(value));
+
+  const describeSlotError = (message: string) => {
+    if (message.includes("Unknown or inactive service")) {
+      return "У базі ще немає активної послуги з актуального прайсу. Застосуйте Supabase migration 0003_vr_pricing_services.sql, після цього слоти з'являться автоматично.";
+    }
+
+    return message || "Невідома помилка календаря.";
+  };
 
   const setupBookingWidget = async (root: HTMLElement) => {
     const form = root.querySelector<HTMLFormElement>("[data-booking-form]");
@@ -165,12 +171,17 @@ const selectedService = defaultServiceSlug || initialServices[0]?.slug || "";
     const slotList = root.querySelector<HTMLElement>("[data-slot-list]");
     const status = root.querySelector<HTMLElement>("[data-booking-status]");
     const refreshButton = root.querySelector<HTMLButtonElement>("[data-refresh-slots]");
+    const priceHint = root.querySelector<HTMLElement>("[data-booking-price]");
     const allowed = JSON.parse(root.dataset.allowedServices || "[]") as string[];
     const defaultService = root.dataset.defaultService || "";
+    const knownServiceSlugs = new Set(fallbackServices.map((service) => service.slug));
 
-    const filterServices = (services: BookingService[]) => (
-      allowed.length ? services.filter((service) => allowed.includes(service.slug)) : services
-    );
+    const filterServices = (services: BookingService[]) => {
+      const currentServices = services.filter((service) => knownServiceSlugs.has(service.slug));
+      return allowed.length
+        ? currentServices.filter((service) => allowed.includes(service.slug))
+        : currentServices;
+    };
 
     const setStatus = (message: string, state = "idle") => {
       if (!status) return;
@@ -178,15 +189,77 @@ const selectedService = defaultServiceSlug || initialServices[0]?.slug || "";
       status.dataset.state = state;
     };
 
+    const escapeHtml = (value: unknown) => String(value ?? "")
+      .replaceAll("&", "&amp;")
+      .replaceAll("<", "&lt;")
+      .replaceAll(">", "&gt;")
+      .replaceAll('"', "&quot;")
+      .replaceAll("'", "&#039;");
+
+    const getServicePricing = (option?: HTMLOptionElement | null) => {
+      const meta = (option ? bookingServicePricing[option.value] || {} : {}) as {
+        price_day?: string;
+        price_evening?: string;
+        price_note?: string;
+      };
+      return {
+        day: option?.dataset.priceDay || meta.price_day || "",
+        evening: option?.dataset.priceEvening || meta.price_evening || "",
+        note: option?.dataset.priceNote || meta.price_note || ""
+      };
+    };
+
+    const getSlotTariff = (slotValue: string) => {
+      if (!slotValue) return "";
+      const slotDate = new Date(slotValue);
+      const weekday = new Intl.DateTimeFormat("en-US", {
+        weekday: "short",
+        timeZone: "Europe/Kyiv"
+      }).format(slotDate);
+      const hour = Number(new Intl.DateTimeFormat("en-GB", {
+        hour: "2-digit",
+        hour12: false,
+        timeZone: "Europe/Kyiv"
+      }).format(slotDate));
+
+      return ["Fri", "Sat", "Sun"].includes(weekday) || hour >= 17 ? "evening" : "day";
+    };
+
+    const renderPriceHint = (slotValue = "") => {
+      if (!priceHint || !serviceSelect) return;
+      const pricing = getServicePricing(serviceSelect.selectedOptions[0]);
+      const note = pricing.note ? ` · ${pricing.note}` : "";
+
+      if (!pricing.day && !pricing.evening) {
+        priceHint.textContent = "Менеджер уточнить вартість після заявки.";
+        return;
+      }
+
+      const tariff = getSlotTariff(slotValue);
+      if (tariff === "day") {
+        priceHint.textContent = `Денний тариф: ${pricing.day}${note}`;
+        return;
+      }
+
+      if (tariff === "evening") {
+        priceHint.textContent = `Вечірній тариф: ${pricing.evening}${note}`;
+        return;
+      }
+
+      priceHint.textContent = `День: ${pricing.day} · Вечір / Пт-Нд: ${pricing.evening}${note}`;
+    };
+
     const setSelectedSlot = (button: HTMLButtonElement) => {
       root.querySelectorAll("[data-slot]").forEach((item) => item.classList.remove("is-selected"));
       button.classList.add("is-selected");
       if (slotInput) slotInput.value = button.dataset.slot || "";
+      renderPriceHint(button.dataset.slot || "");
     };
 
     const renderSlots = (slots: Slot[]) => {
       if (!slotList) return;
       if (slotInput) slotInput.value = "";
+      renderPriceHint("");
 
       if (!slots.length) {
         slotList.innerHTML = "<p>На цю дату немає вільних слотів для вибраної послуги.</p>";
@@ -216,35 +289,51 @@ const selectedService = defaultServiceSlug || initialServices[0]?.slug || "";
 
       const current = Number(partySizeInput.value || min);
       partySizeInput.value = String(Math.min(Math.max(current, Number(min)), Number(max)));
+      renderPriceHint(slotInput?.value || "");
     };
 
     const populateServices = (services: BookingService[]) => {
       if (!serviceSelect) return;
       const filtered = filterServices(services);
+      const fallbackFiltered = filterServices(fallbackServices);
+      const servicesToRender = filtered.length ? filtered : fallbackFiltered;
 
-      if (!filtered.length) {
+      if (!servicesToRender.length) {
         serviceSelect.innerHTML = "";
         setStatus("Немає доступних послуг для цього блоку бронювання.", "error");
         return;
       }
 
-      serviceSelect.innerHTML = filtered.map((service) => `
+      serviceSelect.innerHTML = servicesToRender.map((service) => {
+        const pricing = {
+          ...((bookingServicePricing[service.slug] || {}) as Record<string, string>),
+          price_day: service.price_day || (bookingServicePricing[service.slug] as any)?.price_day || "",
+          price_evening: service.price_evening || (bookingServicePricing[service.slug] as any)?.price_evening || "",
+          price_note: service.price_note || (bookingServicePricing[service.slug] as any)?.price_note || ""
+        };
+
+        return `
         <option
-          value="${service.slug}"
-          data-min="${service.min_people}"
-          data-max="${service.max_people}"
-          data-duration="${service.duration_minutes}"
+          value="${escapeHtml(service.slug)}"
+          data-min="${escapeHtml(service.min_people)}"
+          data-max="${escapeHtml(service.max_people)}"
+          data-duration="${escapeHtml(service.duration_minutes)}"
+          data-price-day="${escapeHtml(pricing.price_day)}"
+          data-price-evening="${escapeHtml(pricing.price_evening)}"
+          data-price-note="${escapeHtml(pricing.price_note)}"
           ${service.slug === defaultService ? "selected" : ""}
         >
-          ${service.name} · ${service.duration_minutes} хв
+          ${escapeHtml(service.name)}
         </option>
-      `).join("");
+      `;
+      }).join("");
 
-      if (defaultService && filtered.some((service) => service.slug === defaultService)) {
+      if (defaultService && servicesToRender.some((service) => service.slug === defaultService)) {
         serviceSelect.value = defaultService;
       }
 
       syncPartyBounds();
+      renderPriceHint(slotInput?.value || "");
     };
 
     const loadServices = async () => {
@@ -272,6 +361,9 @@ const selectedService = defaultServiceSlug || initialServices[0]?.slug || "";
 
     const loadSlots = async () => {
       syncPartyBounds();
+      if (slotInput) slotInput.value = "";
+      root.querySelectorAll("[data-slot]").forEach((item) => item.classList.remove("is-selected"));
+      renderPriceHint("");
 
       if (!slotList || !serviceSelect || !dateInput || !partySizeInput) return;
       if (!dateInput.value) {
@@ -287,6 +379,7 @@ const selectedService = defaultServiceSlug || initialServices[0]?.slug || "";
       }
 
       slotList.innerHTML = "<p>Завантажуємо слоти...</p>";
+      setStatus("Перевіряємо доступний час...", "loading");
       const { data, error } = await supabase.rpc("get_available_slots", {
         p_service_slug: serviceSelect.value,
         p_date: dateInput.value,
@@ -295,8 +388,8 @@ const selectedService = defaultServiceSlug || initialServices[0]?.slug || "";
       });
 
       if (error) {
-        slotList.innerHTML = "<p>Не вдалося завантажити слоти.</p>";
-        setStatus(error.message, "error");
+        slotList.innerHTML = `<p>Не вдалося завантажити слоти. ${describeSlotError(error.message)}</p>`;
+        setStatus("Не вдалося перевірити календар. Спробуйте ще раз або залиште контакт без вибору слоту.", "error");
         return;
       }
 
@@ -320,20 +413,55 @@ const selectedService = defaultServiceSlug || initialServices[0]?.slug || "";
       const formData = new FormData(form);
       setStatus("Створюємо pending-бронювання...", "loading");
 
+      const serviceName = serviceSelect?.selectedOptions[0]?.textContent?.trim() || String(formData.get("service"));
+      const bookingPayload = {
+        service: serviceName,
+        serviceSlug: String(formData.get("service")),
+        name: String(formData.get("customer_name") || ""),
+        phone: String(formData.get("customer_phone") || ""),
+        partySize: Number(formData.get("party_size")),
+        email: String(formData.get("customer_email") || ""),
+        comment: String(formData.get("comment") || ""),
+        startsAt: slotInput.value,
+        status: "pending"
+      };
+
       const { error } = await supabase.rpc("create_pending_booking", {
         p_service_slug: String(formData.get("service")),
         p_start_at: slotInput.value,
-        p_customer_name: String(formData.get("customer_name") || ""),
-        p_customer_phone: String(formData.get("customer_phone") || ""),
-        p_party_size: Number(formData.get("party_size")),
-        p_customer_email: String(formData.get("customer_email") || ""),
-        p_comment: String(formData.get("comment") || "")
+        p_customer_name: bookingPayload.name,
+        p_customer_phone: bookingPayload.phone,
+        p_party_size: bookingPayload.partySize,
+        p_customer_email: bookingPayload.email,
+        p_comment: bookingPayload.comment
       });
 
       if (error) {
         setStatus(error.message, "error");
         await loadSlots();
         return;
+      }
+
+      try {
+        const headers: Record<string, string> = {
+          "content-type": "application/json"
+        };
+
+        if (bookingWebhookSecret) {
+          headers["x-booking-secret"] = bookingWebhookSecret;
+        }
+
+        const response = await fetch("/api/booking", {
+          method: "POST",
+          headers,
+          body: JSON.stringify(bookingPayload)
+        });
+
+        if (!response.ok) {
+          console.warn("Telegram booking notification failed", response.status, await response.text());
+        }
+      } catch (notificationError) {
+        console.warn("Telegram booking notification failed", notificationError);
       }
 
       form.reset();

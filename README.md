@@ -58,6 +58,10 @@ Run `supabase/migrations/0002_vr_games_cms.sql` after the booking core migration
 
 Managers can edit the catalog at `/admin/vr-games` with the same Supabase Auth user used for `/admin/bookings`.
 
+## VR pricing update
+
+Run `supabase/migrations/0003_vr_pricing_services.sql` after the booking core migration to replace the old demo VR services with the current VR, PS5, NovaMix2, and birthday booking formats.
+
 ## Pre-deploy check
 
 Run:
@@ -78,7 +82,7 @@ Create a test booking and confirm it appears in Supabase. Also verify that the m
 
 ## Telegram booking bot
 
-The quick notification bot lives in `booking-bot/`. It has no manager actions: users enter the password once, then the bot forwards every new booking posted to its HTTP endpoint.
+The booking bot lives in `booking-bot/`. Users enter the password once, then the bot forwards every new booking posted to its HTTP endpoint. When the booking payload includes the booking UUID, each Telegram notification includes Confirm and Cancel buttons that update the booking status in Supabase.
 
 1. Create a Telegram bot through BotFather and copy its token.
 2. Copy the bot env example:
@@ -88,7 +92,7 @@ cd booking-bot
 cp .env.example .env
 ```
 
-3. Fill `TELEGRAM_BOT_TOKEN` and `BOT_WEBHOOK_SECRET`. `BOT_PASSWORD` defaults to `0912`.
+3. Fill `TELEGRAM_BOT_TOKEN`, `BOT_WEBHOOK_SECRET`, `SUPABASE_URL`, and `SUPABASE_SERVICE_ROLE_KEY`. `BOT_PASSWORD` defaults to `0912`. Keep `SUPABASE_SERVICE_ROLE_KEY` only in the bot environment; never expose it through frontend or `PUBLIC_*` variables.
 4. Start it:
 
 ```bash
@@ -116,15 +120,18 @@ Example body:
 ```json
 {
   "record": {
-    "service_name": "VR Squad",
+    "id": "00000000-0000-4000-8000-000000000000",
+    "service_name": "VR 60 хв",
     "customer_name": "Олена",
     "customer_phone": "+380501112233",
-    "party_size": 4,
+    "party_size": 2,
     "start_at": "2026-05-12T15:00:00+03:00",
-    "end_at": "2026-05-12T16:15:00+03:00",
-    "comment": "День народження"
+    "end_at": "2026-05-12T16:00:00+03:00",
+    "comment": "Перший візит"
   }
 }
 ```
+
+The `record.id` field must be the UUID from `public.bookings.id`. If the payload has no booking ID, the bot still sends the notification but skips the action buttons because it cannot safely update the status.
 
 For Supabase, create a Database Webhook on inserts into `public.bookings` and point it to the public URL of `/booking`. Add the same secret as the `X-Booking-Secret` header.

@@ -3136,6 +3136,30 @@ p {
   padding-right: 2px;
 }
 
+.vr-screen#sessions {
+  align-content: start;
+  gap: 14px;
+  grid-template-rows: max-content max-content max-content;
+  overflow: auto;
+}
+
+.vr-screen#sessions .vr-screen__head {
+  align-self: start;
+}
+
+.vr-screen#sessions .vr-price-board {
+  align-items: start;
+  grid-auto-rows: max-content;
+  height: max-content;
+  min-height: max-content;
+  overflow: visible;
+}
+
+.vr-screen#sessions .vr-price-card {
+  min-height: max-content;
+  overflow: visible;
+}
+
 .vr-price-card {
   gap: 12px;
   overflow: hidden;
@@ -3172,6 +3196,37 @@ p {
 
 .vr-price-card td {
   font-weight: 900;
+}
+
+.vr-pricing-notes {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 10px;
+  margin-top: 14px;
+}
+
+.vr-pricing-notes article {
+  min-width: 0;
+  display: grid;
+  align-content: start;
+  gap: 6px;
+  padding: 12px;
+  border: 1px solid rgba(208, 188, 139, 0.16);
+  border-radius: 14px;
+  background: rgba(208, 188, 139, 0.06);
+}
+
+.vr-pricing-notes strong {
+  color: #f5f0e7;
+  font-size: 13px;
+  line-height: 1.25;
+}
+
+.vr-pricing-notes p {
+  margin: 0;
+  color: rgba(245, 240, 231, 0.66);
+  font-size: 12px;
+  line-height: 1.45;
 }
 
 .vr-scenario-board {
@@ -3360,7 +3415,8 @@ p {
 
   .vr-app-grid--modules,
   .vr-scenario-board,
-  .vr-games-grid {
+  .vr-games-grid,
+  .vr-pricing-notes {
     grid-template-columns: repeat(2, minmax(0, 1fr));
   }
 
@@ -3899,6 +3955,20 @@ p {
     gap: 10px;
   }
 
+  .vr-price-board,
+  .vr-pricing-notes {
+    grid-template-columns: 1fr;
+    gap: 10px;
+  }
+
+  .vr-price-card {
+    padding: 12px;
+  }
+
+  .vr-price-card table {
+    font-size: 11px;
+  }
+
   .vr-scenario-board article,
   .vr-help-board article {
     padding: 12px;
@@ -4185,6 +4255,17 @@ p {
 .booking-admin__auth input:focus {
   border-color: #73d2ff;
   box-shadow: 0 0 0 3px rgba(115, 210, 255, 0.14);
+}
+
+.booking-price-note {
+  margin: -4px 0 2px;
+  padding: 12px 14px;
+  border: 1px solid rgba(100, 240, 185, 0.18);
+  border-radius: 8px;
+  color: rgba(245, 247, 251, 0.82);
+  background: rgba(100, 240, 185, 0.08);
+  font-size: 14px;
+  line-height: 1.45;
 }
 
 .booking-slots {
@@ -5069,6 +5150,12 @@ body:has(.studio-page)::before {
 .booking-widget--studio .booking-field textarea:focus {
   border-color: rgba(139, 115, 93, 0.52);
   box-shadow: 0 0 0 3px rgba(139, 115, 93, 0.12);
+}
+
+.booking-widget--studio .booking-price-note {
+  border-color: rgba(139, 115, 93, 0.16);
+  color: rgba(36, 31, 27, 0.76);
+  background: rgba(139, 115, 93, 0.1);
 }
 
 .booking-widget--studio .booking-slots {

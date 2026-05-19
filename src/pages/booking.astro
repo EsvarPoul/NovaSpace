@@ -5,7 +5,7 @@ import BookingWidget from "../components/booking/BookingWidget.astro";
 
 <BaseLayout
   title="NOVA Booking"
-  description="Календар бронювання NOVA VR та NOVA Studio."
+  description="Календар бронювання NOVA VR та NOVA Photo Studio."
 >
   <main class="booking-app" data-booking-app>
     <header class="booking-hero">
@@ -14,15 +14,15 @@ import BookingWidget from "../components/booking/BookingWidget.astro";
         <small>Booking calendar</small>
       </a>
       <div>
-        <span class="booking-kicker">Calendar + manager confirmation</span>
-        <h1>Забронюйте VR, студію або подію в одному календарі.</h1>
-        <p>Оберіть формат, дату і вільний слот. Заявка створюється як pending і блокує потрібні ресурси до рішення менеджера.</p>
+        <span class="booking-kicker">VR price rules + manager confirmation</span>
+        <h1>Забронюйте VR, PS5, NovaMix, ДР або студію в одному календарі.</h1>
+        <p>Оберіть формат, дату і слот. Форма підкаже денний або вечірній тариф, а менеджер підтвердить заявку та деталі за новими правилами.</p>
       </div>
     </header>
 
     <BookingWidget
       introTitle="Нове бронювання"
-      introText="Оберіть послугу, дату і час. Ми підтвердимо заявку після перевірки календаря."
+      introText="Оберіть формат із актуального прайсу, дату і час. Для ДР, знижок або фотографа залиште деталі в коментарі."
     />
   </main>
 </BaseLayout>

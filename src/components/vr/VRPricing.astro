@@ -1,9 +1,9 @@
 ---
-import { vrPricing } from "../../data/vr.js";
+import { vrPricing, vrPricingNotes } from "../../data/vr.js";
 import Section from "../ui/Section.astro";
 ---
 
-<Section id="pricing" eyebrow="Формати та вартість" title="М'яка сітка цін для VR, PS5, кімнат і свят." className="vr-app-section vr-presets">
+<Section id="pricing" eyebrow="Формати та вартість" title="Актуальна сітка цін для VR, PS5, NovaMix і ДР." className="vr-app-section vr-presets">
   <div class="vr-price-board">
     {vrPricing.map((group: any) => (
       <article class="vr-price-card">
@@ -27,6 +27,14 @@ import Section from "../ui/Section.astro";
             ))}
           </tbody>
         </table>
+      </article>
+    ))}
+  </div>
+  <div class="vr-pricing-notes">
+    {vrPricingNotes.map((note: any) => (
+      <article>
+        <strong>{note.title}</strong>
+        <p>{note.text}</p>
       </article>
     ))}
   </div>
