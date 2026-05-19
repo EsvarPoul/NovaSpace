@@ -146,6 +146,13 @@ const selectedService = defaultServiceSlug || initialServices[0]?.slug || "";
     slot_end: string;
   }
 
+  interface CreatedBooking {
+    id?: string;
+    start_at?: string;
+    end_at?: string;
+    status?: string;
+  }
+
   const bookingWebhookSecret = import.meta.env.PUBLIC_BOOKING_WEBHOOK_SECRET ?? "";
 
   const formatTime = (value: string) => new Intl.DateTimeFormat("uk-UA", {
@@ -415,6 +422,7 @@ const selectedService = defaultServiceSlug || initialServices[0]?.slug || "";
 
       const serviceName = serviceSelect?.selectedOptions[0]?.textContent?.trim() || String(formData.get("service"));
       const bookingPayload = {
+        id: "",
         service: serviceName,
         serviceSlug: String(formData.get("service")),
         name: String(formData.get("customer_name") || ""),
@@ -423,10 +431,11 @@ const selectedService = defaultServiceSlug || initialServices[0]?.slug || "";
         email: String(formData.get("customer_email") || ""),
         comment: String(formData.get("comment") || ""),
         startsAt: slotInput.value,
+        endsAt: "",
         status: "pending"
       };
 
-      const { error } = await supabase.rpc("create_pending_booking", {
+      const { data: createdBooking, error } = await supabase.rpc("create_pending_booking", {
         p_service_slug: String(formData.get("service")),
         p_start_at: slotInput.value,
         p_customer_name: bookingPayload.name,
@@ -441,6 +450,12 @@ const selectedService = defaultServiceSlug || initialServices[0]?.slug || "";
         await loadSlots();
         return;
       }
+
+      const createdBookingRecord = (Array.isArray(createdBooking) ? createdBooking[0] : createdBooking) as CreatedBooking | null;
+      bookingPayload.id = createdBookingRecord?.id || "";
+      bookingPayload.startsAt = createdBookingRecord?.start_at || bookingPayload.startsAt;
+      bookingPayload.endsAt = createdBookingRecord?.end_at || "";
+      bookingPayload.status = createdBookingRecord?.status || bookingPayload.status;
 
       try {
         const headers: Record<string, string> = {
