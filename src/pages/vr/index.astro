@@ -8,17 +8,17 @@ const scenariosJson = JSON.stringify(vrScenarios);
 ---
 
 <BaseLayout
-  title="NOVA VR"
-  description="NOVA VR: клуб віртуальної реальності з 6 VR-зонами, PS5, форматами для компаній, свят і корпоративів."
+  title="Nova VR"
+  description="Nova VR: VR-напрям Nova Space з 6 VR-зонами, PS5, форматами для компаній, свят і корпоративів."
 >
-  <main class="vr-os" aria-label="NOVA VR club page">
+  <main class="vr-os" aria-label="Nova VR club page">
     <script is:inline type="application/json" id="vr-games-data" set:html={gamesJson}></script>
     <script is:inline type="application/json" id="vr-scenarios-data" set:html={scenariosJson}></script>
 
     <aside class="vr-os__sidebar" aria-label="VR navigation">
       <a class="vr-os__brand" href="/vr/">
         <img class="vr-os__logo" src="/vr/nova-space-logo.svg" alt="" aria-hidden="true" loading="eager" />
-        <span>NOVA VR</span>
+        <span>Nova VR</span>
       </a>
       <nav class="vr-os__nav" aria-label="VR screens">
         {vrNav.map((item) => <a href={item.href} data-vr-nav={item.href.replace("#", "")}>{item.label}</a>)}
@@ -29,10 +29,10 @@ const scenariosJson = JSON.stringify(vrScenarios);
     <section class="vr-os__main">
       <header class="vr-os__topbar">
         <div>
-          <span>NOVA VR</span>
+          <span>Nova VR</span>
           <strong data-vr-title>Головна</strong>
         </div>
-        <div class="vr-os__status" aria-label="Контакти NOVA VR">
+        <div class="vr-os__status" aria-label="Контакти Nova VR">
           {vrContacts.map((item) => (
             item.href ? (
               <a href={item.href}>
@@ -53,14 +53,14 @@ const scenariosJson = JSON.stringify(vrScenarios);
         <section class="vr-screen is-active" id="dashboard" data-vr-screen="dashboard" aria-labelledby="dashboard-title">
           <div class="vr-screen__copy">
             <span class="vr-os__eyebrow">Про нас</span>
-            <h1 id="dashboard-title">NOVA VR для гри, свят і команд.</h1>
+            <h1 id="dashboard-title">Nova VR для гри, свят і команд.</h1>
             <p>У нас є 6 ігрових VR-зон, PS5 зона на два джойстика та формати для індивідуальних і групових візитів. Проводимо дні народження, корпоративи, побачення та активні вечори з друзями.</p>
             <div class="vr-quick-actions">
               <a href="/booking">Забронювати</a>
               <a href="#games" data-vr-nav="games">Переглянути ігри</a>
             </div>
           </div>
-          <div class="vr-about-panel" aria-label="Можливості NOVA VR">
+          <div class="vr-about-panel" aria-label="Можливості Nova VR">
             <article>
               <span>01</span>
               <strong>6 VR-зон</strong>
@@ -660,7 +660,7 @@ const scenariosJson = JSON.stringify(vrScenarios);
     setActiveScreen(screen, activeId);
 
     if (activeId === "games") renderGames();
-    if (title) title.textContent = screenTitles[activeId] || "NOVA VR";
+    if (title) title.textContent = screenTitles[activeId] || "Nova VR";
   };
 
   const updateLoadout = () => {
@@ -807,7 +807,7 @@ const scenariosJson = JSON.stringify(vrScenarios);
       .order("title", { ascending: true });
 
     if (error) {
-      console.warn("NOVA VR CMS fallback:", error.message);
+      console.warn("Nova VR CMS fallback:", error.message);
       return false;
     }
 

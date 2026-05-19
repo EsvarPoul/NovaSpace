@@ -9,7 +9,7 @@ const required = [
   "src/pages/studio/index.astro",
   "src/pages/vr/index.astro",
   "src/layouts/BaseLayout.astro",
-  "src/components/gateway/SplitGateway.astro",
+  "src/components/space/SpaceLanding.astro",
   "src/components/studio/StudioHero.astro",
   "src/components/vr/VRHero.astro",
   "src/styles/globals.css"

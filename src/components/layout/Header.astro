@@ -10,17 +10,21 @@ interface Props {
   brand: string;
   sub?: string;
   nav?: NavItem[];
+  schedule?: string;
   ctaHref?: string;
   ctaLabel?: string;
 }
 
 const {
   brand,
-  sub = "Studio + VR",
+  sub = "PhotoStudio + VR",
   nav = [],
+  schedule,
   ctaHref = "/booking",
   ctaLabel = "Бронювання"
 } = Astro.props;
+
+const scheduleLines = schedule ? schedule.split("|").map((line) => line.trim()).filter(Boolean) : [];
 ---
 
 <header class="site-header" data-header>
@@ -30,6 +34,11 @@ const {
   </a>
   <nav class="site-nav" aria-label="Основна навігація">
     {nav.map((item) => <a href={item.href}>{item.label}</a>)}
+    {scheduleLines.length > 0 && (
+      <span class="site-nav__schedule">
+        {scheduleLines.map((line) => <span>{line}</span>)}
+      </span>
+    )}
   </nav>
   <div class="header-actions">
     <Button href={ctaHref} label={ctaLabel} variant="small" />

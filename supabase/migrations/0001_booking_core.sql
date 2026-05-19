@@ -561,9 +561,7 @@ insert into public.services (
   ('vr-first-dive', 'VR First Dive', 'vr', 'Intro VR session for a small group.', 60, 10, 15, 1, 2, 10),
   ('vr-squad', 'VR Squad', 'vr', 'Team VR session for friends or small events.', 75, 10, 15, 3, 6, 20),
   ('vr-event', 'VR Event', 'event', 'Longer birthday, corporate, or private VR format.', 150, 20, 30, 4, 12, 30),
-  ('studio-light', 'Studio Light', 'studio', 'One-hour portrait or product shoot.', 60, 15, 15, 1, 4, 40),
-  ('studio-story', 'Studio Story', 'studio', 'Two-hour studio session with several looks.', 120, 15, 20, 1, 6, 50),
-  ('studio-brand', 'Studio Brand', 'event', 'Half-day content or brand shoot.', 240, 30, 30, 1, 10, 60)
+  ('studio-rent', 'Оренда студії · 600 грн./год.', 'studio', 'Studio rental from one hour. Photographer is paid separately when needed.', 60, 15, 15, 1, 5, 40)
 on conflict (slug) do update set
   name = excluded.name,
   area = excluded.area,
@@ -576,6 +574,10 @@ on conflict (slug) do update set
   sort_order = excluded.sort_order,
   active = true;
 
+update public.services
+set active = false
+where slug in ('studio-light', 'studio-story', 'studio-brand');
+
 insert into public.service_resources (service_id, resource_id)
 select services.id, resources.id
 from public.services services
@@ -587,14 +589,7 @@ insert into public.service_resources (service_id, resource_id)
 select services.id, resources.id
 from public.services services
 join public.resources resources on resources.slug in ('studio-room', 'studio-light')
-where services.slug in ('studio-light', 'studio-story', 'studio-brand')
-on conflict do nothing;
-
-insert into public.service_resources (service_id, resource_id)
-select services.id, resources.id
-from public.services services
-join public.resources resources on resources.slug = 'nova-host'
-where services.slug = 'studio-brand'
+where services.slug = 'studio-rent'
 on conflict do nothing;
 
 insert into public.business_hours (weekday, open_time, close_time, active)

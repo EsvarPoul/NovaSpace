@@ -1,0 +1,40 @@
+﻿---
+import StudioPanel from "./StudioPanel.astro";
+import VRPanel from "./VRPanel.astro";
+---
+
+<main class="space" data-space>
+  <div class="ambient-grid" aria-hidden="true"></div>
+  <header class="space-brand" aria-label="Nova Space">
+    <span class="space-brand__rail">Nova Space</span>
+    <div>
+      <span class="space-brand__kicker">Головний простір</span>
+      <strong>Nova <em>Space</em></strong>
+      <p>Оберіть Nova PhotoStudio для зйомок або Nova VR для занурення у віртуальну реальність. Два напрями, одна екосистема Nova Space.</p>
+    </div>
+    <span class="space-brand__rail">Бровари</span>
+  </header>
+  <div class="space-split">
+    <StudioPanel />
+    <VRPanel />
+  </div>
+  <div class="space-line" aria-hidden="true"></div>
+</main>
+
+<script>
+  document.body.classList.add("is-loaded");
+
+  const space = document.querySelector("[data-space]");
+  const panels = document.querySelectorAll("[data-panel]");
+
+  panels.forEach((panel) => {
+    const name = panel.getAttribute("data-panel");
+    const activate = () => name && space?.setAttribute("data-active", name);
+    const reset = () => space?.removeAttribute("data-active");
+
+    panel.addEventListener("mouseenter", activate);
+    panel.addEventListener("focus", activate);
+    panel.addEventListener("mouseleave", reset);
+    panel.addEventListener("blur", reset);
+  });
+</script>

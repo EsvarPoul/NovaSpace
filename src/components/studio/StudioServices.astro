@@ -1,5 +1,5 @@
 ---
-import { studioServices, studioBenefits } from "../../data/studio.js";
+import { studioServices } from "../../data/studio.js";
 import Card from "../ui/Card.astro";
 import Section from "../ui/Section.astro";
 ---
@@ -7,16 +7,25 @@ import Section from "../ui/Section.astro";
 <Section
   id="services"
   eyebrow="Послуги"
-  title="Зйомки, у яких є місце для людини, світла і тиші."
-  text="NOVA Studio працює як приватний простір: без поспіху, з уважною підготовкою і сценарієм, який підлаштовується під вашу історію."
-  className="studio-section"
+  title="Маємо штатного фотографа, який проводить зйомки у просторі Nova PhotoStudio"
+  className="studio-section studio-services-section"
 >
-  <div class="grid grid--4">
-    {studioServices.map((item, index) => (
-      <Card eyebrow={`0${index + 1}`} title={item.title} text={item.text} />
+  <div class="studio-photographer" slot="text">
+    <span>Фотограф: Владислава</span>
+    <a href="https://www.instagram.com/vladensiya.photo/" target="_blank" rel="noreferrer" aria-label="Instagram Владислави">
+      <svg viewBox="0 0 24 24" aria-hidden="true">
+        <rect x="2" y="2" width="20" height="20" rx="5" ry="5"></rect>
+        <path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"></path>
+        <path d="M17.5 6.5h.01"></path>
+      </svg>
+      <span>@vladensiya.photo</span>
+    </a>
+  </div>
+  <div class="grid grid--3">
+    {studioServices.map((item) => (
+      <Card eyebrow={item.type} title={item.title} text={item.text} className="studio-service-card">
+        <strong>{item.price}</strong>
+      </Card>
     ))}
   </div>
-  <ul class="benefit-row studio-benefits">
-    {studioBenefits.map((item) => <li>{item}</li>)}
-  </ul>
 </Section>

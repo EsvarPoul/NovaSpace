@@ -16,7 +16,9 @@ const { id, eyebrow = "", title, text = "", className = "" } = Astro.props;
       {eyebrow && <span class="eyebrow">{eyebrow}</span>}
       <h2>{title}</h2>
     </div>
-    {text && <p>{text}</p>}
+    <slot name="text">
+      {text && <p>{text}</p>}
+    </slot>
   </div>
   <slot />
 </section>

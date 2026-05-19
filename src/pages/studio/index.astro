@@ -5,25 +5,23 @@ import Footer from "../../components/layout/Footer.astro";
 import StudioHero from "../../components/studio/StudioHero.astro";
 import StudioServices from "../../components/studio/StudioServices.astro";
 import StudioPortfolio from "../../components/studio/StudioPortfolio.astro";
-import StudioPricing from "../../components/studio/StudioPricing.astro";
 import StudioBookingCTA from "../../components/studio/StudioBookingCTA.astro";
 import { studioNav } from "../../data/studio.js";
 ---
 
 <BaseLayout
-  title="NOVA Studio"
-  description="NOVA Studio: преміальна домашня фотостудія для портретів, брендів, beauty та предметної зйомки."
+  title="Nova PhotoStudio"
+  description="Nova PhotoStudio: світла фотостудія від Nova Space у Броварах для індивідуальних, сімейних і контент-зйомок."
 >
   <div class="app-shell studio-page">
-    <Header brand="NOVA STUDIO" sub="Photo studio" nav={studioNav} ctaHref="#booking" ctaLabel="Забронювати" />
+    <Header brand="Nova Space" sub="Nova PhotoStudio" nav={studioNav} schedule="Понеділок-Неділя|10:00-21:00" ctaHref="#booking" ctaLabel="Забронювати" />
     <main>
       <StudioHero />
       <StudioServices />
       <StudioPortfolio />
-      <StudioPricing />
       <StudioBookingCTA />
     </main>
-    <Footer brand="NOVA STUDIO" mode="Photo studio" />
+    <Footer brand="Nova Space" mode="Nova PhotoStudio" />
   </div>
 </BaseLayout>
 
@@ -48,14 +46,4 @@ import { studioNav } from "../../data/studio.js";
 
   items.forEach((item) => observer.observe(item));
 
-  document.querySelectorAll("[data-service-link]").forEach((link) => {
-    link.addEventListener("click", () => {
-      const service = link.getAttribute("data-service-link");
-      const select = document.querySelector("[data-booking-widget] [data-service-select]");
-      if (service && select instanceof HTMLSelectElement) {
-        select.value = service;
-        select.dispatchEvent(new Event("change", { bubbles: true }));
-      }
-    });
-  });
 </script>
