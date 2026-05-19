@@ -38,6 +38,28 @@ Add these environment variables in Vercel for both Production and Preview:
 
 Vercel also provides `VERCEL_PROJECT_PRODUCTION_URL`; if `SITE_URL` is missing, `astro.config.mjs` uses that value before falling back to `https://nova.local`.
 
+## Docker deployment
+
+The root `compose.yaml` builds the Astro site into static files and serves them with nginx.
+
+Create a local `.env` file if you need production build variables:
+
+```bash
+SITE_URL=https://your-domain.example
+SITE_PORT=8080
+PUBLIC_SUPABASE_URL=https://your-project.supabase.co
+PUBLIC_SUPABASE_ANON_KEY=your-public-anon-key
+```
+
+Then deploy or update:
+
+```bash
+git pull origin main
+docker compose up -d --build --force-recreate
+```
+
+By default the site is exposed on host port `8080`. Set `SITE_PORT=80` in `.env` if the container should bind directly to port 80.
+
 ## Supabase checklist
 
 1. Run `supabase/migrations/0001_booking_core.sql` in the Supabase SQL editor or through the Supabase CLI.

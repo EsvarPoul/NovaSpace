@@ -1,0 +1,12 @@
+.git
+.astro
+.vercel
+dist
+node_modules
+npm-debug.log*
+*.log
+.env
+.env.*
+!.env.example
+booking-bot
+booking-bot/authorized-chats.json

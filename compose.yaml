@@ -1,0 +1,13 @@
+services:
+  nova-site:
+    build:
+      context: .
+      args:
+        SITE_URL: ${SITE_URL:-https://nova.local}
+        PUBLIC_SUPABASE_URL: ${PUBLIC_SUPABASE_URL:-}
+        PUBLIC_SUPABASE_ANON_KEY: ${PUBLIC_SUPABASE_ANON_KEY:-}
+    image: nova-site:latest
+    container_name: nova-site
+    restart: unless-stopped
+    ports:
+      - "${SITE_PORT:-8080}:80"
