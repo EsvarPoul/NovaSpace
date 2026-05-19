@@ -217,16 +217,17 @@ async function notifyAuthorizedChats(booking) {
     return;
   }
 
-  const canAttachActions = isUuid(booking.id);
-  if (!booking.id) {
+  const bookingWithActions = await resolveBookingForActions(booking);
+  const canAttachActions = isUuid(bookingWithActions.id);
+  if (!bookingWithActions.id) {
     console.warn("New booking received without an id; Telegram action buttons were not attached.");
   } else if (!canAttachActions) {
-    console.warn(`New booking received with invalid id "${booking.id}"; Telegram action buttons were not attached.`);
+    console.warn(`New booking received with invalid id "${bookingWithActions.id}"; Telegram action buttons were not attached.`);
   }
 
-  const message = formatBookingMessage(booking);
+  const message = formatBookingMessage(bookingWithActions);
   const options = canAttachActions
-    ? { reply_markup: createBookingActionMarkup(booking.id) }
+    ? { reply_markup: createBookingActionMarkup(bookingWithActions.id) }
     : {};
 
   await Promise.all(
@@ -238,6 +239,102 @@ async function notifyAuthorizedChats(booking) {
       }
     }),
   );
+}
+
+async function resolveBookingForActions(booking) {
+  if (isUuid(booking.id)) {
+    return booking;
+  }
+
+  const resolvedBooking = await findRecentBooking(booking);
+  if (!resolvedBooking?.id) {
+    return booking;
+  }
+
+  return {
+    ...booking,
+    id: resolvedBooking.id,
+    service: booking.service || resolvedBooking.service,
+    name: booking.name || resolvedBooking.name,
+    phone: booking.phone || resolvedBooking.phone,
+    email: booking.email || resolvedBooking.email,
+    partySize: booking.partySize || resolvedBooking.partySize,
+    startsAt: resolvedBooking.startsAt || booking.startsAt,
+    endsAt: resolvedBooking.endsAt || booking.endsAt,
+    comment: booking.comment || resolvedBooking.comment,
+    status: resolvedBooking.status || booking.status,
+  };
+}
+
+async function findRecentBooking(booking) {
+  if (!config.supabaseUrl || !config.supabaseServiceRoleKey) {
+    return null;
+  }
+
+  const url = new URL(`${config.supabaseUrl}/rest/v1/bookings`);
+  url.searchParams.set(
+    "select",
+    "id,start_at,end_at,status,customer_name,customer_phone,customer_email,party_size,comment,created_at,services(slug,name)",
+  );
+  url.searchParams.set("order", "created_at.desc");
+  url.searchParams.set("limit", "5");
+
+  if (booking.phone) {
+    url.searchParams.set("customer_phone", `eq.${booking.phone}`);
+  }
+
+  const startAt = new Date(booking.startsAt);
+  if (!Number.isNaN(startAt.getTime())) {
+    const lowerBound = new Date(startAt.getTime() - 2 * 60 * 1000).toISOString();
+    const upperBound = new Date(startAt.getTime() + 2 * 60 * 1000).toISOString();
+    url.searchParams.set("start_at", `gte.${lowerBound}`);
+    url.searchParams.append("start_at", `lte.${upperBound}`);
+  } else {
+    const createdAfter = new Date(Date.now() - 30 * 60 * 1000).toISOString();
+    url.searchParams.set("created_at", `gte.${createdAfter}`);
+  }
+
+  const response = await fetch(url, {
+    headers: {
+      apikey: config.supabaseServiceRoleKey,
+      authorization: `Bearer ${config.supabaseServiceRoleKey}`,
+    },
+  });
+
+  if (!response.ok) {
+    const details = await response.text().catch(() => "");
+    console.warn(`Could not resolve booking id from Supabase: ${details || response.status}`);
+    return null;
+  }
+
+  const rows = await response.json().catch(() => []);
+  if (!Array.isArray(rows) || rows.length === 0) {
+    console.warn("Could not resolve booking id from Supabase: no matching booking found.");
+    return null;
+  }
+
+  const serviceNeedle = String(booking.service || "").trim().toLowerCase();
+  const row = rows.find((candidate) => {
+    if (!serviceNeedle) return true;
+    const service = Array.isArray(candidate.services) ? candidate.services[0] : candidate.services;
+    const slug = String(service?.slug || "").toLowerCase();
+    const name = String(service?.name || "").toLowerCase();
+    return serviceNeedle === slug || serviceNeedle === name;
+  }) || rows[0];
+
+  const service = Array.isArray(row.services) ? row.services[0] : row.services;
+  return normalizeBookingPayload({
+    id: row.id,
+    service: service?.name || service?.slug || booking.service,
+    customer_name: row.customer_name,
+    customer_phone: row.customer_phone,
+    customer_email: row.customer_email,
+    party_size: row.party_size,
+    start_at: row.start_at,
+    end_at: row.end_at,
+    comment: row.comment,
+    status: row.status,
+  });
 }
 
 function formatBookingMessage(rawBooking) {
