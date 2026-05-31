@@ -1,0 +1,1383 @@
+---
+import BaseLayout from "../../layouts/BaseLayout.astro";
+---
+
+<BaseLayout
+  title="NOVA Admin"
+  description="Єдина адмін-панель NOVA для бронювань і каталогу ігор."
+>
+  <main class="nova-admin" data-admin-root>
+    <section class="nova-admin-login" data-login-view aria-labelledby="admin-login-title">
+      <div class="nova-admin-login__brand">
+        <span>NOVA</span>
+        <strong>Admin</strong>
+      </div>
+      <form class="nova-admin-login__card" data-login-form>
+        <span class="nova-admin-kicker">Manager access</span>
+        <h1 id="admin-login-title">Вхід в адмінку</h1>
+        <p>Увійдіть через Supabase-акаунт менеджера, щоб працювати з бронюваннями та каталогом ігор.</p>
+        <label class="nova-admin-field">
+          <span>Email</span>
+          <input type="email" placeholder="manager@email.com" autocomplete="email" data-login-email />
+        </label>
+        <label class="nova-admin-field">
+          <span>Пароль</span>
+          <input type="password" placeholder="Пароль" autocomplete="current-password" data-login-password />
+        </label>
+        <button class="nova-admin-button nova-admin-button--primary" type="submit" data-login-button>Увійти</button>
+        <p class="nova-admin-status" data-login-status role="status"></p>
+      </form>
+    </section>
+
+    <section class="nova-admin-shell" data-admin-shell hidden>
+      <aside class="nova-admin-sidebar" aria-label="Навігація адмінки">
+        <a class="nova-admin-brand" href="/admin">
+          <span>NOVA</span>
+          <strong>Admin</strong>
+        </a>
+        <nav class="nova-admin-nav">
+          <a href="#dashboard" data-admin-nav="dashboard">Огляд</a>
+          <a href="#bookings" data-admin-nav="bookings">Бронювання</a>
+          <a href="#games" data-admin-nav="games">Ігри</a>
+        </nav>
+        <a class="nova-admin-public-link" href="/vr/">Відкрити сайт</a>
+      </aside>
+
+      <section class="nova-admin-main">
+        <header class="nova-admin-topbar">
+          <div>
+            <span data-admin-breadcrumb>Адмінка</span>
+            <h1 data-admin-title>Огляд</h1>
+          </div>
+          <div class="nova-admin-user">
+            <span data-admin-user>Manager</span>
+            <button type="button" data-logout-button>Вийти</button>
+          </div>
+        </header>
+
+        <p class="nova-admin-status nova-admin-status--global" data-admin-global-status role="status"></p>
+
+        <section class="nova-admin-screen is-active" data-admin-screen="dashboard" aria-labelledby="admin-dashboard-title">
+          <div class="nova-admin-dashboard-head">
+            <span class="nova-admin-kicker">Робочий центр</span>
+            <h2 id="admin-dashboard-title">Керуйте тим, що реально працює зараз.</h2>
+            <p>У цій версії адмінка відповідає за бронювання та каталог ігор. Статичний контент сайту лишається в коді й оновлюється через rebuild.</p>
+          </div>
+          <div class="nova-admin-dashboard-grid">
+            <button class="nova-admin-section-card" type="button" data-open-section="bookings">
+              <span>Бронювання</span>
+              <strong data-dashboard-bookings>—</strong>
+              <em>Календар, статуси, блокування часу</em>
+            </button>
+            <button class="nova-admin-section-card" type="button" data-open-section="games">
+              <span>Ігри</span>
+              <strong data-dashboard-games>—</strong>
+              <em>Каталог VR / PS, preview, видимість</em>
+            </button>
+          </div>
+        </section>
+
+        <section class="nova-admin-screen" data-admin-screen="bookings" aria-labelledby="admin-bookings-title" hidden>
+          <div class="nova-admin-section-head">
+            <div>
+              <span class="nova-admin-kicker">Операції</span>
+              <h2 id="admin-bookings-title">Бронювання</h2>
+            </div>
+            <button class="nova-admin-button" type="button" data-load-board>Оновити</button>
+          </div>
+
+          <div class="nova-admin-toolbar">
+            <div class="nova-admin-month-controls" aria-label="Навігація календаря">
+              <button class="nova-admin-button" type="button" data-calendar-prev aria-label="Попередній місяць">‹</button>
+              <strong data-calendar-title>Місяць</strong>
+              <button class="nova-admin-button" type="button" data-calendar-next aria-label="Наступний місяць">›</button>
+            </div>
+            <label class="nova-admin-field nova-admin-field--date">
+              <span>Обрати день</span>
+              <input type="date" data-selected-date />
+            </label>
+          </div>
+
+          <div class="nova-admin-workspace nova-admin-workspace--bookings">
+            <div class="nova-admin-panel nova-admin-panel--calendar">
+              <div class="nova-admin-panel__head">
+                <span data-selected-day-summary>Календар</span>
+                <strong data-booking-panel-title>Бронювання за день</strong>
+              </div>
+              <div class="nova-admin-calendar" data-calendar-grid aria-label="Календар бронювань"></div>
+              <div class="nova-admin-calendar-legend" aria-label="Пояснення календаря">
+                <span><i data-tone="free"></i>Вільно</span>
+                <span><i data-tone="booked"></i>Є бронювання</span>
+                <span><i data-tone="selected"></i>Обраний день</span>
+                <span><i data-tone="today"></i>Сьогодні</span>
+              </div>
+              <div class="nova-admin-list" data-booking-board>
+                <p class="nova-admin-empty">Оберіть день у календарі, щоб побачити бронювання.</p>
+              </div>
+            </div>
+
+            <aside class="nova-admin-panel">
+              <div class="nova-admin-panel__head">
+                <span data-block-day-label>Обраний день</span>
+                <strong>Заблокувати час</strong>
+              </div>
+              <form class="nova-admin-form" data-block-form>
+                <label class="nova-admin-field">
+                  <span>Resource slug або порожньо для всіх</span>
+                  <input name="resource_slug" placeholder="vr-room" />
+                </label>
+                <div class="nova-admin-grid nova-admin-grid--compact">
+                  <label class="nova-admin-field">
+                    <span>З</span>
+                    <input name="starts_time" type="time" value="10:00" required />
+                  </label>
+                  <label class="nova-admin-field">
+                    <span>До</span>
+                    <input name="ends_time" type="time" value="11:00" required />
+                  </label>
+                </div>
+                <label class="nova-admin-field">
+                  <span>Причина</span>
+                  <input name="reason" placeholder="Приватна подія, ремонт, пауза" />
+                </label>
+                <button class="nova-admin-button nova-admin-button--primary" type="submit">Додати блокування</button>
+              </form>
+              <p class="nova-admin-status" data-bookings-status role="status"></p>
+            </aside>
+          </div>
+        </section>
+
+        <section class="nova-admin-screen" data-admin-screen="games" aria-labelledby="admin-games-title" hidden>
+          <div class="nova-admin-section-head">
+            <div>
+              <span class="nova-admin-kicker">Каталог</span>
+              <h2 id="admin-games-title">Ігри VR / PS</h2>
+            </div>
+            <button class="nova-admin-button" type="button" data-reset-game-form>Нова гра</button>
+          </div>
+
+          <div class="nova-admin-toolbar">
+            <div class="nova-admin-segmented" aria-label="Фільтр платформи">
+              <button class="is-active" type="button" data-games-platform-filter="all">Усі</button>
+              <button type="button" data-games-platform-filter="vr">VR</button>
+              <button type="button" data-games-platform-filter="ps">PS</button>
+            </div>
+            <button class="nova-admin-button" type="button" data-load-games>Оновити каталог</button>
+          </div>
+
+          <div class="nova-admin-workspace nova-admin-workspace--games">
+            <div class="nova-admin-panel">
+              <div class="nova-admin-panel__head">
+                <span data-games-count>Каталог</span>
+                <strong>Список ігор</strong>
+              </div>
+              <div class="nova-admin-list" data-games-list>
+                <p class="nova-admin-empty">Завантажуємо каталог...</p>
+              </div>
+            </div>
+
+            <aside class="nova-admin-panel">
+              <div class="nova-admin-panel__head">
+                <span data-form-mode>New game</span>
+                <strong>Картка гри</strong>
+              </div>
+              <form class="nova-admin-form" data-game-form>
+                <input type="hidden" name="id" data-game-id />
+                <input type="hidden" name="preview_image_path" data-preview-path />
+                <input type="hidden" name="genre" data-genre-labels />
+                <input type="hidden" name="genre_key" data-primary-genre />
+                <input type="hidden" name="player_key" data-primary-player />
+
+                <div class="nova-admin-grid">
+                  <label class="nova-admin-field">
+                    <span>Платформа <small>Де показувати гру в каталозі: VR або PlayStation.</small></span>
+                    <select name="platform" required>
+                      <option value="vr">VR</option>
+                      <option value="ps">PS</option>
+                    </select>
+                  </label>
+                  <label class="nova-admin-field">
+                    <span>Показувати <small>Якщо вимкнено, гра лишиться в адмінці, але зникне з сайту.</small></span>
+                    <input class="nova-admin-check" name="active" type="checkbox" checked />
+                  </label>
+                </div>
+
+                <div class="nova-admin-grid">
+                  <label class="nova-admin-field">
+                    <span>Назва <small>Назва гри на картці та в детальному перегляді.</small></span>
+                    <input name="title" required data-title-input placeholder="Наприклад, Beat Saber" />
+                  </label>
+                  <label class="nova-admin-field">
+                    <span>Slug <small>URL-ключ латиницею, створюється з назви автоматично.</small></span>
+                    <input name="slug" required data-slug-input placeholder="beat-saber" />
+                  </label>
+                </div>
+
+                <fieldset class="nova-admin-choice-field">
+                  <legend>Жанри <small>Можна вибрати кілька, фільтри на сайті знайдуть гру за кожним із них.</small></legend>
+                  <div class="nova-admin-choice-list" data-choice-list="genres">
+                    <label><input type="checkbox" name="genre_keys" value="arcade" checked data-genre-choice /> <span>Аркади</span></label>
+                    <label><input type="checkbox" name="genre_keys" value="action" data-genre-choice /> <span>Екшен</span></label>
+                    <label><input type="checkbox" name="genre_keys" value="quest" data-genre-choice /> <span>Квести</span></label>
+                    <label><input type="checkbox" name="genre_keys" value="simulator" data-genre-choice /> <span>Симулятори</span></label>
+                    <label><input type="checkbox" name="genre_keys" value="sport" data-genre-choice /> <span>Спорт</span></label>
+                    <label><input type="checkbox" name="genre_keys" value="fishing" data-genre-choice /> <span>Рибалка</span></label>
+                    <label><input type="checkbox" name="genre_keys" value="horror" data-genre-choice /> <span>Horror</span></label>
+                  </div>
+                </fieldset>
+
+                <div class="nova-admin-grid">
+                  <label class="nova-admin-field">
+                    <span>Кількість гравців <small>Текст на картці: “1-4”, “до 6 гравців”, “2 гравці”.</small></span>
+                    <input name="players" required placeholder="1-4" />
+                  </label>
+                  <fieldset class="nova-admin-choice-field nova-admin-choice-field--inline">
+                    <legend>Режими <small>Можна вибрати кілька: solo, co-op, online.</small></legend>
+                    <div class="nova-admin-choice-list" data-choice-list="players">
+                      <label><input type="checkbox" name="player_keys" value="solo" checked data-player-choice /> <span>Solo</span></label>
+                      <label><input type="checkbox" name="player_keys" value="coop" data-player-choice /> <span>Co-op</span></label>
+                      <label><input type="checkbox" name="player_keys" value="online" data-player-choice /> <span>Online</span></label>
+                    </div>
+                  </fieldset>
+                </div>
+
+                <div class="nova-admin-grid">
+                  <label class="nova-admin-field">
+                    <span>Тривалість <small>Людський текст для картки.</small></span>
+                    <input name="duration" required placeholder="45-60 хв" />
+                  </label>
+                  <label class="nova-admin-field">
+                    <span>Ключ тривалості <small>Короткий службовий ключ, наприклад 45-60 або 60.</small></span>
+                    <input name="duration_key" required placeholder="45-60" />
+                  </label>
+                </div>
+
+                <div class="nova-admin-grid">
+                  <label class="nova-admin-field">
+                    <span>Рівень / настрій <small>Короткий маркер: “легкий старт”, “інтенсивний”, “командний”.</small></span>
+                    <input name="level" required placeholder="Легкий старт" />
+                  </label>
+                  <label class="nova-admin-field">
+                    <span>Тон fallback <small>Колір картки, якщо preview-зображення не завантажене.</small></span>
+                    <select name="media_tone" required>
+                      <option value="cyan">cyan</option>
+                      <option value="blue">blue</option>
+                      <option value="violet">violet</option>
+                      <option value="magenta">magenta</option>
+                      <option value="pink">pink</option>
+                      <option value="green">green</option>
+                      <option value="gold">gold</option>
+                      <option value="ice">ice</option>
+                    </select>
+                  </label>
+                </div>
+
+                <label class="nova-admin-field">
+                  <span>Короткий опис <small>1-2 речення для швидкого розуміння гри в списку.</small></span>
+                  <textarea name="short_text" required rows="3" placeholder="Коротко про темп, формат і кому зайде гра."></textarea>
+                </label>
+                <label class="nova-admin-field">
+                  <span>Детальний опис <small>Повний опис для відкритої картки гри на сайті.</small></span>
+                  <textarea name="description" required rows="5" placeholder="Що відбувається у грі, який досвід отримує гість, для яких компаній підходить."></textarea>
+                </label>
+                <label class="nova-admin-field">
+                  <span>Теги <small>Короткі бейджі на картці, через кому або з нового рядка.</small></span>
+                  <textarea name="tags" required rows="3" placeholder="ритм, швидкий старт, команда"></textarea>
+                </label>
+                <label class="nova-admin-field">
+                  <span>Особливості <small>Список переваг у детальному перегляді, кожен пункт з нового рядка.</small></span>
+                  <textarea name="features" required rows="3" placeholder="інструктаж перед стартом&#10;підбір під рівень&#10;командний формат"></textarea>
+                </label>
+                <label class="nova-admin-field">
+                  <span>Кому підійде <small>Для яких гостей або подій найкраще рекомендувати цю гру.</small></span>
+                  <textarea name="recommended_for" required rows="3" placeholder="новачкам, компаніям друзів, дням народження"></textarea>
+                </label>
+
+                <label class="nova-admin-field">
+                  <span>Порядок <small>Менше число показується вище у списку.</small></span>
+                  <input name="sort_order" type="number" value="100" required />
+                </label>
+
+                <label class="nova-admin-field">
+                  <span>Preview image <small>Зображення для картки гри на сайті.</small></span>
+                  <input name="preview_file" type="file" accept="image/png,image/jpeg,image/webp,image/gif" data-preview-file />
+                </label>
+
+                <div class="nova-admin-preview" data-preview-shell hidden>
+                  <img alt="" data-preview-image />
+                  <button class="nova-admin-button" type="button" data-clear-preview>Прибрати preview</button>
+                </div>
+
+                <div class="nova-admin-form-actions">
+                  <button class="nova-admin-button nova-admin-button--primary" type="submit" data-save-game>Зберегти</button>
+                  <button class="nova-admin-button" type="button" data-show-game-preview>Прев'ю</button>
+                  <button class="nova-admin-button" type="button" data-reset-game-form>Нова картка</button>
+                </div>
+                <p class="nova-admin-status" data-games-status role="status"></p>
+              </form>
+            </aside>
+          </div>
+        </section>
+      </section>
+    </section>
+    <div class="nova-admin-modal" data-game-preview-modal hidden role="dialog" aria-modal="true" aria-label="Прев'ю гри">
+      <div class="nova-admin-modal__panel">
+        <div class="nova-admin-modal__head">
+          <div>
+            <span class="nova-admin-kicker">Прев'ю</span>
+            <strong>Як гра виглядатиме на сайті</strong>
+          </div>
+          <button class="nova-admin-button" type="button" data-close-game-preview>Закрити</button>
+        </div>
+        <div class="nova-admin-preview-card" data-game-preview-card></div>
+      </div>
+    </div>
+  </main>
+</BaseLayout>
+
+<script>
+  import { isSupabaseConfigured, supabase } from "../../lib/supabaseClient";
+
+  type AdminSection = "dashboard" | "bookings" | "games";
+  type PlatformFilter = "all" | "vr" | "ps";
+
+  interface BoardBooking {
+    id: string;
+    service_name: string;
+    service_slug: string;
+    area: string;
+    customer_name: string;
+    customer_phone: string;
+    customer_email?: string;
+    party_size: number;
+    start_at: string;
+    end_at: string;
+    status: string;
+    comment?: string;
+    manager_note?: string;
+    resource_names: string[];
+  }
+
+  interface VRGameRow {
+    id: string;
+    slug: string;
+    title: string;
+    platform?: "vr" | "ps";
+    genre: string;
+    genre_key: string;
+    genre_keys?: string[];
+    tags: string[];
+    players: string;
+    player_key: string;
+    player_keys?: string[];
+    duration: string;
+    duration_key: string;
+    level: string;
+    short_text: string;
+    description: string;
+    features: string[];
+    recommended_for: string;
+    media_tone: string;
+    preview_image_path?: string | null;
+    active: boolean;
+    sort_order: number;
+  }
+
+  const PREVIEW_BUCKET = "vr-game-previews";
+  const sectionTitles: Record<AdminSection, string> = {
+    dashboard: "Огляд",
+    bookings: "Бронювання",
+    games: "Ігри"
+  };
+  const genreOptions = [
+    { key: "arcade", label: "Аркади" },
+    { key: "action", label: "Екшен" },
+    { key: "quest", label: "Квести" },
+    { key: "simulator", label: "Симулятори" },
+    { key: "sport", label: "Спорт" },
+    { key: "fishing", label: "Рибалка" },
+    { key: "horror", label: "Horror" }
+  ];
+  const playerModeOptions = [
+    { key: "solo", label: "Solo" },
+    { key: "coop", label: "Co-op" },
+    { key: "online", label: "Online" }
+  ];
+
+  const loginView = document.querySelector<HTMLElement>("[data-login-view]");
+  const shell = document.querySelector<HTMLElement>("[data-admin-shell]");
+  const loginForm = document.querySelector<HTMLFormElement>("[data-login-form]");
+  const emailInput = document.querySelector<HTMLInputElement>("[data-login-email]");
+  const passwordInput = document.querySelector<HTMLInputElement>("[data-login-password]");
+  const loginButton = document.querySelector<HTMLButtonElement>("[data-login-button]");
+  const logoutButton = document.querySelector<HTMLButtonElement>("[data-logout-button]");
+  const loginStatus = document.querySelector<HTMLElement>("[data-login-status]");
+  const globalStatus = document.querySelector<HTMLElement>("[data-admin-global-status]");
+  const userLabel = document.querySelector<HTMLElement>("[data-admin-user]");
+  const title = document.querySelector<HTMLElement>("[data-admin-title]");
+  const breadcrumb = document.querySelector<HTMLElement>("[data-admin-breadcrumb]");
+  const screens = Array.from(document.querySelectorAll<HTMLElement>("[data-admin-screen]"));
+  const navItems = Array.from(document.querySelectorAll<HTMLElement>("[data-admin-nav]"));
+
+  const loadBoardButton = document.querySelector<HTMLButtonElement>("[data-load-board]");
+  const bookingBoard = document.querySelector<HTMLElement>("[data-booking-board]");
+  const calendarTitle = document.querySelector<HTMLElement>("[data-calendar-title]");
+  const calendarGrid = document.querySelector<HTMLElement>("[data-calendar-grid]");
+  const selectedDateInput = document.querySelector<HTMLInputElement>("[data-selected-date]");
+  const calendarPrevButton = document.querySelector<HTMLButtonElement>("[data-calendar-prev]");
+  const calendarNextButton = document.querySelector<HTMLButtonElement>("[data-calendar-next]");
+  const bookingPanelTitle = document.querySelector<HTMLElement>("[data-booking-panel-title]");
+  const selectedDaySummary = document.querySelector<HTMLElement>("[data-selected-day-summary]");
+  const blockDayLabel = document.querySelector<HTMLElement>("[data-block-day-label]");
+  const blockForm = document.querySelector<HTMLFormElement>("[data-block-form]");
+  const bookingsStatus = document.querySelector<HTMLElement>("[data-bookings-status]");
+  const dashboardBookings = document.querySelector<HTMLElement>("[data-dashboard-bookings]");
+
+  const gamesList = document.querySelector<HTMLElement>("[data-games-list]");
+  const gamesCount = document.querySelector<HTMLElement>("[data-games-count]");
+  const gameForm = document.querySelector<HTMLFormElement>("[data-game-form]");
+  const gameStatus = document.querySelector<HTMLElement>("[data-games-status]");
+  const formMode = document.querySelector<HTMLElement>("[data-form-mode]");
+  const idInput = document.querySelector<HTMLInputElement>("[data-game-id]");
+  const titleInput = document.querySelector<HTMLInputElement>("[data-title-input]");
+  const slugInput = document.querySelector<HTMLInputElement>("[data-slug-input]");
+  const genreLabelInput = document.querySelector<HTMLInputElement>("[data-genre-labels]");
+  const primaryGenreInput = document.querySelector<HTMLInputElement>("[data-primary-genre]");
+  const primaryPlayerInput = document.querySelector<HTMLInputElement>("[data-primary-player]");
+  const previewPathInput = document.querySelector<HTMLInputElement>("[data-preview-path]");
+  const previewFileInput = document.querySelector<HTMLInputElement>("[data-preview-file]");
+  const previewShell = document.querySelector<HTMLElement>("[data-preview-shell]");
+  const previewImage = document.querySelector<HTMLImageElement>("[data-preview-image]");
+  const genreChoiceInputs = Array.from(document.querySelectorAll<HTMLInputElement>("[data-genre-choice]"));
+  const playerChoiceInputs = Array.from(document.querySelectorAll<HTMLInputElement>("[data-player-choice]"));
+  const showGamePreviewButton = document.querySelector<HTMLButtonElement>("[data-show-game-preview]");
+  const previewModal = document.querySelector<HTMLElement>("[data-game-preview-modal]");
+  const previewCard = document.querySelector<HTMLElement>("[data-game-preview-card]");
+  const closeGamePreviewButton = document.querySelector<HTMLButtonElement>("[data-close-game-preview]");
+  const loadGamesButton = document.querySelector<HTMLButtonElement>("[data-load-games]");
+  const platformButtons = Array.from(document.querySelectorAll<HTMLButtonElement>("[data-games-platform-filter]"));
+  const dashboardGames = document.querySelector<HTMLElement>("[data-dashboard-games]");
+
+  let sessionActive = false;
+  let bookings: BoardBooking[] = [];
+  let games: VRGameRow[] = [];
+  let gamesLoaded = false;
+  let bookingsLoaded = false;
+  let currentMonth = "";
+  let selectedDate = "";
+  let gamePlatformFilter: PlatformFilter = "all";
+  let slugEdited = false;
+
+  const setStatus = (element: HTMLElement | null, message: string, state = "idle") => {
+    if (!element) return;
+    element.textContent = message;
+    element.dataset.state = state;
+  };
+
+  const escapeHtml = (value: unknown) => String(value ?? "")
+    .replaceAll("&", "&amp;")
+    .replaceAll("<", "&lt;")
+    .replaceAll(">", "&gt;")
+    .replaceAll('"', "&quot;")
+    .replaceAll("'", "&#039;");
+
+  const formatAuthError = (message: string) => {
+    const normalized = message.toLowerCase();
+    if (normalized.includes("invalid login credentials")) return "Невірний email або пароль.";
+    if (normalized.includes("email not confirmed")) return "Email менеджера ще не підтверджено в Supabase Auth.";
+    return message;
+  };
+
+  const formatAdminError = (message: string) => (
+    message.includes("Manager access required") || message.includes("row-level security")
+      ? "Користувач увійшов, але його UUID не додано в public.manager_users або не застосована потрібна migration."
+      : message
+  );
+
+  const toDateInput = (date: Date) => {
+    const local = new Date(date);
+    local.setMinutes(local.getMinutes() - local.getTimezoneOffset());
+    return local.toISOString().slice(0, 10);
+  };
+
+  const toKyivRange = (dateValue: string, endOfDay = false) => {
+    const suffix = endOfDay ? "T23:59:59+03:00" : "T00:00:00+03:00";
+    return `${dateValue}${suffix}`;
+  };
+
+  const parseDateInput = (value: string) => {
+    const [year, month, day] = value.split("-").map(Number);
+    return new Date(year, month - 1, day || 1);
+  };
+
+  const toMonthInput = (date: Date) => `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, "0")}`;
+
+  const getMonthRange = () => {
+    const [year, month] = currentMonth.split("-").map(Number);
+    const start = new Date(year, month - 1, 1);
+    const end = new Date(year, month, 0);
+    return {
+      from: toDateInput(start),
+      to: toDateInput(end),
+      start,
+      end
+    };
+  };
+
+  const formatMonthTitle = (monthValue: string) => {
+    const [year, month] = monthValue.split("-").map(Number);
+    const value = new Date(year, month - 1, 1);
+    return new Intl.DateTimeFormat("uk-UA", { month: "long", year: "numeric" }).format(value);
+  };
+
+  const formatDateLabel = (dateValue: string) => new Intl.DateTimeFormat("uk-UA", {
+    day: "2-digit",
+    month: "long",
+    year: "numeric"
+  }).format(parseDateInput(dateValue));
+
+  const getKyivDateKey = (value: string) => {
+    const parts = new Intl.DateTimeFormat("en-CA", {
+      day: "2-digit",
+      month: "2-digit",
+      year: "numeric",
+      timeZone: "Europe/Kyiv"
+    }).formatToParts(new Date(value));
+    const get = (type: string) => parts.find((part) => part.type === type)?.value || "";
+    return `${get("year")}-${get("month")}-${get("day")}`;
+  };
+
+  const buildKyivDateTime = (dateValue: string, timeValue: string) => `${dateValue}T${timeValue}:00`;
+
+  const formatDateTime = (value: string) => new Intl.DateTimeFormat("uk-UA", {
+    day: "2-digit",
+    month: "short",
+    hour: "2-digit",
+    minute: "2-digit",
+    timeZone: "Europe/Kyiv"
+  }).format(new Date(value));
+
+  const formatTimeOnly = (value: string) => new Intl.DateTimeFormat("uk-UA", {
+    hour: "2-digit",
+    minute: "2-digit",
+    timeZone: "Europe/Kyiv"
+  }).format(new Date(value));
+
+  const toSlug = (value: string) => value
+    .trim()
+    .toLowerCase()
+    .normalize("NFKD")
+    .replace(/[\u0300-\u036f]/g, "")
+    .replace(/[^a-z0-9]+/g, "-")
+    .replace(/^-+|-+$/g, "")
+    .slice(0, 80);
+
+  const normalizeList = (value: FormDataEntryValue | null) => String(value || "")
+    .split(/[\n,;]+/)
+    .map((item) => item.trim())
+    .filter(Boolean);
+
+  const getCheckedValues = (inputs: HTMLInputElement[]) => inputs
+    .filter((input) => input.checked)
+    .map((input) => input.value);
+
+  const labelsFor = (keys: string[], options: Array<{ key: string; label: string }>) => keys
+    .map((key) => options.find((option) => option.key === key)?.label || key)
+    .filter(Boolean);
+
+  const setCheckedValues = (inputs: HTMLInputElement[], values: string[]) => {
+    const nextValues = values.length ? values : [inputs[0]?.value || ""];
+    inputs.forEach((input) => {
+      input.checked = nextValues.includes(input.value);
+    });
+  };
+
+  const syncGameChoiceFields = () => {
+    if (!genreChoiceInputs.length || !playerChoiceInputs.length) return;
+    const genreKeys = getCheckedValues(genreChoiceInputs);
+    const playerKeys = getCheckedValues(playerChoiceInputs);
+
+    if (!genreKeys.length) genreChoiceInputs[0].checked = true;
+    if (!playerKeys.length) playerChoiceInputs[0].checked = true;
+
+    const syncedGenreKeys = getCheckedValues(genreChoiceInputs);
+    const syncedPlayerKeys = getCheckedValues(playerChoiceInputs);
+    if (genreLabelInput) genreLabelInput.value = labelsFor(syncedGenreKeys, genreOptions).join(", ");
+    if (primaryGenreInput) primaryGenreInput.value = syncedGenreKeys[0] || "arcade";
+    if (primaryPlayerInput) primaryPlayerInput.value = syncedPlayerKeys[0] || "solo";
+  };
+
+  const getPreviewUrl = (path?: string | null) => {
+    if (!path || !supabase) return "";
+    return supabase.storage.from(PREVIEW_BUCKET).getPublicUrl(path).data.publicUrl;
+  };
+
+  const updateDashboard = () => {
+    if (dashboardBookings) dashboardBookings.textContent = bookingsLoaded ? String(bookings.length) : "—";
+    if (dashboardGames) {
+      const visibleGames = games.filter((game) => game.active);
+      const vrCount = visibleGames.filter((game) => (game.platform || "vr") === "vr").length;
+      const psCount = visibleGames.filter((game) => game.platform === "ps").length;
+      dashboardGames.textContent = gamesLoaded ? `${visibleGames.length} (${vrCount} VR / ${psCount} PS)` : "—";
+    }
+  };
+
+  const setAuthenticatedView = async (isLoggedIn: boolean, email = "") => {
+    sessionActive = isLoggedIn;
+    loginView?.toggleAttribute("hidden", isLoggedIn);
+    shell?.toggleAttribute("hidden", !isLoggedIn);
+    if (userLabel) userLabel.textContent = email || "Manager";
+
+    if (!isLoggedIn) {
+      bookings = [];
+      games = [];
+      bookingsLoaded = false;
+      gamesLoaded = false;
+      if (bookingBoard) bookingBoard.innerHTML = '<p class="nova-admin-empty">Увійдіть, щоб побачити бронювання.</p>';
+      if (gamesList) gamesList.innerHTML = '<p class="nova-admin-empty">Увійдіть, щоб редагувати каталог.</p>';
+      updateDashboard();
+      return;
+    }
+
+    activateSection(getSectionFromHash(), false);
+  };
+
+  const getSectionFromHash = (): AdminSection => {
+    const hash = location.hash.replace("#", "");
+    if (hash === "bookings" || hash === "games" || hash === "dashboard") return hash;
+    return "dashboard";
+  };
+
+  const activateSection = (section: AdminSection, push = true) => {
+    if (!sessionActive) return;
+    screens.forEach((screen) => {
+      const isActive = screen.dataset.adminScreen === section;
+      screen.classList.toggle("is-active", isActive);
+      screen.toggleAttribute("hidden", !isActive);
+    });
+    navItems.forEach((item) => {
+      const isActive = item.dataset.adminNav === section;
+      item.classList.toggle("is-active", isActive);
+      item.setAttribute("aria-current", isActive ? "page" : "false");
+    });
+    if (title) title.textContent = sectionTitles[section];
+    if (breadcrumb) breadcrumb.textContent = section === "dashboard" ? "Адмінка" : `Адмінка / ${sectionTitles[section]}`;
+    if (push && location.hash !== `#${section}`) history.pushState(null, "", `#${section}`);
+    setStatus(globalStatus, "");
+    if (section === "bookings" && !bookingsLoaded) loadBoard();
+    if (section === "games" && !gamesLoaded) loadGames();
+    updateDashboard();
+  };
+
+  const updateAuth = async () => {
+    if (!isSupabaseConfigured || !supabase) {
+      setStatus(loginStatus, "Додайте PUBLIC_SUPABASE_URL і PUBLIC_SUPABASE_ANON_KEY.", "warning");
+      await setAuthenticatedView(false);
+      return;
+    }
+
+    const { data } = await supabase.auth.getSession();
+    await setAuthenticatedView(Boolean(data.session), data.session?.user?.email || "");
+  };
+
+  const getSelectedDayBookings = () => bookings.filter((booking) => getKyivDateKey(booking.start_at) === selectedDate);
+
+  const updateSelectedDayLabels = () => {
+    if (!selectedDate) return;
+    const dayBookings = getSelectedDayBookings();
+    const dayLabel = formatDateLabel(selectedDate);
+    if (selectedDateInput) selectedDateInput.value = selectedDate;
+    if (bookingPanelTitle) bookingPanelTitle.textContent = `Бронювання: ${dayLabel}`;
+    if (selectedDaySummary) selectedDaySummary.textContent = dayBookings.length
+      ? `${dayBookings.length} за день / ${bookings.length} за місяць`
+      : `Вільно / ${bookings.length} за місяць`;
+    if (blockDayLabel) blockDayLabel.textContent = dayLabel;
+  };
+
+  const renderBookingCalendar = () => {
+    if (!calendarGrid || !currentMonth) return;
+    const range = getMonthRange();
+    const monthStart = range.start;
+    const monthIndex = monthStart.getMonth();
+    const startOffset = (monthStart.getDay() + 6) % 7;
+    const gridStart = new Date(monthStart);
+    gridStart.setDate(monthStart.getDate() - startOffset);
+    const todayKey = toDateInput(new Date());
+    const dayBookings = new Map<string, BoardBooking[]>();
+
+    bookings.forEach((booking) => {
+      const key = getKyivDateKey(booking.start_at);
+      const items = dayBookings.get(key) || [];
+      items.push(booking);
+      dayBookings.set(key, items);
+    });
+
+    if (calendarTitle) calendarTitle.textContent = formatMonthTitle(currentMonth);
+
+    const weekdays = ["Пн", "Вт", "Ср", "Чт", "Пт", "Сб", "Нд"]
+      .map((day) => `<span class="nova-admin-calendar__weekday">${day}</span>`)
+      .join("");
+
+    const days = Array.from({ length: 42 }, (_, index) => {
+      const day = new Date(gridStart);
+      day.setDate(gridStart.getDate() + index);
+      const key = toDateInput(day);
+      const items = (dayBookings.get(key) || [])
+        .sort((first, second) => new Date(first.start_at).getTime() - new Date(second.start_at).getTime());
+      const count = items.length;
+      const loadClass = count >= 4 ? "is-busy" : count >= 2 ? "is-medium" : count ? "is-light" : "is-free";
+      const eventMarkers = items.slice(0, 3).map((booking) => `
+        <i
+          data-status="${escapeHtml(booking.status)}"
+          title="${escapeHtml(`${formatDateTime(booking.start_at)} · ${booking.service_name}`)}"
+        ></i>
+      `).join("");
+      const firstSlots = items.slice(0, 2)
+        .map((booking) => formatTimeOnly(booking.start_at))
+        .join(", ");
+      const classes = [
+        "nova-admin-calendar__day",
+        loadClass,
+        day.getMonth() !== monthIndex ? "is-outside" : "",
+        key === selectedDate ? "is-selected" : "",
+        key === todayKey ? "is-today" : "",
+        count ? "has-bookings" : ""
+      ].filter(Boolean).join(" ");
+
+      return `
+        <button class="${classes}" type="button" data-calendar-day="${key}" aria-label="${escapeHtml(`${formatDateLabel(key)}: ${count ? `${count} бронювань` : "вільно"}`)}">
+          <span class="nova-admin-calendar__top">
+            <strong>${day.getDate()}</strong>
+            ${key === todayKey ? "<em>сьогодні</em>" : ""}
+            ${count ? `<span class="nova-admin-calendar__count">${count}</span>` : ""}
+          </span>
+          <span class="nova-admin-calendar__events" aria-hidden="true">${eventMarkers || "<i></i>"}</span>
+          ${firstSlots ? `<small>${escapeHtml(firstSlots)}</small>` : ""}
+        </button>
+      `;
+    }).join("");
+
+    calendarGrid.innerHTML = weekdays + days;
+    updateSelectedDayLabels();
+  };
+
+  const renderSelectedDayBookings = () => renderBookings(getSelectedDayBookings());
+
+  const selectCalendarDay = async (dateValue: string) => {
+    selectedDate = dateValue;
+    const nextMonth = dateValue.slice(0, 7);
+    if (nextMonth !== currentMonth) {
+      currentMonth = nextMonth;
+      await loadBoard();
+      return;
+    }
+
+    renderBookingCalendar();
+    renderSelectedDayBookings();
+    setStatus(bookingsStatus, "");
+  };
+
+  const changeCalendarMonth = async (offset: number) => {
+    const [year, month] = currentMonth.split("-").map(Number);
+    const next = new Date(year, month - 1 + offset, 1);
+    currentMonth = toMonthInput(next);
+    selectedDate = toDateInput(next);
+    await loadBoard();
+  };
+
+  const renderBookings = (items: BoardBooking[]) => {
+    if (!bookingBoard) return;
+    updateSelectedDayLabels();
+
+    if (!items.length) {
+      bookingBoard.innerHTML = '<p class="nova-admin-empty">На вибраний день бронювань немає.</p>';
+      return;
+    }
+
+    bookingBoard.innerHTML = items.map((booking) => `
+      <article class="nova-admin-booking-card" data-booking-id="${escapeHtml(booking.id)}">
+        <div class="nova-admin-card-title">
+          <span class="nova-admin-badge" data-status="${escapeHtml(booking.status)}">${escapeHtml(booking.status)}</span>
+          <h3>${escapeHtml(booking.service_name)}</h3>
+          <p>${escapeHtml(formatDateTime(booking.start_at))} - ${escapeHtml(formatDateTime(booking.end_at))}</p>
+        </div>
+        <dl class="nova-admin-details">
+          <div><dt>Клієнт</dt><dd>${escapeHtml(booking.customer_name)}</dd></div>
+          <div><dt>Телефон</dt><dd>${escapeHtml(booking.customer_phone)}</dd></div>
+          <div><dt>Email</dt><dd>${escapeHtml(booking.customer_email || "—")}</dd></div>
+          <div><dt>Людей</dt><dd>${escapeHtml(booking.party_size)}</dd></div>
+          <div><dt>Ресурси</dt><dd>${escapeHtml((booking.resource_names || []).join(", ") || "—")}</dd></div>
+        </dl>
+        ${booking.comment ? `<p class="nova-admin-note">${escapeHtml(booking.comment)}</p>` : ""}
+        <div class="nova-admin-card-actions">
+          <button type="button" data-status-action="confirmed">Підтвердити</button>
+          <button type="button" data-status-action="cancelled">Скасувати</button>
+          <button type="button" data-status-action="completed">Завершити</button>
+          <button type="button" data-status-action="no_show">No-show</button>
+        </div>
+      </article>
+    `).join("");
+  };
+
+  const loadBoard = async () => {
+    if (!isSupabaseConfigured || !supabase || !currentMonth || !selectedDate) return false;
+    const range = getMonthRange();
+
+    setStatus(bookingsStatus, `Завантажуємо ${formatMonthTitle(currentMonth)}...`, "loading");
+    if (bookingBoard) bookingBoard.innerHTML = '<p class="nova-admin-empty">Завантаження...</p>';
+    const { data, error } = await supabase.rpc("list_booking_board", {
+      p_from: toKyivRange(range.from),
+      p_to: toKyivRange(range.to, true)
+    });
+
+    if (error) {
+      bookings = [];
+      bookingsLoaded = true;
+      if (bookingBoard) bookingBoard.innerHTML = '<p class="nova-admin-empty">Немає доступу або сталася помилка.</p>';
+      setStatus(bookingsStatus, formatAdminError(error.message), "error");
+      updateDashboard();
+      return false;
+    }
+
+    bookings = (data || []) as BoardBooking[];
+    bookingsLoaded = true;
+    renderBookingCalendar();
+    renderSelectedDayBookings();
+    setStatus(bookingsStatus, "Календар оновлено.", "success");
+    updateDashboard();
+    return true;
+  };
+
+  const updateBookingStatus = async (bookingId: string, nextStatus: string) => {
+    if (!supabase) return;
+    setStatus(bookingsStatus, "Оновлюємо статус...", "loading");
+    const { error } = await supabase.rpc("update_booking_status", {
+      p_booking_id: bookingId,
+      p_status: nextStatus,
+      p_manager_note: null
+    });
+
+    if (error) {
+      setStatus(bookingsStatus, formatAdminError(error.message), "error");
+      return;
+    }
+
+    await loadBoard();
+    setStatus(bookingsStatus, "Статус оновлено.", "success");
+  };
+
+  const renderPreview = (path?: string | null) => {
+    if (!previewShell || !previewImage) return;
+    const url = getPreviewUrl(path);
+    previewShell.toggleAttribute("hidden", !url);
+    previewImage.src = url;
+  };
+
+  const resetGameForm = () => {
+    gameForm?.reset();
+    if (idInput) idInput.value = "";
+    if (previewPathInput) previewPathInput.value = "";
+    if (previewFileInput) previewFileInput.value = "";
+    if (formMode) formMode.textContent = "New game";
+    slugEdited = false;
+    previewModal?.setAttribute("hidden", "");
+    syncGameChoiceFields();
+    renderPreview("");
+    setStatus(gameStatus, "");
+  };
+
+  const fillGameForm = (game: VRGameRow) => {
+    if (!gameForm) return;
+    const fields = gameForm.elements as typeof gameForm.elements & {
+      id: HTMLInputElement;
+      platform: HTMLSelectElement;
+      slug: HTMLInputElement;
+      title: HTMLInputElement;
+      genre: HTMLInputElement;
+      genre_key: HTMLInputElement;
+      tags: HTMLTextAreaElement;
+      players: HTMLInputElement;
+      player_key: HTMLInputElement;
+      duration: HTMLInputElement;
+      duration_key: HTMLInputElement;
+      level: HTMLInputElement;
+      short_text: HTMLTextAreaElement;
+      description: HTMLTextAreaElement;
+      features: HTMLTextAreaElement;
+      recommended_for: HTMLTextAreaElement;
+      media_tone: HTMLSelectElement;
+      preview_image_path: HTMLInputElement;
+      active: HTMLInputElement;
+      sort_order: HTMLInputElement;
+    };
+
+    fields.id.value = game.id;
+    fields.platform.value = game.platform || "vr";
+    fields.slug.value = game.slug;
+    fields.title.value = game.title;
+    fields.genre.value = game.genre;
+    setCheckedValues(genreChoiceInputs, game.genre_keys?.length ? game.genre_keys : [game.genre_key || "arcade"]);
+    fields.tags.value = (game.tags || []).join("\n");
+    fields.players.value = game.players;
+    setCheckedValues(playerChoiceInputs, game.player_keys?.length ? game.player_keys : [game.player_key || "solo"]);
+    syncGameChoiceFields();
+    fields.duration.value = game.duration;
+    fields.duration_key.value = game.duration_key;
+    fields.level.value = game.level;
+    fields.short_text.value = game.short_text;
+    fields.description.value = game.description;
+    fields.features.value = (game.features || []).join("\n");
+    fields.recommended_for.value = game.recommended_for;
+    fields.media_tone.value = game.media_tone || "cyan";
+    fields.preview_image_path.value = game.preview_image_path || "";
+    fields.active.checked = game.active;
+    fields.sort_order.value = String(game.sort_order);
+    if (previewFileInput) previewFileInput.value = "";
+    if (formMode) formMode.textContent = "Edit game";
+    slugEdited = true;
+    renderPreview(game.preview_image_path);
+    setStatus(gameStatus, "");
+  };
+
+  const filteredGames = () => games.filter((game) => (
+    gamePlatformFilter === "all" || (game.platform || "vr") === gamePlatformFilter
+  ));
+
+  const renderGames = () => {
+    if (!gamesList) return;
+    const visibleGames = filteredGames();
+    const vrCount = games.filter((game) => (game.platform || "vr") === "vr").length;
+    const psCount = games.filter((game) => game.platform === "ps").length;
+    if (gamesCount) gamesCount.textContent = `${visibleGames.length} у фільтрі · ${vrCount} VR · ${psCount} PS`;
+
+    if (!visibleGames.length) {
+      gamesList.innerHTML = '<p class="nova-admin-empty">У цьому фільтрі ігор поки немає.</p>';
+      updateDashboard();
+      return;
+    }
+
+    gamesList.innerHTML = visibleGames.map((game) => {
+      const previewUrl = getPreviewUrl(game.preview_image_path);
+      const platform = game.platform || "vr";
+      const genreLabel = game.genre || labelsFor(game.genre_keys?.length ? game.genre_keys : [game.genre_key], genreOptions).join(", ");
+      const playerModes = labelsFor(game.player_keys?.length ? game.player_keys : [game.player_key], playerModeOptions).join(" / ");
+      return `
+        <article class="nova-admin-game-card" data-game-id="${escapeHtml(game.id)}">
+          ${previewUrl ? `<img src="${escapeHtml(previewUrl)}" alt="" />` : `<span class="nova-admin-game-card__tone">${escapeHtml(game.media_tone || "cyan")}</span>`}
+          <div>
+            <div class="nova-admin-card-badges">
+              <span class="nova-admin-badge nova-admin-badge--platform" data-platform="${platform}">${platform.toUpperCase()}</span>
+              <span class="nova-admin-badge" data-status="${game.active ? "confirmed" : "cancelled"}">${game.active ? "active" : "hidden"}</span>
+            </div>
+            <h3>${escapeHtml(game.title)}</h3>
+            <p>${escapeHtml(genreLabel)} · ${escapeHtml(game.players)} · ${escapeHtml(playerModes)} · ${escapeHtml(game.duration)}</p>
+          </div>
+          <div class="nova-admin-card-actions">
+            <button type="button" data-edit-game="${escapeHtml(game.id)}">Редагувати</button>
+            <button type="button" data-toggle-game="${escapeHtml(game.id)}">${game.active ? "Сховати" : "Показати"}</button>
+            <button class="nova-admin-danger" type="button" data-delete-game="${escapeHtml(game.id)}">Видалити</button>
+          </div>
+        </article>
+      `;
+    }).join("");
+    updateDashboard();
+  };
+
+  const loadGames = async () => {
+    if (!supabase || !gamesList) return;
+    gamesList.innerHTML = '<p class="nova-admin-empty">Завантажуємо ігри...</p>';
+    setStatus(gameStatus, "Завантажуємо каталог...", "loading");
+
+    const { data, error } = await supabase
+      .from("vr_games")
+      .select("*")
+      .order("sort_order", { ascending: true })
+      .order("title", { ascending: true });
+
+    if (error) {
+      games = [];
+      gamesLoaded = true;
+      gamesList.innerHTML = '<p class="nova-admin-empty">Не вдалося завантажити каталог.</p>';
+      setStatus(gameStatus, formatAdminError(error.message), "error");
+      updateDashboard();
+      return;
+    }
+
+    games = ((data || []) as VRGameRow[]).map((game) => ({
+      ...game,
+      platform: game.platform || "vr",
+      genre_keys: game.genre_keys?.length ? game.genre_keys : [game.genre_key || "arcade"],
+      player_keys: game.player_keys?.length ? game.player_keys : [game.player_key || "solo"]
+    }));
+    gamesLoaded = true;
+    renderGames();
+    setStatus(gameStatus, "Каталог оновлено.", "success");
+  };
+
+  const deleteGame = async (game: VRGameRow) => {
+    if (!supabase) return;
+    const confirmed = window.confirm(`Видалити гру "${game.title}"? Цю дію не можна скасувати.`);
+    if (!confirmed) return;
+
+    setStatus(gameStatus, "Видаляємо гру...", "loading");
+    const { error } = await supabase
+      .from("vr_games")
+      .delete()
+      .eq("id", game.id);
+
+    if (error) {
+      setStatus(gameStatus, formatAdminError(error.message), "error");
+      return;
+    }
+
+    let previewCleanupFailed = false;
+    if (game.preview_image_path) {
+      const { error: storageError } = await supabase.storage
+        .from(PREVIEW_BUCKET)
+        .remove([game.preview_image_path]);
+      previewCleanupFailed = Boolean(storageError);
+    }
+
+    if (idInput?.value === game.id) resetGameForm();
+    await loadGames();
+    setStatus(
+      gameStatus,
+      previewCleanupFailed ? "Гру видалено, але preview-файл не вдалося прибрати зі storage." : "Гру видалено.",
+      previewCleanupFailed ? "warning" : "success"
+    );
+  };
+
+  const renderGameDraftPreview = () => {
+    if (!gameForm || !previewModal || !previewCard) return;
+    syncGameChoiceFields();
+    const formData = new FormData(gameForm);
+    const genreKeys = getCheckedValues(genreChoiceInputs);
+    const playerKeys = getCheckedValues(playerChoiceInputs);
+    const titleValue = String(formData.get("title") || "").trim() || "Назва гри";
+    const platform = String(formData.get("platform") || "vr").toUpperCase();
+    const genreLabel = labelsFor(genreKeys, genreOptions).join(", ") || "Жанри";
+    const playerModes = labelsFor(playerKeys, playerModeOptions).join(" / ") || "Режими";
+    const players = String(formData.get("players") || "").trim() || "Кількість гравців";
+    const duration = String(formData.get("duration") || "").trim() || "Тривалість";
+    const level = String(formData.get("level") || "").trim() || "Рівень";
+    const shortText = String(formData.get("short_text") || "").trim() || "Короткий опис гри з'явиться тут.";
+    const description = String(formData.get("description") || "").trim() || shortText;
+    const tags = normalizeList(formData.get("tags")).slice(0, 5);
+    const features = normalizeList(formData.get("features")).slice(0, 4);
+    const imageSrc = previewImage?.getAttribute("src") || getPreviewUrl(String(formData.get("preview_image_path") || ""));
+    const tone = String(formData.get("media_tone") || "cyan").toUpperCase();
+
+    previewCard.innerHTML = `
+      <article class="nova-admin-preview-game">
+        <div class="nova-admin-preview-game__media">
+          ${imageSrc ? `<img src="${escapeHtml(imageSrc)}" alt="" />` : `<span>${escapeHtml(tone)}</span>`}
+        </div>
+        <div class="nova-admin-preview-game__body">
+          <div class="nova-admin-card-badges">
+            <span class="nova-admin-badge nova-admin-badge--platform" data-platform="${escapeHtml(platform.toLowerCase())}">${escapeHtml(platform)}</span>
+            <span class="nova-admin-badge">${escapeHtml(level)}</span>
+          </div>
+          <h3>${escapeHtml(titleValue)}</h3>
+          <p>${escapeHtml(shortText)}</p>
+          <dl class="nova-admin-preview-game__stats">
+            <div><dt>Жанри</dt><dd>${escapeHtml(genreLabel)}</dd></div>
+            <div><dt>Гравці</dt><dd>${escapeHtml(players)} · ${escapeHtml(playerModes)}</dd></div>
+            <div><dt>Тривалість</dt><dd>${escapeHtml(duration)}</dd></div>
+          </dl>
+          <p class="nova-admin-note">${escapeHtml(description)}</p>
+          <div class="nova-admin-card-badges">
+            ${tags.map((tag) => `<span class="nova-admin-badge">${escapeHtml(tag)}</span>`).join("")}
+          </div>
+          ${features.length ? `<ul>${features.map((feature) => `<li>${escapeHtml(feature)}</li>`).join("")}</ul>` : ""}
+        </div>
+      </article>
+    `;
+    previewModal.removeAttribute("hidden");
+  };
+
+  const uploadPreview = async (platform: string, slug: string, previousPath: string) => {
+    const file = previewFileInput?.files?.[0];
+    if (!file || !supabase) return previousPath;
+    const safeName = file.name.toLowerCase().replace(/[^a-z0-9.]+/g, "-").replace(/^-+|-+$/g, "");
+    const path = `${platform}/${slug}/${Date.now()}-${safeName || "preview.jpg"}`;
+    const { error } = await supabase.storage.from(PREVIEW_BUCKET).upload(path, file, {
+      cacheControl: "3600",
+      upsert: false
+    });
+    if (error) throw new Error(error.message);
+    return path;
+  };
+
+  const saveGame = async () => {
+    if (!gameForm || !supabase) return;
+    syncGameChoiceFields();
+    const formData = new FormData(gameForm);
+    const id = String(formData.get("id") || "");
+    const platform = String(formData.get("platform") || "vr");
+    const slug = toSlug(String(formData.get("slug") || formData.get("title") || ""));
+    const previousPath = String(formData.get("preview_image_path") || "");
+    const genreKeys = getCheckedValues(genreChoiceInputs);
+    const playerKeys = getCheckedValues(playerChoiceInputs);
+
+    if (!slug) {
+      setStatus(gameStatus, "Додайте slug або назву гри.", "error");
+      return;
+    }
+
+    if (!genreKeys.length || !playerKeys.length) {
+      setStatus(gameStatus, "Оберіть хоча б один жанр і один режим гравців.", "error");
+      return;
+    }
+
+    setStatus(gameStatus, "Зберігаємо гру...", "loading");
+
+    let previewPath = previousPath;
+    try {
+      previewPath = await uploadPreview(platform, slug, previousPath);
+    } catch (error) {
+      setStatus(gameStatus, `Preview не завантажено: ${error instanceof Error ? error.message : "невідома помилка"}`, "error");
+      return;
+    }
+
+    const payload = {
+      platform,
+      slug,
+      title: String(formData.get("title") || "").trim(),
+      genre: labelsFor(genreKeys, genreOptions).join(", "),
+      genre_key: genreKeys[0] || "arcade",
+      genre_keys: genreKeys,
+      tags: normalizeList(formData.get("tags")),
+      players: String(formData.get("players") || "").trim(),
+      player_key: playerKeys[0] || "solo",
+      player_keys: playerKeys,
+      duration: String(formData.get("duration") || "").trim(),
+      duration_key: String(formData.get("duration_key") || "").trim(),
+      level: String(formData.get("level") || "").trim(),
+      short_text: String(formData.get("short_text") || "").trim(),
+      description: String(formData.get("description") || "").trim(),
+      features: normalizeList(formData.get("features")),
+      recommended_for: String(formData.get("recommended_for") || "").trim(),
+      media_tone: String(formData.get("media_tone") || "cyan"),
+      preview_image_path: previewPath || null,
+      active: formData.get("active") === "on",
+      sort_order: Number(formData.get("sort_order") || 100)
+    };
+
+    const request = id
+      ? supabase.from("vr_games").update(payload).eq("id", id)
+      : supabase.from("vr_games").insert(payload);
+    const { error } = await request;
+
+    if (error) {
+      setStatus(gameStatus, formatAdminError(error.message), "error");
+      return;
+    }
+
+    if (previousPath && previewPath && previousPath !== previewPath) {
+      await supabase.storage.from(PREVIEW_BUCKET).remove([previousPath]);
+    }
+
+    resetGameForm();
+    await loadGames();
+    setStatus(gameStatus, "Гру збережено.", "success");
+  };
+
+  const today = new Date();
+  currentMonth = toMonthInput(today);
+  selectedDate = toDateInput(today);
+  if (selectedDateInput) selectedDateInput.value = selectedDate;
+  renderBookingCalendar();
+  syncGameChoiceFields();
+
+  loginForm?.addEventListener("submit", async (event) => {
+    event.preventDefault();
+    if (!isSupabaseConfigured || !supabase) return;
+
+    const email = emailInput?.value.trim() || "";
+    const password = passwordInput?.value || "";
+    if (!email || !password) {
+      setStatus(loginStatus, "Введіть email і пароль.", "error");
+      return;
+    }
+
+    if (loginButton) loginButton.disabled = true;
+    setStatus(loginStatus, "Входимо в адмінку...", "loading");
+    const { data, error } = await supabase.auth.signInWithPassword({ email, password });
+    if (loginButton) loginButton.disabled = false;
+
+    if (error) {
+      setStatus(loginStatus, formatAuthError(error.message), "error");
+      return;
+    }
+
+    if (passwordInput) passwordInput.value = "";
+    setStatus(loginStatus, "");
+    await setAuthenticatedView(Boolean(data.session), data.session?.user?.email || email);
+  });
+
+  logoutButton?.addEventListener("click", async () => {
+    await supabase?.auth.signOut();
+    await setAuthenticatedView(false);
+    setStatus(loginStatus, "Ви вийшли з адмінки.", "success");
+  });
+
+  navItems.forEach((item) => {
+    item.addEventListener("click", (event) => {
+      event.preventDefault();
+      const section = item.dataset.adminNav as AdminSection | undefined;
+      if (section) activateSection(section);
+    });
+  });
+
+  document.querySelectorAll<HTMLElement>("[data-open-section]").forEach((item) => {
+    item.addEventListener("click", () => {
+      const section = item.dataset.openSection as AdminSection | undefined;
+      if (section) activateSection(section);
+    });
+  });
+
+  window.addEventListener("hashchange", () => activateSection(getSectionFromHash(), false));
+  window.addEventListener("popstate", () => activateSection(getSectionFromHash(), false));
+
+  loadBoardButton?.addEventListener("click", loadBoard);
+  calendarPrevButton?.addEventListener("click", () => changeCalendarMonth(-1));
+  calendarNextButton?.addEventListener("click", () => changeCalendarMonth(1));
+  selectedDateInput?.addEventListener("change", () => {
+    if (selectedDateInput.value) selectCalendarDay(selectedDateInput.value);
+  });
+  calendarGrid?.addEventListener("click", (event) => {
+    const target = event.target as HTMLElement;
+    const button = target.closest<HTMLButtonElement>("[data-calendar-day]");
+    const dateValue = button?.dataset.calendarDay;
+    if (dateValue) selectCalendarDay(dateValue);
+  });
+  bookingBoard?.addEventListener("click", async (event) => {
+    const target = event.target as HTMLElement;
+    const button = target.closest<HTMLButtonElement>("[data-status-action]");
+    if (!button) return;
+    const card = button.closest<HTMLElement>("[data-booking-id]");
+    const bookingId = card?.dataset.bookingId;
+    const nextStatus = button.dataset.statusAction;
+    if (bookingId && nextStatus) await updateBookingStatus(bookingId, nextStatus);
+  });
+
+  blockForm?.addEventListener("submit", async (event) => {
+    event.preventDefault();
+    if (!isSupabaseConfigured || !supabase) return;
+    const formData = new FormData(blockForm);
+    const startsTime = String(formData.get("starts_time") || "");
+    const endsTime = String(formData.get("ends_time") || "");
+    const startsAt = startsTime ? buildKyivDateTime(selectedDate, startsTime) : "";
+    const endsAt = endsTime ? buildKyivDateTime(selectedDate, endsTime) : "";
+
+    if (!startsAt || !endsAt || new Date(endsAt) <= new Date(startsAt)) {
+      setStatus(bookingsStatus, "Перевірте час: кінець має бути пізніше початку.", "error");
+      return;
+    }
+
+    setStatus(bookingsStatus, "Додаємо блокування...", "loading");
+    const { error } = await supabase.rpc("add_blocked_time", {
+      p_starts_at: startsAt ? new Date(startsAt).toISOString() : null,
+      p_ends_at: endsAt ? new Date(endsAt).toISOString() : null,
+      p_reason: String(formData.get("reason") || ""),
+      p_resource_slug: String(formData.get("resource_slug") || "")
+    });
+
+    if (error) {
+      setStatus(bookingsStatus, formatAdminError(error.message), "error");
+      return;
+    }
+
+    blockForm.reset();
+    updateSelectedDayLabels();
+    await loadBoard();
+    setStatus(bookingsStatus, "Час заблоковано.", "success");
+  });
+
+  loadGamesButton?.addEventListener("click", loadGames);
+  platformButtons.forEach((button) => {
+    button.addEventListener("click", () => {
+      gamePlatformFilter = (button.dataset.gamesPlatformFilter || "all") as PlatformFilter;
+      platformButtons.forEach((item) => item.classList.toggle("is-active", item === button));
+      renderGames();
+    });
+  });
+
+  document.querySelectorAll("[data-reset-game-form]").forEach((item) => {
+    item.addEventListener("click", resetGameForm);
+  });
+
+  [...genreChoiceInputs, ...playerChoiceInputs].forEach((input) => {
+    input.addEventListener("change", syncGameChoiceFields);
+  });
+
+  showGamePreviewButton?.addEventListener("click", renderGameDraftPreview);
+  closeGamePreviewButton?.addEventListener("click", () => previewModal?.setAttribute("hidden", ""));
+  previewModal?.addEventListener("click", (event) => {
+    if (event.target === previewModal) previewModal.setAttribute("hidden", "");
+  });
+
+  titleInput?.addEventListener("input", () => {
+    if (!slugInput || slugEdited) return;
+    slugInput.value = toSlug(titleInput.value);
+  });
+
+  slugInput?.addEventListener("input", () => {
+    slugEdited = true;
+  });
+
+  previewFileInput?.addEventListener("change", () => {
+    const file = previewFileInput.files?.[0];
+    if (!file || !previewShell || !previewImage) return;
+    previewImage.src = URL.createObjectURL(file);
+    previewShell.removeAttribute("hidden");
+  });
+
+  document.querySelector("[data-clear-preview]")?.addEventListener("click", () => {
+    if (previewPathInput) previewPathInput.value = "";
+    if (previewFileInput) previewFileInput.value = "";
+    renderPreview("");
+  });
+
+  gameForm?.addEventListener("submit", async (event) => {
+    event.preventDefault();
+    await saveGame();
+  });
+
+  gamesList?.addEventListener("click", async (event) => {
+    const target = event.target as HTMLElement;
+    const editButton = target.closest<HTMLElement>("[data-edit-game]");
+    const toggleButton = target.closest<HTMLElement>("[data-toggle-game]");
+    const deleteButton = target.closest<HTMLElement>("[data-delete-game]");
+
+    if (editButton) {
+      const game = games.find((item) => item.id === editButton.dataset.editGame);
+      if (game) fillGameForm(game);
+      return;
+    }
+
+    if (deleteButton) {
+      const game = games.find((item) => item.id === deleteButton.dataset.deleteGame);
+      if (game) await deleteGame(game);
+      return;
+    }
+
+    if (toggleButton && supabase) {
+      const game = games.find((item) => item.id === toggleButton.dataset.toggleGame);
+      if (!game) return;
+      setStatus(gameStatus, "Оновлюємо видимість...", "loading");
+      const { error } = await supabase
+        .from("vr_games")
+        .update({ active: !game.active })
+        .eq("id", game.id);
+      if (error) {
+        setStatus(gameStatus, formatAdminError(error.message), "error");
+        return;
+      }
+      await loadGames();
+      setStatus(gameStatus, "Видимість оновлено.", "success");
+    }
+  });
+
+  await updateAuth();
+</script>

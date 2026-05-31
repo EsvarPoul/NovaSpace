@@ -1,5 +1,6 @@
 ---
 import BaseLayout from "../layouts/BaseLayout.astro";
+import MobileActionBar from "../components/layout/MobileActionBar.astro";
 import SpaceLanding from "../components/space/SpaceLanding.astro";
 ---
 
@@ -8,4 +9,10 @@ import SpaceLanding from "../components/space/SpaceLanding.astro";
   description="Nova Space об'єднує Nova PhotoStudio та Nova VR: фотостудію і VR-простір у Броварах."
 >
   <SpaceLanding />
+  <MobileActionBar
+    primaryHref="/booking"
+    primaryLabel="Забронювати"
+    secondaryHref="tel:+380660097630"
+    secondaryLabel="Дзвінок"
+  />
 </BaseLayout>

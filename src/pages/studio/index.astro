@@ -2,6 +2,7 @@
 import BaseLayout from "../../layouts/BaseLayout.astro";
 import Header from "../../components/layout/Header.astro";
 import Footer from "../../components/layout/Footer.astro";
+import MobileActionBar from "../../components/layout/MobileActionBar.astro";
 import StudioHero from "../../components/studio/StudioHero.astro";
 import StudioServices from "../../components/studio/StudioServices.astro";
 import StudioPortfolio from "../../components/studio/StudioPortfolio.astro";
@@ -23,6 +24,13 @@ import { studioNav } from "../../data/studio.js";
     </main>
     <Footer brand="Nova Space" mode="Nova PhotoStudio" />
   </div>
+  <MobileActionBar
+    primaryHref="#booking"
+    primaryLabel="Забронювати"
+    secondaryHref="tel:+380660097630"
+    secondaryLabel="Дзвінок"
+    class="mobile-action-bar--studio"
+  />
 </BaseLayout>
 
 <script>

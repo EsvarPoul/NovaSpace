@@ -1,0 +1,32 @@
+---
+interface Props {
+  primaryHref?: string;
+  primaryLabel?: string;
+  secondaryHref: string;
+  secondaryLabel: string;
+  class?: string;
+  compact?: boolean;
+}
+
+const {
+  primaryHref,
+  primaryLabel,
+  secondaryHref,
+  secondaryLabel,
+  class: className = "",
+  compact = false
+} = Astro.props;
+
+const classes = [
+  "mobile-action-bar",
+  compact ? "mobile-action-bar--compact" : "",
+  className
+].filter(Boolean).join(" ");
+---
+
+<nav class={classes} aria-label="Швидкі дії">
+  {!compact && primaryHref && primaryLabel && (
+    <a class="mobile-action-bar__primary" href={primaryHref}>{primaryLabel}</a>
+  )}
+  <a class={`mobile-action-bar__secondary ${compact ? "mobile-action-bar__call" : ""}`.trim()} href={secondaryHref}>{secondaryLabel}</a>
+</nav>
