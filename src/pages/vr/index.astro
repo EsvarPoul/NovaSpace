@@ -4,9 +4,14 @@ import MobileActionBar from "../../components/layout/MobileActionBar.astro";
 import { faqItems } from "../../data/faq.js";
 import { novaVrSchema, organizationSchema } from "../../data/seo.js";
 import { vrContacts, vrGames, vrNav, vrPricing, vrPricingNotes, vrRules, vrScenarios } from "../../data/vr.js";
+import { vrLandingPages } from "../../data/vrLandingPages.js";
 
 const gamesJson = JSON.stringify(vrGames);
 const scenariosJson = JSON.stringify(vrScenarios);
+const localLandingLinks = (vrLandingPages as Array<{ slug: string; eyebrow: string }>).map((page) => ({
+  slug: page.slug,
+  eyebrow: page.eyebrow
+}));
 ---
 
 <BaseLayout
@@ -69,6 +74,14 @@ const scenariosJson = JSON.stringify(vrScenarios);
               <a href="/booking/">Забронювати</a>
               <a href="#games" data-vr-nav="games">Переглянути ігри</a>
             </div>
+            <nav class="vr-local-links" aria-label="Популярні формати NOVA VR у Броварах">
+              <span>Популярні формати у Броварах</span>
+              <div class="vr-local-links__grid">
+                {localLandingLinks.map((landingPage) => (
+                  <a href={`/${landingPage.slug}/`}>{landingPage.eyebrow}</a>
+                ))}
+              </div>
+            </nav>
           </div>
           <div class="vr-about-panel" aria-label="Можливості Nova VR">
             <article>

@@ -1,0 +1,263 @@
+---
+import BaseLayout from "../layouts/BaseLayout.astro";
+import Header from "../components/layout/Header.astro";
+import MobileActionBar from "../components/layout/MobileActionBar.astro";
+import { address, mapsUrl, novaVrSchema, organizationSchema, phone, siteUrl } from "../data/seo.js";
+import { getRelatedVrLandingPages, vrLandingPages } from "../data/vrLandingPages.js";
+
+interface VrLandingPage {
+  slug: string;
+  title: string;
+  description: string;
+  eyebrow: string;
+  h1: string;
+  lead: string;
+  image: string;
+  imageAlt: string;
+  primaryCta: string;
+  secondaryCta: string;
+  highlights: string[];
+  sections: Array<{
+    title: string;
+    text: string;
+  }>;
+  stats: Array<{
+    label: string;
+    value: string;
+  }>;
+  faq: Array<{
+    question: string;
+    answer: string;
+  }>;
+  related?: string[];
+}
+
+export function getStaticPaths() {
+  return (vrLandingPages as VrLandingPage[]).map((page) => ({
+    params: { slug: page.slug },
+    props: { page }
+  }));
+}
+
+const { page } = Astro.props as { page: VrLandingPage };
+const relatedPages = getRelatedVrLandingPages(page) as VrLandingPage[];
+const pageUrl = `${siteUrl}/${page.slug}/`;
+const addressText = `${address.streetAddress}, ${address.addressLocality}`;
+
+const breadcrumbSchema = {
+  "@context": "https://schema.org",
+  "@type": "BreadcrumbList",
+  itemListElement: [
+    {
+      "@type": "ListItem",
+      position: 1,
+      name: "Nova Space",
+      item: `${siteUrl}/`
+    },
+    {
+      "@type": "ListItem",
+      position: 2,
+      name: "NOVA VR",
+      item: `${siteUrl}/vr/`
+    },
+    {
+      "@type": "ListItem",
+      position: 3,
+      name: page.h1,
+      item: pageUrl
+    }
+  ]
+};
+
+const webPageSchema = {
+  "@context": "https://schema.org",
+  "@type": "WebPage",
+  "@id": `${pageUrl}#webpage`,
+  url: pageUrl,
+  name: page.title,
+  description: page.description,
+  inLanguage: "uk-UA",
+  isPartOf: {
+    "@id": `${siteUrl}/#organization`
+  },
+  about: {
+    "@id": `${siteUrl}/vr/#localbusiness`
+  },
+  primaryImageOfPage: {
+    "@type": "ImageObject",
+    url: `${siteUrl}${page.image}`
+  }
+};
+
+const serviceSchema = {
+  "@context": "https://schema.org",
+  "@type": "Service",
+  "@id": `${pageUrl}#service`,
+  name: page.h1,
+  description: page.lead,
+  provider: {
+    "@id": `${siteUrl}/vr/#localbusiness`
+  },
+  areaServed: {
+    "@type": "City",
+    name: "Бровари"
+  },
+  serviceType: page.eyebrow
+};
+
+const faqSchema = {
+  "@context": "https://schema.org",
+  "@type": "FAQPage",
+  mainEntity: page.faq.map((item) => ({
+    "@type": "Question",
+    name: item.question,
+    acceptedAnswer: {
+      "@type": "Answer",
+      text: item.answer
+    }
+  }))
+};
+---
+
+<BaseLayout
+  title={page.title}
+  description={page.description}
+  canonicalPath={`/${page.slug}/`}
+  image={page.image}
+  schema={[organizationSchema, novaVrSchema, webPageSchema, serviceSchema, breadcrumbSchema, faqSchema]}
+>
+  <div class="vr-local-page">
+    <Header
+      brand="Nova Space"
+      sub="NOVA VR"
+      nav={[
+        { label: "VR клуб", href: "/vr/" },
+        { label: "День народження", href: "/den-narodzhennya-vr-brovary/" },
+        { label: "PS5", href: "/ps5-brovary/" },
+        { label: "Контакти", href: "#contacts" }
+      ]}
+      schedule="Щодня|10:00-22:00"
+      ctaHref="/booking/"
+      ctaLabel="Забронювати"
+    />
+
+    <main>
+      <section class="vr-local-hero" aria-labelledby="vr-local-title">
+        <div class="vr-local-hero__copy">
+          <nav class="vr-local-breadcrumbs" aria-label="Навігаційний шлях">
+            <a href="/">Nova Space</a>
+            <span>/</span>
+            <a href="/vr/">NOVA VR</a>
+            <span>/</span>
+            <strong>{page.eyebrow}</strong>
+          </nav>
+          <span class="vr-local-kicker">{page.eyebrow}</span>
+          <h1 id="vr-local-title">{page.h1}</h1>
+          <p>{page.lead}</p>
+          <div class="vr-local-actions">
+            <a class="vr-local-button vr-local-button--primary" href="/booking/">{page.primaryCta}</a>
+            <a class="vr-local-button" href="/vr/#sessions">{page.secondaryCta}</a>
+          </div>
+        </div>
+        <figure class="vr-local-hero__media">
+          <img src={page.image} alt={page.imageAlt} width="800" height="500" loading="eager" />
+          <figcaption>
+            <span>Бровари</span>
+            <strong>{address.streetAddress}</strong>
+          </figcaption>
+        </figure>
+      </section>
+
+      <section class="vr-local-stats" aria-label="Ключові деталі">
+        {page.stats.map((stat) => (
+          <article>
+            <span>{stat.label}</span>
+            <strong>{stat.value}</strong>
+          </article>
+        ))}
+      </section>
+
+      <section class="vr-local-grid" aria-labelledby="vr-local-includes">
+        <div>
+          <span class="vr-local-kicker">Що важливо знати</span>
+          <h2 id="vr-local-includes">Формат під конкретний запит у Броварах</h2>
+          <p>
+            Тут зібрали головні деталі формату: що входить, кому підходить, як проходить бронювання
+            і що варто уточнити перед візитом у NOVA VR.
+          </p>
+        </div>
+        <div class="vr-local-points">
+          {page.highlights.map((item) => (
+            <article>
+              <span></span>
+              <p>{item}</p>
+            </article>
+          ))}
+        </div>
+      </section>
+
+      <section class="vr-local-sections" aria-label="Деталі формату">
+        {page.sections.map((section) => (
+          <article>
+            <h2>{section.title}</h2>
+            <p>{section.text}</p>
+          </article>
+        ))}
+      </section>
+
+      <section class="vr-local-faq" aria-labelledby="vr-local-faq-title">
+        <div>
+          <span class="vr-local-kicker">FAQ</span>
+          <h2 id="vr-local-faq-title">Питання, які зазвичай уточнюють перед бронюванням</h2>
+        </div>
+        <div>
+          {page.faq.map((item) => (
+            <article>
+              <h3>{item.question}</h3>
+              <p>{item.answer}</p>
+            </article>
+          ))}
+        </div>
+      </section>
+
+      {relatedPages.length > 0 && (
+        <section class="vr-local-related" aria-labelledby="vr-local-related-title">
+          <div>
+            <span class="vr-local-kicker">Інші формати</span>
+            <h2 id="vr-local-related-title">Ще кілька варіантів у NOVA VR</h2>
+          </div>
+          <div class="vr-local-related__grid">
+            {relatedPages.map((related) => (
+              <a href={`/${related.slug}/`}>
+                <span>{related.eyebrow}</span>
+                <strong>{related.h1}</strong>
+                <em>{related.description}</em>
+              </a>
+            ))}
+          </div>
+        </section>
+      )}
+    </main>
+
+    <footer id="contacts" class="vr-local-contact">
+      <div>
+        <span class="vr-local-kicker">Контакти</span>
+        <h2>NOVA VR у Броварах</h2>
+        <p>Адреса: {addressText}. Працюємо щодня з 10:00 до 22:00.</p>
+      </div>
+      <div class="vr-local-contact__actions">
+        <a href={`tel:${phone}`}>+380 66 009 7630</a>
+        <a href={mapsUrl} target="_blank" rel="noreferrer">Відкрити маршрут</a>
+        <a href="https://instagram.com/novaspace_vr" target="_blank" rel="noreferrer">@novaspace_vr</a>
+      </div>
+    </footer>
+  </div>
+
+  <MobileActionBar
+    primaryHref="/booking/"
+    primaryLabel="Забронювати"
+    secondaryHref="tel:+380660097630"
+    secondaryLabel="Дзвінок"
+    class="mobile-action-bar--vr"
+  />
+</BaseLayout>
