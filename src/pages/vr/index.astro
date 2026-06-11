@@ -2,7 +2,7 @@
 import BaseLayout from "../../layouts/BaseLayout.astro";
 import MobileActionBar from "../../components/layout/MobileActionBar.astro";
 import { faqItems } from "../../data/faq.js";
-import { makeBreadcrumbSchema, makeWebPageSchema, novaVrSchema, organizationSchema, siteUrl, webSiteSchema } from "../../data/seo.js";
+import { makeBreadcrumbSchema, makeItemListSchema, makeWebPageSchema, novaVrSchema, organizationSchema, siteUrl, webSiteSchema } from "../../data/seo.js";
 import { vrContacts, vrGames, vrNav, vrPricing, vrPricingNotes, vrRules, vrScenarios } from "../../data/vr.js";
 import { vrLandingPages } from "../../data/vrLandingPages.js";
 
@@ -27,6 +27,17 @@ const breadcrumbSchema = makeBreadcrumbSchema([
   { name: "Бровари", url: "/brovary/" },
   { name: "NOVA VR", url: "/vr/" }
 ]);
+const popularFormatsSchema = makeItemListSchema({
+  id: "/vr/#popular-formats",
+  name: "Популярні формати NOVA VR у Броварах",
+  items: [
+    { name: "Усі формати Nova Space у Броварах", url: "/brovary/" },
+    ...localLandingLinks.map((page) => ({
+      name: page.eyebrow,
+      url: `/${page.slug}/`
+    }))
+  ]
+});
 const faqSchema = {
   "@context": "https://schema.org",
   "@type": "FAQPage",
@@ -46,7 +57,7 @@ const faqSchema = {
   description={pageDescription}
   canonicalPath="/vr/"
   image="/vr/nova-space-logo.webp"
-  schema={[organizationSchema, webSiteSchema, novaVrSchema, vrPageSchema, breadcrumbSchema, faqSchema]}
+  schema={[organizationSchema, webSiteSchema, novaVrSchema, vrPageSchema, popularFormatsSchema, breadcrumbSchema, faqSchema]}
 >
   <main class="vr-os" aria-label="Nova VR club page">
     <script is:inline type="application/json" id="vr-games-data" set:html={gamesJson}></script>

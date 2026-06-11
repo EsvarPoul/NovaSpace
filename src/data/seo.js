@@ -156,6 +156,19 @@ export const makeBreadcrumbSchema = (items) => ({
   }))
 });
 
+export const makeItemListSchema = ({ id, name, items }) => ({
+  "@context": "https://schema.org",
+  "@type": "ItemList",
+  "@id": id?.startsWith("http") ? id : absoluteSiteUrl(id || "/#item-list"),
+  name,
+  itemListElement: items.map((item, index) => ({
+    "@type": "ListItem",
+    position: index + 1,
+    name: item.name,
+    url: item.url?.startsWith("http") ? item.url : absoluteSiteUrl(item.url || "/")
+  }))
+});
+
 /**
  * @param {{
  *   path: string;

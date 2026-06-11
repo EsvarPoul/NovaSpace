@@ -7,7 +7,7 @@ import StudioHero from "../../components/studio/StudioHero.astro";
 import StudioServices from "../../components/studio/StudioServices.astro";
 import StudioPortfolio from "../../components/studio/StudioPortfolio.astro";
 import StudioBookingCTA from "../../components/studio/StudioBookingCTA.astro";
-import { makeBreadcrumbSchema, makeWebPageSchema, novaPhotoStudioSchema, organizationSchema, siteUrl, webSiteSchema } from "../../data/seo.js";
+import { makeBreadcrumbSchema, makeItemListSchema, makeWebPageSchema, novaPhotoStudioSchema, organizationSchema, siteUrl, webSiteSchema } from "../../data/seo.js";
 import { studioNav } from "../../data/studio.js";
 import { studioLandingPages } from "../../data/studioLandingPages.js";
 
@@ -26,6 +26,17 @@ const breadcrumbSchema = makeBreadcrumbSchema([
   { name: "Бровари", url: "/brovary/" },
   { name: "Nova PhotoStudio", url: "/studio/" }
 ]);
+const popularFormatsSchema = makeItemListSchema({
+  id: "/studio/#popular-formats",
+  name: "Популярні формати Nova PhotoStudio у Броварах",
+  items: [
+    { name: "Усі формати Nova Space у Броварах", url: "/brovary/" },
+    ...studioLandingPages.map((page) => ({
+      name: page.eyebrow,
+      url: `/${page.slug}/`
+    }))
+  ]
+});
 ---
 
 <BaseLayout
@@ -33,7 +44,7 @@ const breadcrumbSchema = makeBreadcrumbSchema([
   description={pageDescription}
   canonicalPath="/studio/"
   image="/studio/studio-hero.png"
-  schema={[organizationSchema, webSiteSchema, novaPhotoStudioSchema, studioPageSchema, breadcrumbSchema]}
+  schema={[organizationSchema, webSiteSchema, novaPhotoStudioSchema, studioPageSchema, popularFormatsSchema, breadcrumbSchema]}
 >
   <div class="app-shell studio-page">
     <Header brand="Nova Space" sub="Nova PhotoStudio" nav={studioNav} schedule="Понеділок-Неділя|10:00-21:00" ctaHref="#booking" ctaLabel="Забронювати" />

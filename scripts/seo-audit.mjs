@@ -28,13 +28,13 @@ const adminPages = ["/admin/", "/admin/bookings/", "/admin/vr-games/"];
 
 const requiredSchemaTypes = {
   "/": ["Organization", "WebSite", "CollectionPage"],
-  "/brovary/": ["Organization", "WebSite", "LocalBusiness", "CollectionPage", "BreadcrumbList"],
-  "/vr/": ["Organization", "WebSite", "LocalBusiness", "WebPage", "BreadcrumbList", "FAQPage"],
-  "/studio/": ["Organization", "WebSite", "LocalBusiness", "WebPage", "BreadcrumbList"],
+  "/brovary/": ["Organization", "WebSite", "LocalBusiness", "CollectionPage", "ItemList", "BreadcrumbList"],
+  "/vr/": ["Organization", "WebSite", "LocalBusiness", "WebPage", "ItemList", "BreadcrumbList", "FAQPage"],
+  "/studio/": ["Organization", "WebSite", "LocalBusiness", "WebPage", "ItemList", "BreadcrumbList"],
   "/booking/": ["Organization", "WebSite", "WebPage", "BreadcrumbList"]
 };
 
-const landingSchemaTypes = ["Organization", "WebSite", "LocalBusiness", "WebPage", "Service", "BreadcrumbList", "FAQPage"];
+const landingSchemaTypes = ["Organization", "WebSite", "LocalBusiness", "WebPage", "Service", "ItemList", "BreadcrumbList", "FAQPage"];
 
 const fail = (message) => {
   throw new Error(message);
@@ -101,6 +101,17 @@ const assertLocalBusinessesHaveMedia = (path, schemas) => {
     assert(images.length >= 2, `${path} LocalBusiness should expose multiple images`);
     assert(photos.length >= 2, `${path} LocalBusiness should expose multiple photos`);
     assert(amenities.length >= 2, `${path} LocalBusiness should expose amenityFeature entries`);
+  }
+};
+
+const assertItemListsHaveLocalUrls = (path, schemas) => {
+  for (const itemList of findSchemas(schemas, "ItemList")) {
+    const items = itemList.itemListElement || [];
+    assert(items.length >= 3, `${path} ItemList should expose at least three related URLs`);
+
+    for (const item of items) {
+      assert(item.url?.startsWith(siteUrl), `${path} ItemList contains a non-local URL: ${item.url}`);
+    }
   }
 };
 
@@ -180,6 +191,7 @@ const auditPage = async (path) => {
   assertTypes(path, schemas, expected);
   assertLocalBusinessesHaveGeo(path, schemas);
   assertLocalBusinessesHaveMedia(path, schemas);
+  if (expected.includes("ItemList")) assertItemListsHaveLocalUrls(path, schemas);
 
   if (path !== "/") assertBreadcrumbIncludesBrovary(path, schemas);
   if (path.includes("fotostudiya")) assert(!html.includes('href="/vr/#sessions"'), `${path} studio CTA still links to VR sessions`);
