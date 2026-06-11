@@ -89,6 +89,18 @@ const assertLocalBusinessesHaveGeo = (path, schemas) => {
   }
 };
 
+const assertLocalBusinessesHaveMedia = (path, schemas) => {
+  for (const business of findSchemas(schemas, "LocalBusiness")) {
+    const images = Array.isArray(business.image) ? business.image : [business.image].filter(Boolean);
+    const photos = Array.isArray(business.photo) ? business.photo : [business.photo].filter(Boolean);
+    const amenities = Array.isArray(business.amenityFeature) ? business.amenityFeature : [];
+
+    assert(images.length >= 2, `${path} LocalBusiness should expose multiple images`);
+    assert(photos.length >= 2, `${path} LocalBusiness should expose multiple photos`);
+    assert(amenities.length >= 2, `${path} LocalBusiness should expose amenityFeature entries`);
+  }
+};
+
 const readSitemapUrls = async () => {
   const sitemap = await readFile(join(distDir, "sitemap.xml"), "utf8");
   const urls = [...sitemap.matchAll(/<loc>(.*?)<\/loc>/g)].map((match) => match[1]);
@@ -123,6 +135,8 @@ const auditPage = async (path) => {
   assert(description.length >= 80, `${path} meta description is too short`);
   assert(robots === "index,follow", `${path} robots meta should be index,follow`);
   assert(html.includes(`<link rel="alternate" hreflang="uk-UA" href="${canonical}"`), `${path} is missing uk-UA hreflang`);
+  assert(html.includes(`<link rel="icon" href="/vr/nova-space-logo.svg"`), `${path} is missing SVG favicon`);
+  assert(html.includes(`<meta name="theme-color" content="#050711"`), `${path} is missing theme-color`);
   assert(html.includes(`<meta property="og:image:alt"`), `${path} is missing og:image:alt`);
   assert(html.includes(`<meta name="geo.position" content="50.49937;30.77804"`), `${path} is missing geo.position`);
   assert(!html.includes("Точну адресу можна додати"), `${path} contains old placeholder address FAQ text`);
@@ -131,6 +145,7 @@ const auditPage = async (path) => {
   const expected = requiredSchemaTypes[path] || landingSchemaTypes;
   assertTypes(path, schemas, expected);
   assertLocalBusinessesHaveGeo(path, schemas);
+  assertLocalBusinessesHaveMedia(path, schemas);
 
   if (path !== "/") assertBreadcrumbIncludesBrovary(path, schemas);
   if (path.includes("fotostudiya")) assert(!html.includes('href="/vr/#sessions"'), `${path} studio CTA still links to VR sessions`);

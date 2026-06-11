@@ -65,6 +65,32 @@ const cityServed = {
   name: "Бровари"
 };
 
+const imageObject = (path, name) => ({
+  "@type": "ImageObject",
+  url: new URL(path, siteUrl).toString(),
+  name
+});
+
+const makeAmenity = (name) => ({
+  "@type": "LocationFeatureSpecification",
+  name,
+  value: true
+});
+
+const vrImages = [
+  imageObject("/vr/nova-space-logo.webp", "Логотип Nova Space"),
+  imageObject("/vr/nova-vr-about-players.webp", "Гравці у NOVA VR у Броварах"),
+  imageObject("/vr/nova-vr-about-ps5.webp", "PS5 зона у NOVA VR"),
+  imageObject("/vr/nova-vr-about-duo.webp", "VR кімната для двох")
+];
+
+const studioImages = [
+  imageObject("/studio/studio-hero.png", "Nova PhotoStudio у Броварах"),
+  imageObject("/studio/studio-paper-backdrops.jpg", "Паперові фони Nova PhotoStudio"),
+  imageObject("/studio/studio-cozy-zone.jpg", "Затишна зона Nova PhotoStudio"),
+  imageObject("/studio/studio-wood-backdrop.jpg", "Фактурна зона Nova PhotoStudio")
+];
+
 const makeBookingOffer = (service, providerId) => ({
   "@type": "Offer",
   "@id": `${bookingUrl}#offer-${service.slug}`,
@@ -207,7 +233,8 @@ export const organizationSchema = {
   "@id": `${siteUrl}/#organization`,
   name: "Nova Space",
   url: siteUrl,
-  logo: `${siteUrl}/vr/nova-space-logo.webp`,
+  logo: imageObject("/vr/nova-space-logo.webp", "Nova Space logo"),
+  image: vrImages[0],
   telephone: phone,
   address,
   contactPoint: [makeContactPoint("UA")],
@@ -243,7 +270,8 @@ export const novaVrSchema = {
   description:
     "VR клуб у Броварах для ігор, днів народження, корпоративів, побачень і компаній до 6 гравців.",
   url: `${siteUrl}/vr/`,
-  image: `${siteUrl}/vr/nova-space-logo.webp`,
+  image: vrImages,
+  photo: vrImages,
   telephone: phone,
   priceRange: "200-7000 UAH",
   address,
@@ -256,6 +284,12 @@ export const novaVrSchema = {
   },
   potentialAction: makeReserveAction("Забронювати NOVA VR"),
   hasOfferCatalog: makeOfferCatalog("Послуги NOVA VR у Броварах", vrOffers),
+  amenityFeature: [
+    makeAmenity("6 VR-зон"),
+    makeAmenity("PlayStation 5 зона"),
+    makeAmenity("Зона відпочинку для свят"),
+    makeAmenity("Фотограф за потреби")
+  ],
   sameAs: ["https://instagram.com/novaspace_vr"],
   openingHoursSpecification: [
     {
@@ -285,7 +319,8 @@ export const novaPhotoStudioSchema = {
   description:
     "Світла фотостудія у Броварах для портретів, сімейних зйомок, beauty-контенту та фото для брендів.",
   url: `${siteUrl}/studio/`,
-  image: `${siteUrl}/studio/studio-hero.png`,
+  image: studioImages,
+  photo: studioImages,
   telephone: phone,
   priceRange: "600 UAH/hour",
   address,
@@ -298,6 +333,12 @@ export const novaPhotoStudioSchema = {
   },
   potentialAction: makeReserveAction("Забронювати Nova PhotoStudio"),
   hasOfferCatalog: makeOfferCatalog("Послуги Nova PhotoStudio у Броварах", studioOffers),
+  amenityFeature: [
+    makeAmenity("Світлий студійний простір"),
+    makeAmenity("Паперові фони"),
+    makeAmenity("Затишна зона"),
+    makeAmenity("Фотограф за потреби")
+  ],
   sameAs: ["https://www.instagram.com/nova_photostudio_/"],
   openingHoursSpecification: [
     {
