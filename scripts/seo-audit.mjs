@@ -22,6 +22,7 @@ const publicPages = [
   "/simeyna-fotosesiya-brovary/",
   "/kontent-zyomka-brovary/"
 ];
+const adminPages = ["/admin/", "/admin/bookings/", "/admin/vr-games/"];
 
 const requiredSchemaTypes = {
   "/": ["Organization", "WebSite", "CollectionPage"],
@@ -113,6 +114,12 @@ const auditRobots = async () => {
   assert(robots.includes(`Sitemap: ${siteUrl}/sitemap.xml`), "robots.txt is missing the sitemap directive");
 };
 
+const auditNginx = async () => {
+  const nginx = await readFile(resolve("nginx.conf"), "utf8");
+  assert(nginx.includes("location ^~ /admin"), "nginx.conf is missing an /admin location");
+  assert(nginx.includes('X-Robots-Tag "noindex, nofollow, noarchive" always'), "nginx.conf is missing admin X-Robots-Tag");
+};
+
 const auditSitemap = async () => {
   const { sitemap, pageUrls } = await readSitemapUrls();
   assert(pageUrls.length === expectedUrlCount, `Expected ${expectedUrlCount} sitemap page URLs, found ${pageUrls.length}`);
@@ -122,6 +129,17 @@ const auditSitemap = async () => {
   for (const path of publicPages) {
     assert(pageUrls.includes(absoluteUrl(path)), `Sitemap is missing ${path}`);
   }
+};
+
+const auditAdminPage = async (path) => {
+  const html = await readPage(path);
+  const canonical = matchAttribute(html, /<link rel="canonical" href="([^"]+)"/);
+  const robots = matchAttribute(html, /<meta name="robots" content="([^"]+)"/);
+
+  assert(canonical === absoluteUrl(path), `${path} canonical mismatch: ${canonical}`);
+  assert(robots === "noindex,nofollow", `${path} robots meta should be noindex,nofollow`);
+  assert(!html.includes("FAQPage"), `${path} should not expose public FAQ schema`);
+  assert(!html.includes("LocalBusiness"), `${path} should not expose public LocalBusiness schema`);
 };
 
 const auditPage = async (path) => {
@@ -157,6 +175,7 @@ const auditPage = async (path) => {
 };
 
 await auditRobots();
+await auditNginx();
 await auditSitemap();
 const reports = [];
 
@@ -164,4 +183,8 @@ for (const path of publicPages) {
   reports.push(await auditPage(path));
 }
 
-console.log(`SEO audit passed for ${reports.length} public pages and ${expectedUrlCount} sitemap URLs.`);
+for (const path of adminPages) {
+  await auditAdminPage(path);
+}
+
+console.log(`SEO audit passed for ${reports.length} public pages, ${adminPages.length} admin pages and ${expectedUrlCount} sitemap URLs.`);
