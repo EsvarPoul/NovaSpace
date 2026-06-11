@@ -111,6 +111,68 @@ const makeOfferCatalog = (name, offers) => ({
   itemListElement: offers
 });
 
+const absoluteSiteUrl = (path = "/") => new URL(path, siteUrl).toString();
+
+export const makeBreadcrumbSchema = (items) => ({
+  "@context": "https://schema.org",
+  "@type": "BreadcrumbList",
+  itemListElement: items.map((item, index) => ({
+    "@type": "ListItem",
+    position: index + 1,
+    name: item.name,
+    item: item.url?.startsWith("http") ? item.url : absoluteSiteUrl(item.url || "/")
+  }))
+});
+
+/**
+ * @param {{
+ *   path: string;
+ *   name: string;
+ *   description: string;
+ *   type?: string;
+ *   about?: unknown;
+ *   image?: string;
+ *   mainEntity?: unknown;
+ * }} config
+ */
+export const makeWebPageSchema = ({
+  path,
+  name,
+  description,
+  type = "WebPage",
+  about = undefined,
+  image = undefined,
+  mainEntity = undefined
+}) => {
+  const pageUrl = absoluteSiteUrl(path);
+
+  return {
+    "@context": "https://schema.org",
+    "@type": type,
+    "@id": `${pageUrl}#webpage`,
+    url: pageUrl,
+    name,
+    description,
+    inLanguage: "uk-UA",
+    isPartOf: {
+      "@id": `${siteUrl}/#website`
+    },
+    publisher: {
+      "@id": `${siteUrl}/#organization`
+    },
+    ...(about ? { about } : {}),
+    ...(image
+      ? {
+          primaryImageOfPage: {
+            "@type": "ImageObject",
+            url: absoluteSiteUrl(image)
+          }
+        }
+      : {}),
+    ...(mainEntity ? { mainEntity } : {})
+  };
+};
+
 const vrProviderId = `${siteUrl}/vr/#localbusiness`;
 const studioProviderId = `${siteUrl}/studio/#localbusiness`;
 const vrOffers = bookingServices
@@ -147,6 +209,24 @@ export const organizationSchema = {
     "https://instagram.com/novaspace_vr",
     "https://www.instagram.com/nova_photostudio_/"
   ]
+};
+
+export const webSiteSchema = {
+  "@context": "https://schema.org",
+  "@type": "WebSite",
+  "@id": `${siteUrl}/#website`,
+  name: "Nova Space",
+  alternateName: [
+    "Nova Space Бровари",
+    "NOVA VR Бровари",
+    "Nova PhotoStudio Бровари"
+  ],
+  url: siteUrl,
+  inLanguage: "uk-UA",
+  publisher: {
+    "@id": `${siteUrl}/#organization`
+  },
+  potentialAction: makeReserveAction("Забронювати Nova Space")
 };
 
 export const novaVrSchema = {

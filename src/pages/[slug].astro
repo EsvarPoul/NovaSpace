@@ -2,7 +2,7 @@
 import BaseLayout from "../layouts/BaseLayout.astro";
 import Header from "../components/layout/Header.astro";
 import MobileActionBar from "../components/layout/MobileActionBar.astro";
-import { address, bookingUrl, mapsUrl, novaPhotoStudioSchema, novaVrSchema, organizationSchema, phone, siteUrl } from "../data/seo.js";
+import { address, bookingUrl, makeBreadcrumbSchema, mapsUrl, novaPhotoStudioSchema, novaVrSchema, organizationSchema, phone, siteUrl, webSiteSchema } from "../data/seo.js";
 import { studioLandingPages } from "../data/studioLandingPages.js";
 import { getRelatedVrLandingPages, vrLandingPages } from "../data/vrLandingPages.js";
 
@@ -78,31 +78,14 @@ const contactTitle = isStudioLanding ? "Nova PhotoStudio у Броварах" : 
 const contactText = isStudioLanding
   ? `Адреса: ${addressText}. Працюємо щодня з 10:00 до 21:00.`
   : `Адреса: ${addressText}. Працюємо щодня з 10:00 до 22:00.`;
+const secondaryCtaHref = isStudioLanding ? parentPage.path : "/vr/#sessions";
 
-const breadcrumbSchema = {
-  "@context": "https://schema.org",
-  "@type": "BreadcrumbList",
-  itemListElement: [
-    {
-      "@type": "ListItem",
-      position: 1,
-      name: "Nova Space",
-      item: `${siteUrl}/`
-    },
-    {
-      "@type": "ListItem",
-      position: 2,
-      name: parentPage.name,
-      item: parentPage.url
-    },
-    {
-      "@type": "ListItem",
-      position: 3,
-      name: page.h1,
-      item: pageUrl
-    }
-  ]
-};
+const breadcrumbSchema = makeBreadcrumbSchema([
+  { name: "Nova Space", url: "/" },
+  { name: "Бровари", url: "/brovary/" },
+  { name: parentPage.name, url: parentPage.url },
+  { name: page.h1, url: pageUrl }
+]);
 
 const webPageSchema = {
   "@context": "https://schema.org",
@@ -113,6 +96,9 @@ const webPageSchema = {
   description: page.description,
   inLanguage: "uk-UA",
   isPartOf: {
+    "@id": `${siteUrl}/#website`
+  },
+  publisher: {
     "@id": `${siteUrl}/#organization`
   },
   about: {
@@ -172,7 +158,7 @@ const faqSchema = {
   description={page.description}
   canonicalPath={`/${page.slug}/`}
   image={page.image}
-  schema={[organizationSchema, businessSchema, webPageSchema, serviceSchema, breadcrumbSchema, faqSchema]}
+  schema={[organizationSchema, webSiteSchema, businessSchema, webPageSchema, serviceSchema, breadcrumbSchema, faqSchema]}
 >
   <div class={`vr-local-page${isStudioLanding ? " vr-local-page--studio" : ""}`}>
     <Header
@@ -190,6 +176,8 @@ const faqSchema = {
           <nav class="vr-local-breadcrumbs" aria-label="Навігаційний шлях">
             <a href="/">Nova Space</a>
             <span>/</span>
+            <a href="/brovary/">Бровари</a>
+            <span>/</span>
             <a href={parentPage.path}>{parentPage.name}</a>
             <span>/</span>
             <strong>{page.eyebrow}</strong>
@@ -199,7 +187,7 @@ const faqSchema = {
           <p>{page.lead}</p>
           <div class="vr-local-actions">
             <a class="vr-local-button vr-local-button--primary" href="/booking/">{page.primaryCta}</a>
-            <a class="vr-local-button" href="/vr/#sessions">{page.secondaryCta}</a>
+            <a class="vr-local-button" href={secondaryCtaHref}>{page.secondaryCta}</a>
           </div>
         </div>
         <figure class="vr-local-hero__media">

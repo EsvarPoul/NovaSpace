@@ -2,24 +2,39 @@
 import BaseLayout from "../../layouts/BaseLayout.astro";
 import MobileActionBar from "../../components/layout/MobileActionBar.astro";
 import { faqItems } from "../../data/faq.js";
-import { novaVrSchema, organizationSchema } from "../../data/seo.js";
+import { makeBreadcrumbSchema, makeWebPageSchema, novaVrSchema, organizationSchema, siteUrl, webSiteSchema } from "../../data/seo.js";
 import { vrContacts, vrGames, vrNav, vrPricing, vrPricingNotes, vrRules, vrScenarios } from "../../data/vr.js";
 import { vrLandingPages } from "../../data/vrLandingPages.js";
 
+const pageTitle = "NOVA VR | VR клуб Бровари, ігри, дні народження та PS5";
+const pageDescription = "NOVA VR у Броварах: VR клуб з 6 VR-зонами, PlayStation 5, іграми для дітей і дорослих, днями народження, корпоративами та бронюванням онлайн.";
 const gamesJson = JSON.stringify(vrGames);
 const scenariosJson = JSON.stringify(vrScenarios);
 const localLandingLinks = (vrLandingPages as Array<{ slug: string; eyebrow: string }>).map((page) => ({
   slug: page.slug,
   eyebrow: page.eyebrow
 }));
+const vrPageSchema = makeWebPageSchema({
+  path: "/vr/",
+  name: pageTitle,
+  description: pageDescription,
+  image: "/vr/nova-space-logo.webp",
+  about: { "@id": `${siteUrl}/vr/#localbusiness` },
+  mainEntity: { "@id": `${siteUrl}/vr/#localbusiness` }
+});
+const breadcrumbSchema = makeBreadcrumbSchema([
+  { name: "Nova Space", url: "/" },
+  { name: "Бровари", url: "/brovary/" },
+  { name: "NOVA VR", url: "/vr/" }
+]);
 ---
 
 <BaseLayout
-  title="NOVA VR | VR клуб Бровари, ігри, дні народження та PS5"
-  description="NOVA VR у Броварах: VR клуб з 6 VR-зонами, PlayStation 5, іграми для дітей і дорослих, днями народження, корпоративами та бронюванням онлайн."
+  title={pageTitle}
+  description={pageDescription}
   canonicalPath="/vr/"
   image="/vr/nova-space-logo.webp"
-  schema={[organizationSchema, novaVrSchema]}
+  schema={[organizationSchema, webSiteSchema, novaVrSchema, vrPageSchema, breadcrumbSchema]}
 >
   <main class="vr-os" aria-label="Nova VR club page">
     <script is:inline type="application/json" id="vr-games-data" set:html={gamesJson}></script>
@@ -77,6 +92,7 @@ const localLandingLinks = (vrLandingPages as Array<{ slug: string; eyebrow: stri
             <nav class="vr-local-links" aria-label="Популярні формати NOVA VR у Броварах">
               <span>Популярні формати у Броварах</span>
               <div class="vr-local-links__grid">
+                <a href="/brovary/">Усі формати Nova Space у Броварах</a>
                 {localLandingLinks.map((landingPage) => (
                   <a href={`/${landingPage.slug}/`}>{landingPage.eyebrow}</a>
                 ))}

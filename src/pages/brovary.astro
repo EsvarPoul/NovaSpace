@@ -3,7 +3,7 @@ import BaseLayout from "../layouts/BaseLayout.astro";
 import Header from "../components/layout/Header.astro";
 import Footer from "../components/layout/Footer.astro";
 import MobileActionBar from "../components/layout/MobileActionBar.astro";
-import { address, mapsUrl, novaPhotoStudioSchema, novaVrSchema, organizationSchema, phone, siteUrl } from "../data/seo.js";
+import { address, makeBreadcrumbSchema, mapsUrl, novaPhotoStudioSchema, novaVrSchema, organizationSchema, phone, siteUrl, webSiteSchema } from "../data/seo.js";
 import { studioLandingPages } from "../data/studioLandingPages.js";
 import { vrLandingPages } from "../data/vrLandingPages.js";
 
@@ -21,6 +21,9 @@ const pageSchema = {
     "Локальна сторінка Nova Space у Броварах з усіма напрямами: NOVA VR, PlayStation 5, дні народження, корпоративи, Nova PhotoStudio, оренда студії та фотосесії.",
   inLanguage: "uk-UA",
   isPartOf: {
+    "@id": `${siteUrl}/#website`
+  },
+  publisher: {
     "@id": `${siteUrl}/#organization`
   },
   about: [
@@ -51,24 +54,10 @@ const pageSchema = {
   }
 };
 
-const breadcrumbSchema = {
-  "@context": "https://schema.org",
-  "@type": "BreadcrumbList",
-  itemListElement: [
-    {
-      "@type": "ListItem",
-      position: 1,
-      name: "Nova Space",
-      item: `${siteUrl}/`
-    },
-    {
-      "@type": "ListItem",
-      position: 2,
-      name: "Бровари",
-      item: pageUrl
-    }
-  ]
-};
+const breadcrumbSchema = makeBreadcrumbSchema([
+  { name: "Nova Space", url: "/" },
+  { name: "Бровари", url: pageUrl }
+]);
 ---
 
 <BaseLayout
@@ -76,7 +65,7 @@ const breadcrumbSchema = {
   description="Nova Space у Броварах: NOVA VR, PS5, дні народження, корпоративи, фотостудія, оренда студії, портретні, сімейні та контент-зйомки."
   canonicalPath="/brovary/"
   image="/vr/nova-space-logo.webp"
-  schema={[organizationSchema, novaVrSchema, novaPhotoStudioSchema, pageSchema, breadcrumbSchema]}
+  schema={[organizationSchema, webSiteSchema, novaVrSchema, novaPhotoStudioSchema, pageSchema, breadcrumbSchema]}
 >
   <div class="app-shell brovary-page">
     <Header

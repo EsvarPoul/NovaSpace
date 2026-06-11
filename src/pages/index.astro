@@ -2,14 +2,26 @@
 import BaseLayout from "../layouts/BaseLayout.astro";
 import MobileActionBar from "../components/layout/MobileActionBar.astro";
 import SpaceLanding from "../components/space/SpaceLanding.astro";
-import { novaPhotoStudioSchema, novaVrSchema, organizationSchema } from "../data/seo.js";
+import { makeWebPageSchema, novaPhotoStudioSchema, novaVrSchema, organizationSchema, siteUrl, webSiteSchema } from "../data/seo.js";
+
+const homePageSchema = makeWebPageSchema({
+  path: "/",
+  name: "Nova Space Бровари",
+  description: "Nova Space у Броварах: NOVA VR для ігор, днів народження й компаній та Nova PhotoStudio для портретних, сімейних і контент-зйомок.",
+  type: "CollectionPage",
+  image: "/vr/nova-space-logo.webp",
+  about: [
+    { "@id": `${siteUrl}/vr/#localbusiness` },
+    { "@id": `${siteUrl}/studio/#localbusiness` }
+  ]
+});
 ---
 
 <BaseLayout
   title="Nova Space Бровари | VR клуб і фотостудія"
   description="Nova Space у Броварах: NOVA VR для ігор, днів народження й компаній та Nova PhotoStudio для портретних, сімейних і контент-зйомок."
   canonicalPath="/"
-  schema={[organizationSchema, novaVrSchema, novaPhotoStudioSchema]}
+  schema={[organizationSchema, webSiteSchema, novaVrSchema, novaPhotoStudioSchema, homePageSchema]}
 >
   <SpaceLanding />
   <MobileActionBar

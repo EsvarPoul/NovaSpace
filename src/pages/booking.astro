@@ -1,14 +1,27 @@
 ---
 import BaseLayout from "../layouts/BaseLayout.astro";
 import BookingWidget from "../components/booking/BookingWidget.astro";
-import { organizationSchema } from "../data/seo.js";
+import { makeBreadcrumbSchema, makeWebPageSchema, organizationSchema, webSiteSchema } from "../data/seo.js";
+
+const pageTitle = "Бронювання Nova Space Бровари | NOVA VR, PS5 і PhotoStudio";
+const pageDescription = "Онлайн-бронювання NOVA VR, PS5, NovaMix, днів народження та Nova PhotoStudio у Броварах. Оберіть формат, дату і зручний слот.";
+const bookingPageSchema = makeWebPageSchema({
+  path: "/booking/",
+  name: pageTitle,
+  description: pageDescription
+});
+const breadcrumbSchema = makeBreadcrumbSchema([
+  { name: "Nova Space", url: "/" },
+  { name: "Бровари", url: "/brovary/" },
+  { name: "Бронювання", url: "/booking/" }
+]);
 ---
 
 <BaseLayout
-  title="Бронювання Nova Space Бровари | NOVA VR, PS5 і PhotoStudio"
-  description="Онлайн-бронювання NOVA VR, PS5, NovaMix, днів народження та Nova PhotoStudio у Броварах. Оберіть формат, дату і зручний слот."
+  title={pageTitle}
+  description={pageDescription}
   canonicalPath="/booking/"
-  schema={organizationSchema}
+  schema={[organizationSchema, webSiteSchema, bookingPageSchema, breadcrumbSchema]}
 >
   <main class="booking-app" data-booking-app>
     <header class="booking-hero">

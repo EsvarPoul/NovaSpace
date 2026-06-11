@@ -7,17 +7,33 @@ import StudioHero from "../../components/studio/StudioHero.astro";
 import StudioServices from "../../components/studio/StudioServices.astro";
 import StudioPortfolio from "../../components/studio/StudioPortfolio.astro";
 import StudioBookingCTA from "../../components/studio/StudioBookingCTA.astro";
-import { novaPhotoStudioSchema, organizationSchema } from "../../data/seo.js";
+import { makeBreadcrumbSchema, makeWebPageSchema, novaPhotoStudioSchema, organizationSchema, siteUrl, webSiteSchema } from "../../data/seo.js";
 import { studioNav } from "../../data/studio.js";
 import { studioLandingPages } from "../../data/studioLandingPages.js";
+
+const pageTitle = "Nova PhotoStudio | Фотостудія Бровари для портретів і контенту";
+const pageDescription = "Nova PhotoStudio у Броварах: світла фотостудія для портретних, сімейних, beauty та контент-зйомок. Оренда простору і фотограф за потреби.";
+const studioPageSchema = makeWebPageSchema({
+  path: "/studio/",
+  name: pageTitle,
+  description: pageDescription,
+  image: "/studio/studio-hero.png",
+  about: { "@id": `${siteUrl}/studio/#localbusiness` },
+  mainEntity: { "@id": `${siteUrl}/studio/#localbusiness` }
+});
+const breadcrumbSchema = makeBreadcrumbSchema([
+  { name: "Nova Space", url: "/" },
+  { name: "Бровари", url: "/brovary/" },
+  { name: "Nova PhotoStudio", url: "/studio/" }
+]);
 ---
 
 <BaseLayout
-  title="Nova PhotoStudio | Фотостудія Бровари для портретів і контенту"
-  description="Nova PhotoStudio у Броварах: світла фотостудія для портретних, сімейних, beauty та контент-зйомок. Оренда простору і фотограф за потреби."
+  title={pageTitle}
+  description={pageDescription}
   canonicalPath="/studio/"
   image="/studio/studio-hero.png"
-  schema={[organizationSchema, novaPhotoStudioSchema]}
+  schema={[organizationSchema, webSiteSchema, novaPhotoStudioSchema, studioPageSchema, breadcrumbSchema]}
 >
   <div class="app-shell studio-page">
     <Header brand="Nova Space" sub="Nova PhotoStudio" nav={studioNav} schedule="Понеділок-Неділя|10:00-21:00" ctaHref="#booking" ctaLabel="Забронювати" />
@@ -26,6 +42,7 @@ import { studioLandingPages } from "../../data/studioLandingPages.js";
       <section class="studio-local-links reveal" aria-label="Популярні формати Nova PhotoStudio у Броварах">
         <span>Популярні формати у Броварах</span>
         <div>
+          <a href="/brovary/">Усі формати Nova Space у Броварах</a>
           {studioLandingPages.map((landingPage) => (
             <a href={`/${landingPage.slug}/`}>{landingPage.eyebrow}</a>
           ))}
