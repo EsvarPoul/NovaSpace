@@ -9,6 +9,7 @@ import StudioPortfolio from "../../components/studio/StudioPortfolio.astro";
 import StudioBookingCTA from "../../components/studio/StudioBookingCTA.astro";
 import { novaPhotoStudioSchema, organizationSchema } from "../../data/seo.js";
 import { studioNav } from "../../data/studio.js";
+import { studioLandingPages } from "../../data/studioLandingPages.js";
 ---
 
 <BaseLayout
@@ -22,6 +23,14 @@ import { studioNav } from "../../data/studio.js";
     <Header brand="Nova Space" sub="Nova PhotoStudio" nav={studioNav} schedule="Понеділок-Неділя|10:00-21:00" ctaHref="#booking" ctaLabel="Забронювати" />
     <main>
       <StudioHero />
+      <section class="studio-local-links reveal" aria-label="Популярні формати Nova PhotoStudio у Броварах">
+        <span>Популярні формати у Броварах</span>
+        <div>
+          {studioLandingPages.map((landingPage) => (
+            <a href={`/${landingPage.slug}/`}>{landingPage.eyebrow}</a>
+          ))}
+        </div>
+      </section>
       <StudioServices />
       <StudioPortfolio />
       <StudioBookingCTA />

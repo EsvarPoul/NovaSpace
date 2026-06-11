@@ -49,6 +49,36 @@
     <priority>0.8</priority>
   </url>
   <url>
+    <loc>https://nova-space.pp.ua/fotostudiya-brovary/</loc>
+    <lastmod>2026-06-11</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.85</priority>
+  </url>
+  <url>
+    <loc>https://nova-space.pp.ua/orenda-fotostudiyi-brovary/</loc>
+    <lastmod>2026-06-11</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://nova-space.pp.ua/fotosesiya-brovary/</loc>
+    <lastmod>2026-06-11</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://nova-space.pp.ua/simeyna-fotosesiya-brovary/</loc>
+    <lastmod>2026-06-11</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.75</priority>
+  </url>
+  <url>
+    <loc>https://nova-space.pp.ua/kontent-zyomka-brovary/</loc>
+    <lastmod>2026-06-11</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.75</priority>
+  </url>
+  <url>
     <loc>https://nova-space.pp.ua/booking/</loc>
     <lastmod>2026-06-11</lastmod>
     <changefreq>weekly</changefreq>

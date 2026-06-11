@@ -2,10 +2,12 @@
 import BaseLayout from "../layouts/BaseLayout.astro";
 import Header from "../components/layout/Header.astro";
 import MobileActionBar from "../components/layout/MobileActionBar.astro";
-import { address, mapsUrl, novaVrSchema, organizationSchema, phone, siteUrl } from "../data/seo.js";
+import { address, mapsUrl, novaPhotoStudioSchema, novaVrSchema, organizationSchema, phone, siteUrl } from "../data/seo.js";
+import { studioLandingPages } from "../data/studioLandingPages.js";
 import { getRelatedVrLandingPages, vrLandingPages } from "../data/vrLandingPages.js";
 
 interface VrLandingPage {
+  type?: "vr" | "studio";
   slug: string;
   title: string;
   description: string;
@@ -32,17 +34,50 @@ interface VrLandingPage {
   related?: string[];
 }
 
+const landingPagesForRelated = [...(vrLandingPages as VrLandingPage[]), ...(studioLandingPages as VrLandingPage[])];
+const getLandingPage = (slug: string) => landingPagesForRelated.find((item) => item.slug === slug);
+const getRelatedLandingPages = (page: VrLandingPage) =>
+  (page.related || [])
+    .map((slug) => getLandingPage(slug))
+    .filter(Boolean) as VrLandingPage[];
+
 export function getStaticPaths() {
-  return (vrLandingPages as VrLandingPage[]).map((page) => ({
+  return [...(vrLandingPages as VrLandingPage[]), ...(studioLandingPages as VrLandingPage[])].map((page) => ({
     params: { slug: page.slug },
     props: { page }
   }));
 }
 
 const { page } = Astro.props as { page: VrLandingPage };
-const relatedPages = getRelatedVrLandingPages(page) as VrLandingPage[];
+const isStudioLanding = page.type === "studio";
+const relatedPages = isStudioLanding ? getRelatedLandingPages(page) : (getRelatedVrLandingPages(page) as VrLandingPage[]);
 const pageUrl = `${siteUrl}/${page.slug}/`;
 const addressText = `${address.streetAddress}, ${address.addressLocality}`;
+const parentPage = isStudioLanding
+  ? { name: "Nova PhotoStudio", url: `${siteUrl}/studio/`, path: "/studio/" }
+  : { name: "NOVA VR", url: `${siteUrl}/vr/`, path: "/vr/" };
+const businessSchema = isStudioLanding ? novaPhotoStudioSchema : novaVrSchema;
+const providerId = `${siteUrl}/${isStudioLanding ? "studio" : "vr"}/#localbusiness`;
+const headerNav = isStudioLanding
+  ? [
+      { label: "Фотостудія", href: "/studio/" },
+      { label: "Оренда", href: "/orenda-fotostudiyi-brovary/" },
+      { label: "Фотосесія", href: "/fotosesiya-brovary/" },
+      { label: "Контакти", href: "#contacts" }
+    ]
+  : [
+      { label: "VR клуб", href: "/vr/" },
+      { label: "День народження", href: "/den-narodzhennya-vr-brovary/" },
+      { label: "PS5", href: "/ps5-brovary/" },
+      { label: "Контакти", href: "#contacts" }
+    ];
+const schedule = isStudioLanding ? "Щодня|10:00-21:00" : "Щодня|10:00-22:00";
+const instagramUrl = isStudioLanding ? "https://www.instagram.com/nova_photostudio_/" : "https://instagram.com/novaspace_vr";
+const instagramLabel = isStudioLanding ? "@nova_photostudio_" : "@novaspace_vr";
+const contactTitle = isStudioLanding ? "Nova PhotoStudio у Броварах" : "NOVA VR у Броварах";
+const contactText = isStudioLanding
+  ? `Адреса: ${addressText}. Працюємо щодня з 10:00 до 21:00.`
+  : `Адреса: ${addressText}. Працюємо щодня з 10:00 до 22:00.`;
 
 const breadcrumbSchema = {
   "@context": "https://schema.org",
@@ -57,8 +92,8 @@ const breadcrumbSchema = {
     {
       "@type": "ListItem",
       position: 2,
-      name: "NOVA VR",
-      item: `${siteUrl}/vr/`
+      name: parentPage.name,
+      item: parentPage.url
     },
     {
       "@type": "ListItem",
@@ -81,7 +116,7 @@ const webPageSchema = {
     "@id": `${siteUrl}/#organization`
   },
   about: {
-    "@id": `${siteUrl}/vr/#localbusiness`
+    "@id": providerId
   },
   primaryImageOfPage: {
     "@type": "ImageObject",
@@ -96,7 +131,7 @@ const serviceSchema = {
   name: page.h1,
   description: page.lead,
   provider: {
-    "@id": `${siteUrl}/vr/#localbusiness`
+    "@id": providerId
   },
   areaServed: {
     "@type": "City",
@@ -124,19 +159,14 @@ const faqSchema = {
   description={page.description}
   canonicalPath={`/${page.slug}/`}
   image={page.image}
-  schema={[organizationSchema, novaVrSchema, webPageSchema, serviceSchema, breadcrumbSchema, faqSchema]}
+  schema={[organizationSchema, businessSchema, webPageSchema, serviceSchema, breadcrumbSchema, faqSchema]}
 >
-  <div class="vr-local-page">
+  <div class={`vr-local-page${isStudioLanding ? " vr-local-page--studio" : ""}`}>
     <Header
       brand="Nova Space"
-      sub="NOVA VR"
-      nav={[
-        { label: "VR клуб", href: "/vr/" },
-        { label: "День народження", href: "/den-narodzhennya-vr-brovary/" },
-        { label: "PS5", href: "/ps5-brovary/" },
-        { label: "Контакти", href: "#contacts" }
-      ]}
-      schedule="Щодня|10:00-22:00"
+      sub={parentPage.name}
+      nav={headerNav}
+      schedule={schedule}
       ctaHref="/booking/"
       ctaLabel="Забронювати"
     />
@@ -147,7 +177,7 @@ const faqSchema = {
           <nav class="vr-local-breadcrumbs" aria-label="Навігаційний шлях">
             <a href="/">Nova Space</a>
             <span>/</span>
-            <a href="/vr/">NOVA VR</a>
+            <a href={parentPage.path}>{parentPage.name}</a>
             <span>/</span>
             <strong>{page.eyebrow}</strong>
           </nav>
@@ -242,13 +272,13 @@ const faqSchema = {
     <footer id="contacts" class="vr-local-contact">
       <div>
         <span class="vr-local-kicker">Контакти</span>
-        <h2>NOVA VR у Броварах</h2>
-        <p>Адреса: {addressText}. Працюємо щодня з 10:00 до 22:00.</p>
+        <h2>{contactTitle}</h2>
+        <p>{contactText}</p>
       </div>
       <div class="vr-local-contact__actions">
         <a href={`tel:${phone}`}>+380 66 009 7630</a>
         <a href={mapsUrl} target="_blank" rel="noreferrer">Відкрити маршрут</a>
-        <a href="https://instagram.com/novaspace_vr" target="_blank" rel="noreferrer">@novaspace_vr</a>
+        <a href={instagramUrl} target="_blank" rel="noreferrer">{instagramLabel}</a>
       </div>
     </footer>
   </div>
@@ -258,6 +288,6 @@ const faqSchema = {
     primaryLabel="Забронювати"
     secondaryHref="tel:+380660097630"
     secondaryLabel="Дзвінок"
-    class="mobile-action-bar--vr"
+    class={isStudioLanding ? "mobile-action-bar--studio" : "mobile-action-bar--vr"}
   />
 </BaseLayout>

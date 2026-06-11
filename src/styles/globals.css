@@ -6636,13 +6636,15 @@ p {
   }
 }
 
-body:has(.studio-page) {
+body:has(.studio-page),
+body:has(.vr-local-page--studio) {
   color: #241f1b;
   background:
     linear-gradient(180deg, #f4efe6 0%, #eee5d8 48%, #e7dccd 100%);
 }
 
-body:has(.studio-page)::before {
+body:has(.studio-page)::before,
+body:has(.vr-local-page--studio)::before {
   opacity: 0.18;
   background-image:
     linear-gradient(rgba(66, 54, 42, 0.08) 1px, transparent 1px),
@@ -6650,7 +6652,8 @@ body:has(.studio-page)::before {
   mask-image: radial-gradient(circle at 50% 18%, black 18%, transparent 72%);
 }
 
-.studio-page {
+.studio-page,
+.vr-local-page--studio {
   --studio-ink: #241f1b;
   --studio-muted: rgba(36, 31, 27, 0.66);
   --studio-line: rgba(81, 64, 49, 0.14);
@@ -6800,6 +6803,185 @@ body:has(.studio-page)::before {
 .studio-page .menu-button {
   border-color: var(--studio-line);
   background: rgba(255, 252, 246, 0.74);
+}
+
+.vr-local-page--studio {
+  background:
+    radial-gradient(circle at 16% 12%, rgba(139, 115, 93, 0.12), transparent 24%),
+    radial-gradient(circle at 82% 18%, rgba(255, 252, 246, 0.54), transparent 26%),
+    linear-gradient(180deg, #f4efe6 0%, #eee5d8 52%, #e7dccd 100%);
+}
+
+.vr-local-page--studio .site-header,
+.vr-local-page--studio .vr-local-hero,
+.vr-local-page--studio .vr-local-stats,
+.vr-local-page--studio .vr-local-grid,
+.vr-local-page--studio .vr-local-sections article,
+.vr-local-page--studio .vr-local-faq,
+.vr-local-page--studio .vr-local-related,
+.vr-local-page--studio .vr-local-contact {
+  border-color: var(--studio-line);
+  background:
+    linear-gradient(180deg, rgba(255, 252, 246, 0.9), rgba(248, 241, 231, 0.7));
+  box-shadow: 0 22px 70px rgba(80, 61, 40, 0.12);
+}
+
+.vr-local-page--studio .brand span,
+.vr-local-page--studio .brand small,
+.vr-local-page--studio .site-nav a,
+.vr-local-page--studio .site-nav__schedule,
+.vr-local-page--studio .menu-button,
+.vr-local-page--studio .vr-local-hero h1,
+.vr-local-page--studio .vr-local-grid h2,
+.vr-local-page--studio .vr-local-faq h2,
+.vr-local-page--studio .vr-local-related h2,
+.vr-local-page--studio .vr-local-contact h2,
+.vr-local-page--studio .vr-local-sections h2,
+.vr-local-page--studio .vr-local-faq h3,
+.vr-local-page--studio .vr-local-related__grid a strong {
+  color: var(--studio-ink);
+}
+
+.vr-local-page--studio .brand small {
+  text-transform: none;
+}
+
+.vr-local-page--studio .site-nav a:hover,
+.vr-local-page--studio .site-nav a:focus-visible {
+  border-color: rgba(81, 64, 49, 0.18);
+  background: rgba(255, 255, 255, 0.48);
+}
+
+.vr-local-page--studio .btn {
+  border-color: rgba(139, 115, 93, 0.2);
+  color: #fffaf2;
+  background: linear-gradient(135deg, #3b332c, #8b735d);
+}
+
+.vr-local-page--studio .btn--small {
+  color: var(--studio-ink);
+  background: rgba(255, 252, 246, 0.74);
+}
+
+.vr-local-page--studio .menu-button {
+  border-color: var(--studio-line);
+  background: rgba(255, 252, 246, 0.74);
+}
+
+.vr-local-page--studio .vr-local-breadcrumbs,
+.vr-local-page--studio .vr-local-hero p,
+.vr-local-page--studio .vr-local-grid p,
+.vr-local-page--studio .vr-local-faq p,
+.vr-local-page--studio .vr-local-contact p,
+.vr-local-page--studio .vr-local-sections p,
+.vr-local-page--studio .vr-local-related__grid a em {
+  color: var(--studio-muted);
+}
+
+.vr-local-page--studio .vr-local-kicker,
+.vr-local-page--studio .vr-local-breadcrumbs strong,
+.vr-local-page--studio .vr-local-hero__media figcaption span,
+.vr-local-page--studio .vr-local-stats span,
+.vr-local-page--studio .vr-local-related__grid a span {
+  color: rgba(139, 115, 93, 0.86);
+}
+
+.vr-local-page--studio .vr-local-button,
+.vr-local-page--studio .vr-local-contact__actions a {
+  border-color: rgba(81, 64, 49, 0.15);
+  color: var(--studio-ink);
+  background: rgba(255, 252, 246, 0.72);
+}
+
+.vr-local-page--studio .vr-local-button--primary {
+  border-color: rgba(139, 115, 93, 0.24);
+  color: #fffaf2;
+  background: linear-gradient(135deg, #3b332c, #8b735d);
+}
+
+.vr-local-page--studio .vr-local-stats {
+  background: rgba(81, 64, 49, 0.14);
+}
+
+.vr-local-page--studio .vr-local-stats article,
+.vr-local-page--studio .vr-local-points article,
+.vr-local-page--studio .vr-local-faq article,
+.vr-local-page--studio .vr-local-related__grid a {
+  border-color: rgba(81, 64, 49, 0.12);
+  background: rgba(255, 252, 246, 0.64);
+}
+
+.vr-local-page--studio .vr-local-stats strong,
+.vr-local-page--studio .vr-local-hero__media figcaption strong {
+  color: var(--studio-ink);
+}
+
+.vr-local-page--studio .vr-local-points span {
+  background: #8b735d;
+  box-shadow: 0 0 18px rgba(139, 115, 93, 0.28);
+}
+
+.vr-local-page--studio .vr-local-hero__media {
+  border-color: rgba(81, 64, 49, 0.12);
+  background: #ede4d7;
+}
+
+.vr-local-page--studio .vr-local-hero__media::after {
+  background: linear-gradient(180deg, transparent 48%, rgba(27, 20, 16, 0.34));
+}
+
+.vr-local-page--studio .vr-local-hero__media figcaption {
+  border-color: rgba(255, 252, 246, 0.42);
+  background: rgba(255, 252, 246, 0.78);
+}
+
+.studio-local-links {
+  display: grid;
+  gap: 12px;
+  padding: 18px;
+  border: 1px solid var(--studio-line);
+  border-radius: 18px;
+  background:
+    linear-gradient(180deg, rgba(255, 252, 246, 0.84), rgba(248, 241, 231, 0.66));
+  box-shadow: 0 18px 54px rgba(80, 61, 40, 0.1);
+  backdrop-filter: blur(18px);
+}
+
+.studio-local-links > span {
+  color: rgba(36, 31, 27, 0.58);
+  font-size: 11px;
+  font-weight: 900;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+}
+
+.studio-local-links div {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.studio-local-links a {
+  min-height: 38px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0 13px;
+  border: 1px solid rgba(81, 64, 49, 0.13);
+  border-radius: 999px;
+  color: var(--studio-ink);
+  background: rgba(255, 252, 246, 0.68);
+  font-size: 13px;
+  font-weight: 850;
+  line-height: 1.15;
+  text-align: center;
+}
+
+.studio-local-links a:hover,
+.studio-local-links a:focus-visible {
+  border-color: rgba(139, 115, 93, 0.28);
+  background: rgba(255, 255, 255, 0.86);
+  outline: 0;
 }
 
 .studio-page .hero {
