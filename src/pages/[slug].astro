@@ -2,7 +2,7 @@
 import BaseLayout from "../layouts/BaseLayout.astro";
 import Header from "../components/layout/Header.astro";
 import MobileActionBar from "../components/layout/MobileActionBar.astro";
-import { address, mapsUrl, novaPhotoStudioSchema, novaVrSchema, organizationSchema, phone, siteUrl } from "../data/seo.js";
+import { address, bookingUrl, mapsUrl, novaPhotoStudioSchema, novaVrSchema, organizationSchema, phone, siteUrl } from "../data/seo.js";
 import { studioLandingPages } from "../data/studioLandingPages.js";
 import { getRelatedVrLandingPages, vrLandingPages } from "../data/vrLandingPages.js";
 
@@ -137,7 +137,20 @@ const serviceSchema = {
     "@type": "City",
     name: "Бровари"
   },
-  serviceType: page.eyebrow
+  serviceType: page.eyebrow,
+  potentialAction: {
+    "@type": "ReserveAction",
+    name: page.primaryCta,
+    target: {
+      "@type": "EntryPoint",
+      urlTemplate: bookingUrl,
+      inLanguage: "uk-UA",
+      actionPlatform: [
+        "http://schema.org/DesktopWebPlatform",
+        "http://schema.org/MobileWebPlatform"
+      ]
+    }
+  }
 };
 
 const faqSchema = {
