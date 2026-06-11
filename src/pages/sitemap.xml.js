@@ -14,6 +14,12 @@ const basePages = [
     imageTitle: "Nova Space Бровари"
   },
   {
+    path: "/brovary/",
+    priority: "0.95",
+    image: "/vr/nova-space-logo.webp",
+    imageTitle: "Nova Space у Броварах"
+  },
+  {
     path: "/vr/",
     priority: "0.9",
     image: "/vr/nova-space-logo.webp",
