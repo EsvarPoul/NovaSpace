@@ -5,6 +5,8 @@ import { join, resolve } from "node:path";
 const siteUrl = "https://nova-space.pp.ua";
 const distDir = resolve("dist");
 const expectedUrlCount = 15;
+const indexNowKey = "04329b1562807a21488f46f4ce417551";
+const indexNowKeyFile = `${indexNowKey}.txt`;
 const publicPages = [
   "/",
   "/brovary/",
@@ -120,6 +122,20 @@ const auditNginx = async () => {
   assert(nginx.includes('X-Robots-Tag "noindex, nofollow, noarchive" always'), "nginx.conf is missing admin X-Robots-Tag");
 };
 
+const auditIndexNow = async () => {
+  const packageJson = JSON.parse(await readFile(resolve("package.json"), "utf8"));
+  const publicKey = (await readFile(resolve("public", indexNowKeyFile), "utf8")).trim();
+  const distKey = (await readFile(join(distDir, indexNowKeyFile), "utf8")).trim();
+  const submitScript = await readFile(resolve("scripts", "submit-indexnow.mjs"), "utf8");
+
+  assert(publicKey === indexNowKey, "Public IndexNow key file content does not match the configured key");
+  assert(distKey === indexNowKey, "Built IndexNow key file content does not match the configured key");
+  assert(packageJson.scripts?.["indexnow:submit"], "package.json is missing indexnow:submit");
+  assert(packageJson.scripts?.["indexnow:dry-run"], "package.json is missing indexnow:dry-run");
+  assert(submitScript.includes("api.indexnow.org/indexnow"), "submit-indexnow.mjs is missing the IndexNow endpoint");
+  assert(submitScript.includes(indexNowKey), "submit-indexnow.mjs is missing the configured IndexNow key");
+};
+
 const auditSitemap = async () => {
   const { sitemap, pageUrls } = await readSitemapUrls();
   assert(pageUrls.length === expectedUrlCount, `Expected ${expectedUrlCount} sitemap page URLs, found ${pageUrls.length}`);
@@ -176,6 +192,7 @@ const auditPage = async (path) => {
 
 await auditRobots();
 await auditNginx();
+await auditIndexNow();
 await auditSitemap();
 const reports = [];
 
