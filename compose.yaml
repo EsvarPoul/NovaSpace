@@ -3,7 +3,7 @@ services:
     build:
       context: .
       args:
-        SITE_URL: ${SITE_URL:-https://nova.local}
+        SITE_URL: ${SITE_URL:-https://nova-space.pp.ua}
         PUBLIC_SUPABASE_URL: ${PUBLIC_SUPABASE_URL:-}
         PUBLIC_SUPABASE_ANON_KEY: ${PUBLIC_SUPABASE_ANON_KEY:-}
     image: nova-site:latest

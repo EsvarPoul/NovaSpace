@@ -4,9 +4,25 @@ import "../styles/globals.css";
 interface Props {
   title: string;
   description: string;
+  canonicalPath?: string;
+  image?: string;
+  robots?: string;
+  schema?: Record<string, unknown> | Record<string, unknown>[];
 }
 
-const { title, description } = Astro.props;
+const {
+  title,
+  description,
+  canonicalPath,
+  image = "/vr/nova-space-logo.webp",
+  robots = "index,follow",
+  schema
+} = Astro.props;
+
+const site = Astro.site ?? new URL("https://nova-space.pp.ua");
+const canonicalUrl = new URL(canonicalPath ?? Astro.url.pathname, site).toString();
+const imageUrl = new URL(image, site).toString();
+const schemaJson = schema ? JSON.stringify(schema).replace(/</g, "\\u003c") : "";
 ---
 
 <!doctype html>
@@ -15,10 +31,24 @@ const { title, description } = Astro.props;
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <meta name="description" content={description} />
+    <meta name="robots" content={robots} />
+    <link rel="canonical" href={canonicalUrl} />
     <title>{title}</title>
+    <meta property="og:locale" content="uk_UA" />
+    <meta property="og:type" content="website" />
+    <meta property="og:site_name" content="Nova Space" />
+    <meta property="og:title" content={title} />
+    <meta property="og:description" content={description} />
+    <meta property="og:url" content={canonicalUrl} />
+    <meta property="og:image" content={imageUrl} />
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content={title} />
+    <meta name="twitter:description" content={description} />
+    <meta name="twitter:image" content={imageUrl} />
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Cormorant+Garamond:wght@500;600;700&display=swap" rel="stylesheet" />
+    {schemaJson && <script is:inline type="application/ld+json" set:html={schemaJson}></script>}
   </head>
   <body>
     <slot />

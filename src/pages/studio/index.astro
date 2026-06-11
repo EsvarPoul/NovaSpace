@@ -7,12 +7,16 @@ import StudioHero from "../../components/studio/StudioHero.astro";
 import StudioServices from "../../components/studio/StudioServices.astro";
 import StudioPortfolio from "../../components/studio/StudioPortfolio.astro";
 import StudioBookingCTA from "../../components/studio/StudioBookingCTA.astro";
+import { novaPhotoStudioSchema, organizationSchema } from "../../data/seo.js";
 import { studioNav } from "../../data/studio.js";
 ---
 
 <BaseLayout
-  title="Nova PhotoStudio"
-  description="Nova PhotoStudio: світла фотостудія від Nova Space у Броварах для індивідуальних, сімейних і контент-зйомок."
+  title="Nova PhotoStudio | Фотостудія Бровари для портретів і контенту"
+  description="Nova PhotoStudio у Броварах: світла фотостудія для портретних, сімейних, beauty та контент-зйомок. Оренда простору і фотограф за потреби."
+  canonicalPath="/studio/"
+  image="/studio/studio-hero.png"
+  schema={[organizationSchema, novaPhotoStudioSchema]}
 >
   <div class="app-shell studio-page">
     <Header brand="Nova Space" sub="Nova PhotoStudio" nav={studioNav} schedule="Понеділок-Неділя|10:00-21:00" ctaHref="#booking" ctaLabel="Забронювати" />

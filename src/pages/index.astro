@@ -2,15 +2,18 @@
 import BaseLayout from "../layouts/BaseLayout.astro";
 import MobileActionBar from "../components/layout/MobileActionBar.astro";
 import SpaceLanding from "../components/space/SpaceLanding.astro";
+import { novaPhotoStudioSchema, novaVrSchema, organizationSchema } from "../data/seo.js";
 ---
 
 <BaseLayout
-  title="Nova Space | PhotoStudio + VR"
-  description="Nova Space об'єднує Nova PhotoStudio та Nova VR: фотостудію і VR-простір у Броварах."
+  title="Nova Space Бровари | VR клуб і фотостудія"
+  description="Nova Space у Броварах: NOVA VR для ігор, днів народження й компаній та Nova PhotoStudio для портретних, сімейних і контент-зйомок."
+  canonicalPath="/"
+  schema={[organizationSchema, novaVrSchema, novaPhotoStudioSchema]}
 >
   <SpaceLanding />
   <MobileActionBar
-    primaryHref="/booking"
+    primaryHref="/booking/"
     primaryLabel="Забронювати"
     secondaryHref="tel:+380660097630"
     secondaryLabel="Дзвінок"

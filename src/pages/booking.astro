@@ -1,11 +1,14 @@
 ---
 import BaseLayout from "../layouts/BaseLayout.astro";
 import BookingWidget from "../components/booking/BookingWidget.astro";
+import { organizationSchema } from "../data/seo.js";
 ---
 
 <BaseLayout
-  title="NOVA Booking"
-  description="Календар бронювання Nova VR та Nova PhotoStudio від Nova Space."
+  title="Бронювання Nova Space Бровари | NOVA VR, PS5 і PhotoStudio"
+  description="Онлайн-бронювання NOVA VR, PS5, NovaMix, днів народження та Nova PhotoStudio у Броварах. Оберіть формат, дату і зручний слот."
+  canonicalPath="/booking/"
+  schema={organizationSchema}
 >
   <main class="booking-app" data-booking-app>
     <header class="booking-hero">

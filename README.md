@@ -32,11 +32,11 @@ Import this repository into Vercel. The deployment settings are committed in `ve
 
 Add these environment variables in Vercel for both Production and Preview:
 
-- `SITE_URL`: the production URL, for example `https://nova-site.vercel.app`
+- `SITE_URL`: the production URL, `https://nova-space.pp.ua`
 - `PUBLIC_SUPABASE_URL`: your Supabase project URL
 - `PUBLIC_SUPABASE_ANON_KEY`: your Supabase public anon key
 
-Vercel also provides `VERCEL_PROJECT_PRODUCTION_URL`; if `SITE_URL` is missing, `astro.config.mjs` uses that value before falling back to `https://nova.local`.
+Vercel also provides `VERCEL_PROJECT_PRODUCTION_URL`; if `SITE_URL` is missing, `astro.config.mjs` uses that value before falling back to `https://nova-space.pp.ua`.
 
 ## Docker deployment
 
@@ -45,7 +45,7 @@ The root `compose.yaml` builds the Astro site into static files and serves them 
 Create a local `.env` file if you need production build variables:
 
 ```bash
-SITE_URL=https://your-domain.example
+SITE_URL=https://nova-space.pp.ua
 SITE_PORT=8080
 PUBLIC_SUPABASE_URL=https://your-project.supabase.co
 PUBLIC_SUPABASE_ANON_KEY=your-public-anon-key
@@ -97,7 +97,7 @@ After the first Vercel deployment, test:
 - `/`
 - `/studio`
 - `/vr`
-- `/booking`
+- `/booking/`
 - `/admin/bookings`
 
 Create a test booking and confirm it appears in Supabase. Also verify that the manager page only exposes the data intended by your Supabase RLS policies.

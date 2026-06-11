@@ -2,6 +2,7 @@
 import BaseLayout from "../../layouts/BaseLayout.astro";
 import MobileActionBar from "../../components/layout/MobileActionBar.astro";
 import { faqItems } from "../../data/faq.js";
+import { novaVrSchema, organizationSchema } from "../../data/seo.js";
 import { vrContacts, vrGames, vrNav, vrPricing, vrPricingNotes, vrRules, vrScenarios } from "../../data/vr.js";
 
 const gamesJson = JSON.stringify(vrGames);
@@ -9,8 +10,11 @@ const scenariosJson = JSON.stringify(vrScenarios);
 ---
 
 <BaseLayout
-  title="Nova VR"
-  description="NOVA VR — простір для ігор, свят і компаній з 6 VR-зонами, PlayStation 5 та форматами для подій."
+  title="NOVA VR | VR клуб Бровари, ігри, дні народження та PS5"
+  description="NOVA VR у Броварах: VR клуб з 6 VR-зонами, PlayStation 5, іграми для дітей і дорослих, днями народження, корпоративами та бронюванням онлайн."
+  canonicalPath="/vr/"
+  image="/vr/nova-space-logo.webp"
+  schema={[organizationSchema, novaVrSchema]}
 >
   <main class="vr-os" aria-label="Nova VR club page">
     <script is:inline type="application/json" id="vr-games-data" set:html={gamesJson}></script>
@@ -25,7 +29,7 @@ const scenariosJson = JSON.stringify(vrScenarios);
         {vrNav.map((item) => <a href={item.href} data-vr-nav={item.href.replace("#", "")}>{item.label}</a>)}
       </nav>
       <div class="vr-os__footer">
-        <a class="vr-os__launch" href="/booking">Забронювати</a>
+        <a class="vr-os__launch" href="/booking/">Забронювати</a>
         <a class="vr-os__credit" href="https://app.esvarpoul.pp.ua/" target="_blank" rel="noreferrer">
           Designed by Esvar Poul
         </a>
@@ -62,7 +66,7 @@ const scenariosJson = JSON.stringify(vrScenarios);
             <h1 id="dashboard-title">NOVA VR — простір для ігор, свят і компаній.</h1>
             <p>У NOVA VR можна грати самому, удвох або компанією. У просторі доступні 6 VR-зон, PS5 на два джойстики, сценарії для днів народження, побачень, корпоративів і вечорів з друзями.</p>
             <div class="vr-quick-actions">
-              <a href="/booking">Забронювати</a>
+              <a href="/booking/">Забронювати</a>
               <a href="#games" data-vr-nav="games">Переглянути ігри</a>
             </div>
           </div>
@@ -187,7 +191,7 @@ const scenariosJson = JSON.stringify(vrScenarios);
               </dl>
               <div class="vr-game-detail__features" data-detail-features></div>
               <div class="vr-game-detail__actions">
-                <a href="/booking">Забронювати</a>
+                <a href="/booking/">Забронювати</a>
                 <button type="button" data-game-back>До ігор</button>
               </div>
             </article>
@@ -280,7 +284,7 @@ const scenariosJson = JSON.stringify(vrScenarios);
               <article><span>PS5</span><strong data-scenario-ps5></strong></article>
             </div>
             <div class="vr-game-detail__actions">
-              <a href="/booking">Забронювати сценарій</a>
+              <a href="/booking/">Забронювати сценарій</a>
               <button type="button" data-scenario-back>До сценаріїв</button>
             </div>
           </div>
@@ -385,7 +389,7 @@ const scenariosJson = JSON.stringify(vrScenarios);
             <span>Format</span><strong data-summary-event>Free</strong>
           </div>
           <div class="vr-onboarding__actions">
-            <a href="/booking">Перейти до броні</a>
+            <a href="/booking/">Перейти до броні</a>
             <button type="button" data-finish-onboarding>Вільний режим</button>
           </div>
         </div>
@@ -393,7 +397,7 @@ const scenariosJson = JSON.stringify(vrScenarios);
     </section>
   </main>
   <MobileActionBar
-    primaryHref="/booking"
+    primaryHref="/booking/"
     primaryLabel="Забронювати"
     secondaryHref="tel:+380660097630"
     secondaryLabel="Дзвінок"
