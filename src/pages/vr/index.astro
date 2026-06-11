@@ -27,6 +27,18 @@ const breadcrumbSchema = makeBreadcrumbSchema([
   { name: "Бровари", url: "/brovary/" },
   { name: "NOVA VR", url: "/vr/" }
 ]);
+const faqSchema = {
+  "@context": "https://schema.org",
+  "@type": "FAQPage",
+  mainEntity: faqItems.map((item) => ({
+    "@type": "Question",
+    name: item.question,
+    acceptedAnswer: {
+      "@type": "Answer",
+      text: item.answer
+    }
+  }))
+};
 ---
 
 <BaseLayout
@@ -34,7 +46,7 @@ const breadcrumbSchema = makeBreadcrumbSchema([
   description={pageDescription}
   canonicalPath="/vr/"
   image="/vr/nova-space-logo.webp"
-  schema={[organizationSchema, webSiteSchema, novaVrSchema, vrPageSchema, breadcrumbSchema]}
+  schema={[organizationSchema, webSiteSchema, novaVrSchema, vrPageSchema, breadcrumbSchema, faqSchema]}
 >
   <main class="vr-os" aria-label="Nova VR club page">
     <script is:inline type="application/json" id="vr-games-data" set:html={gamesJson}></script>

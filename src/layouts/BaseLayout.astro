@@ -6,6 +6,7 @@ interface Props {
   description: string;
   canonicalPath?: string;
   image?: string;
+  imageAlt?: string;
   robots?: string;
   schema?: Record<string, unknown> | Record<string, unknown>[];
 }
@@ -15,6 +16,7 @@ const {
   description,
   canonicalPath,
   image = "/vr/nova-space-logo.webp",
+  imageAlt,
   robots = "index,follow",
   schema
 } = Astro.props;
@@ -22,6 +24,7 @@ const {
 const site = Astro.site ?? new URL("https://nova-space.pp.ua");
 const canonicalUrl = new URL(canonicalPath ?? Astro.url.pathname, site).toString();
 const imageUrl = new URL(image, site).toString();
+const socialImageAlt = imageAlt || title;
 const schemaJson = schema ? JSON.stringify(schema).replace(/</g, "\\u003c") : "";
 ---
 
@@ -33,7 +36,13 @@ const schemaJson = schema ? JSON.stringify(schema).replace(/</g, "\\u003c") : ""
     <meta name="description" content={description} />
     <meta name="robots" content={robots} />
     <link rel="canonical" href={canonicalUrl} />
+    <link rel="alternate" hreflang="uk-UA" href={canonicalUrl} />
+    <link rel="alternate" hreflang="x-default" href={canonicalUrl} />
     <title>{title}</title>
+    <meta name="geo.region" content="UA-32" />
+    <meta name="geo.placename" content="Бровари" />
+    <meta name="geo.position" content="50.49937;30.77804" />
+    <meta name="ICBM" content="50.49937, 30.77804" />
     <meta property="og:locale" content="uk_UA" />
     <meta property="og:type" content="website" />
     <meta property="og:site_name" content="Nova Space" />
@@ -41,10 +50,12 @@ const schemaJson = schema ? JSON.stringify(schema).replace(/</g, "\\u003c") : ""
     <meta property="og:description" content={description} />
     <meta property="og:url" content={canonicalUrl} />
     <meta property="og:image" content={imageUrl} />
+    <meta property="og:image:alt" content={socialImageAlt} />
     <meta name="twitter:card" content="summary_large_image" />
     <meta name="twitter:title" content={title} />
     <meta name="twitter:description" content={description} />
     <meta name="twitter:image" content={imageUrl} />
+    <meta name="twitter:image:alt" content={socialImageAlt} />
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Cormorant+Garamond:wght@500;600;700&display=swap" rel="stylesheet" />

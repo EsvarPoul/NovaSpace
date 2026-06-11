@@ -8,7 +8,8 @@
     "dev:lan": "astro dev --host 0.0.0.0 --port 4174",
     "build": "astro check && astro build",
     "preview": "astro preview --host 127.0.0.1 --port 4323",
-    "check": "astro check"
+    "check": "astro check",
+    "seo:audit": "node scripts/seo-audit.mjs"
   },
   "dependencies": {
     "@astrojs/check": "^0.9.4",

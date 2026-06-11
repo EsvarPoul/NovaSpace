@@ -15,6 +15,12 @@ export const address = {
   addressCountry: "UA"
 };
 
+export const geo = {
+  "@type": "GeoCoordinates",
+  latitude: 50.49937,
+  longitude: 30.77804
+};
+
 const week = [
   "Monday",
   "Tuesday",
@@ -241,7 +247,9 @@ export const novaVrSchema = {
   telephone: phone,
   priceRange: "200-7000 UAH",
   address,
+  geo,
   hasMap: mapsUrl,
+  currenciesAccepted: "UAH",
   contactPoint: [makeContactPoint("UA")],
   parentOrganization: {
     "@id": `${siteUrl}/#organization`
@@ -281,7 +289,9 @@ export const novaPhotoStudioSchema = {
   telephone: phone,
   priceRange: "600 UAH/hour",
   address,
+  geo,
   hasMap: mapsUrl,
+  currenciesAccepted: "UAH",
   contactPoint: [makeContactPoint("UA")],
   parentOrganization: {
     "@id": `${siteUrl}/#organization`
@@ -295,6 +305,16 @@ export const novaPhotoStudioSchema = {
       dayOfWeek: week,
       opens: "10:00",
       closes: "21:00"
+    }
+  ],
+  areaServed: [
+    {
+      "@type": "City",
+      name: "Бровари"
+    },
+    {
+      "@type": "AdministrativeArea",
+      name: "Київська область"
     }
   ]
 };
