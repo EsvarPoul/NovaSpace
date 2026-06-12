@@ -180,6 +180,7 @@ const schema = [
   description={page.description}
   canonicalPath={`/${page.slug}/`}
   image={page.image}
+  favicon={isStudioLanding ? "studio" : "vr"}
   schema={schema}
 >
   <div class={`vr-local-page${isStudioLanding ? " vr-local-page--studio" : ""}`}>

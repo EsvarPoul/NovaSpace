@@ -25,6 +25,51 @@ const publicPages = [
   "/kontent-zyomka-brovary/"
 ];
 const adminPages = ["/admin/", "/admin/bookings/", "/admin/vr-games/"];
+const faviconSets = {
+  home: {
+    ico: "/favicon.ico",
+    png48: "/favicon-48x48.png",
+    png192: "/favicon-192x192.png",
+    png512: "favicon-512x512.png",
+    apple: "/apple-touch-icon.png",
+    svg: "/favicon.svg",
+    label: "N.H"
+  },
+  vr: {
+    ico: "/favicon-vr.ico",
+    png48: "/favicon-vr-48x48.png",
+    png192: "/favicon-vr-192x192.png",
+    png512: "favicon-vr-512x512.png",
+    apple: "/apple-touch-icon-vr.png",
+    svg: "/favicon-vr.svg",
+    label: "N.VR"
+  },
+  studio: {
+    ico: "/favicon-studio.ico",
+    png48: "/favicon-studio-48x48.png",
+    png192: "/favicon-studio-192x192.png",
+    png512: "favicon-studio-512x512.png",
+    apple: "/apple-touch-icon-studio.png",
+    svg: "/favicon-studio.svg",
+    label: "N.PS"
+  }
+};
+const vrFaviconPages = new Set([
+  "/vr/",
+  "/vr-klub-brovary/",
+  "/den-narodzhennya-vr-brovary/",
+  "/korporatyv-vr-brovary/",
+  "/vr-dlya-ditey-brovary/",
+  "/ps5-brovary/"
+]);
+const studioFaviconPages = new Set([
+  "/studio/",
+  "/fotostudiya-brovary/",
+  "/orenda-fotostudiyi-brovary/",
+  "/fotosesiya-brovary/",
+  "/simeyna-fotosesiya-brovary/",
+  "/kontent-zyomka-brovary/"
+]);
 
 const requiredSchemaTypes = {
   "/": ["Organization", "WebSite", "CollectionPage"],
@@ -183,24 +228,47 @@ const assertPngSize = async (filename, expectedSize) => {
   assert(width === expectedSize && height === expectedSize, `${filename} must be ${expectedSize}x${expectedSize}, got ${width}x${height}`);
 };
 
+const assertIcoFile = async (filename) => {
+  const icon = await readBinary(join(distDir, filename));
+  assert(icon.readUInt16LE(0) === 0, `${filename} has an invalid reserved field`);
+  assert(icon.readUInt16LE(2) === 1, `${filename} must be an icon file`);
+  const entryCount = icon.readUInt16LE(4);
+  assert(entryCount >= 3, `${filename} should include multiple icon sizes`);
+
+  for (let index = 0; index < entryCount; index += 1) {
+    const offset = 6 + index * 16;
+    const bytes = icon.readUInt32LE(offset + 8);
+    const imageOffset = icon.readUInt32LE(offset + 12);
+    assert(bytes > 100, `${filename} entry ${index + 1} is unexpectedly small`);
+    assert(imageOffset + bytes <= icon.length, `${filename} entry ${index + 1} points outside the file`);
+  }
+};
+
+const faviconFilename = (path) => path.replace(/^\//, "");
+
 const auditFavicons = async () => {
-  const faviconIco = await readBinary(join(distDir, "favicon.ico"));
-  assert(faviconIco.readUInt16LE(0) === 0, "favicon.ico has an invalid reserved field");
-  assert(faviconIco.readUInt16LE(2) === 1, "favicon.ico must be an icon file");
-  assert(faviconIco.readUInt16LE(4) >= 3, "favicon.ico should include multiple icon sizes");
+  for (const [name, set] of Object.entries(faviconSets)) {
+    await assertIcoFile(faviconFilename(set.ico));
+    await assertPngSize(faviconFilename(set.png48), 48);
+    await assertPngSize(faviconFilename(set.png192), 192);
+    await assertPngSize(set.png512, 512);
+    await assertPngSize(faviconFilename(set.apple), 180);
 
-  await assertPngSize("favicon-48x48.png", 48);
-  await assertPngSize("favicon-192x192.png", 192);
-  await assertPngSize("favicon-512x512.png", 512);
-  await assertPngSize("apple-touch-icon.png", 180);
-
-  const faviconSvg = await readFile(join(distDir, "favicon.svg"), "utf8");
-  assert(faviconSvg.includes('viewBox="0 0 512 512"'), "favicon.svg must be square");
+    const faviconSvg = await readFile(join(distDir, faviconFilename(set.svg)), "utf8");
+    assert(faviconSvg.includes('viewBox="0 0 512 512"'), `${name} favicon.svg must be square`);
+    assert(faviconSvg.includes(set.label), `${name} favicon.svg is missing ${set.label}`);
+  }
 
   const manifest = JSON.parse(await readFile(join(distDir, "site.webmanifest"), "utf8"));
   const iconSrcs = manifest.icons?.map((icon) => icon.src) || [];
   assert(iconSrcs.includes("/favicon-192x192.png"), "site.webmanifest is missing the 192px icon");
   assert(iconSrcs.includes("/favicon-512x512.png"), "site.webmanifest is missing the 512px icon");
+};
+
+const expectedFaviconSet = (path) => {
+  if (vrFaviconPages.has(path)) return faviconSets.vr;
+  if (studioFaviconPages.has(path)) return faviconSets.studio;
+  return faviconSets.home;
 };
 
 const auditSitemap = async () => {
@@ -241,9 +309,12 @@ const auditPage = async (path) => {
   assert(description.length >= 80, `${path} meta description is too short`);
   assert(robots === "index,follow", `${path} robots meta should be index,follow`);
   assert(html.includes(`<link rel="alternate" hreflang="uk-UA" href="${canonical}"`), `${path} is missing uk-UA hreflang`);
-  assert(html.includes(`href="/favicon.ico"`), `${path} is missing favicon.ico`);
-  assert(html.includes(`href="/favicon-48x48.png"`), `${path} is missing 48px favicon`);
-  assert(html.includes(`href="/apple-touch-icon.png"`), `${path} is missing apple-touch-icon`);
+  const faviconSet = expectedFaviconSet(path);
+  assert(html.includes(`href="${faviconSet.ico}"`), `${path} is missing ${faviconSet.ico}`);
+  assert(html.includes(`href="${faviconSet.png48}"`), `${path} is missing ${faviconSet.png48}`);
+  assert(html.includes(`href="${faviconSet.png192}"`), `${path} is missing ${faviconSet.png192}`);
+  assert(html.includes(`href="${faviconSet.svg}"`), `${path} is missing ${faviconSet.svg}`);
+  assert(html.includes(`href="${faviconSet.apple}"`), `${path} is missing ${faviconSet.apple}`);
   assert(html.includes(`href="/site.webmanifest"`), `${path} is missing web manifest`);
   assert(!html.includes(`<link rel="icon" href="/vr/nova-space-logo`), `${path} still uses the wide Nova Space logo as a favicon`);
   assert(html.includes(`<meta name="theme-color" content="#050711"`), `${path} is missing theme-color`);
