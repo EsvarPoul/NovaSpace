@@ -147,6 +147,8 @@ const auditNginx = async () => {
   assert(nginx.includes("location = /robots.txt"), "nginx.conf is missing an exact robots.txt location");
   assert(nginx.includes("location = /sitemap.xml"), "nginx.conf is missing an exact sitemap.xml location");
   assert(nginx.includes("location = /sitemap-basic.xml"), "nginx.conf is missing an exact sitemap-basic.xml location");
+  assert(nginx.includes("location = /site.webmanifest"), "nginx.conf is missing an exact site.webmanifest location");
+  assert(nginx.includes("application/manifest+json"), "nginx.conf should serve site.webmanifest as application/manifest+json");
 };
 
 const auditIndexNow = async () => {
