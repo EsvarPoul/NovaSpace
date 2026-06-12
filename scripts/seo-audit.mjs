@@ -122,15 +122,25 @@ const readSitemapUrls = async () => {
   return { sitemap, pageUrls };
 };
 
+const readBasicSitemapUrls = async () => {
+  const sitemap = await readFile(join(distDir, "sitemap-basic.xml"), "utf8");
+  const pageUrls = [...sitemap.matchAll(/<loc>(.*?)<\/loc>/g)].map((match) => match[1]);
+  return { sitemap, pageUrls };
+};
+
 const auditRobots = async () => {
   const robots = await readFile(join(distDir, "robots.txt"), "utf8");
   assert(robots.includes(`Sitemap: ${siteUrl}/sitemap.xml`), "robots.txt is missing the sitemap directive");
+  assert(robots.includes(`Sitemap: ${siteUrl}/sitemap-basic.xml`), "robots.txt is missing the basic sitemap directive");
 };
 
 const auditNginx = async () => {
   const nginx = await readFile(resolve("nginx.conf"), "utf8");
   assert(nginx.includes("location ^~ /admin"), "nginx.conf is missing an /admin location");
   assert(nginx.includes('X-Robots-Tag "noindex, nofollow, noarchive" always'), "nginx.conf is missing admin X-Robots-Tag");
+  assert(nginx.includes("location = /robots.txt"), "nginx.conf is missing an exact robots.txt location");
+  assert(nginx.includes("location = /sitemap.xml"), "nginx.conf is missing an exact sitemap.xml location");
+  assert(nginx.includes("location = /sitemap-basic.xml"), "nginx.conf is missing an exact sitemap-basic.xml location");
 };
 
 const auditIndexNow = async () => {
@@ -149,12 +159,17 @@ const auditIndexNow = async () => {
 
 const auditSitemap = async () => {
   const { sitemap, pageUrls } = await readSitemapUrls();
+  const { sitemap: basicSitemap, pageUrls: basicPageUrls } = await readBasicSitemapUrls();
   assert(pageUrls.length === expectedUrlCount, `Expected ${expectedUrlCount} sitemap page URLs, found ${pageUrls.length}`);
+  assert(basicPageUrls.length === expectedUrlCount, `Expected ${expectedUrlCount} basic sitemap page URLs, found ${basicPageUrls.length}`);
   assert(new Set(pageUrls).size === pageUrls.length, "Sitemap has duplicate page URLs");
+  assert(new Set(basicPageUrls).size === basicPageUrls.length, "Basic sitemap has duplicate page URLs");
   assert(!sitemap.includes("/admin/"), "Sitemap must not include admin pages");
+  assert(!basicSitemap.includes("/admin/"), "Basic sitemap must not include admin pages");
 
   for (const path of publicPages) {
     assert(pageUrls.includes(absoluteUrl(path)), `Sitemap is missing ${path}`);
+    assert(basicPageUrls.includes(absoluteUrl(path)), `Basic sitemap is missing ${path}`);
   }
 };
 

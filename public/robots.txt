@@ -2,3 +2,4 @@ User-agent: *
 Allow: /
 
 Sitemap: https://nova-space.pp.ua/sitemap.xml
+Sitemap: https://nova-space.pp.ua/sitemap-basic.xml

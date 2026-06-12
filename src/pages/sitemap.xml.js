@@ -4,7 +4,7 @@ import { vrLandingPages } from "../data/vrLandingPages.js";
 
 export const prerender = true;
 
-const lastmod = "2026-06-11";
+const lastmod = "2026-06-12";
 
 const basePages = [
   {
@@ -92,7 +92,8 @@ ${pages.map(renderUrl).join("\n")}
 
   return new Response(body, {
     headers: {
-      "Content-Type": "application/xml; charset=utf-8"
+      "Content-Type": "application/xml; charset=utf-8",
+      "Cache-Control": "public, max-age=300"
     }
   });
 }
