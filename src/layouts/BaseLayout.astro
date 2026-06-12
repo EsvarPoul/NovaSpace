@@ -39,8 +39,12 @@ const schemaJson = schema ? JSON.stringify(schema).replace(/</g, "\\u003c") : ""
     <link rel="canonical" href={canonicalUrl} />
     <link rel="alternate" hreflang="uk-UA" href={canonicalUrl} />
     <link rel="alternate" hreflang="x-default" href={canonicalUrl} />
-    <link rel="icon" href="/vr/nova-space-logo.svg" type="image/svg+xml" />
-    <link rel="icon" href="/vr/nova-space-logo.webp" type="image/webp" sizes="1024x1024" />
+    <link rel="icon" href="/favicon.ico" sizes="any" />
+    <link rel="icon" href="/favicon-48x48.png" type="image/png" sizes="48x48" />
+    <link rel="icon" href="/favicon-192x192.png" type="image/png" sizes="192x192" />
+    <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
+    <link rel="apple-touch-icon" href="/apple-touch-icon.png" sizes="180x180" />
+    <link rel="manifest" href="/site.webmanifest" />
     <title>{title}</title>
     <meta name="theme-color" content="#050711" />
     <meta name="geo.region" content="UA-32" />

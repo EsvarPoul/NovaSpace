@@ -163,6 +163,44 @@ const auditIndexNow = async () => {
   assert(submitScript.includes(indexNowKey), "submit-indexnow.mjs is missing the configured IndexNow key");
 };
 
+const readBinary = (path) => readFile(path);
+
+const parsePngSize = (buffer) => {
+  const signature = buffer.subarray(0, 8).toString("hex");
+  assert(signature === "89504e470d0a1a0a", "Favicon PNG has an invalid signature");
+
+  return {
+    width: buffer.readUInt32BE(16),
+    height: buffer.readUInt32BE(20)
+  };
+};
+
+const assertPngSize = async (filename, expectedSize) => {
+  const buffer = await readBinary(join(distDir, filename));
+  const { width, height } = parsePngSize(buffer);
+  assert(width === expectedSize && height === expectedSize, `${filename} must be ${expectedSize}x${expectedSize}, got ${width}x${height}`);
+};
+
+const auditFavicons = async () => {
+  const faviconIco = await readBinary(join(distDir, "favicon.ico"));
+  assert(faviconIco.readUInt16LE(0) === 0, "favicon.ico has an invalid reserved field");
+  assert(faviconIco.readUInt16LE(2) === 1, "favicon.ico must be an icon file");
+  assert(faviconIco.readUInt16LE(4) >= 3, "favicon.ico should include multiple icon sizes");
+
+  await assertPngSize("favicon-48x48.png", 48);
+  await assertPngSize("favicon-192x192.png", 192);
+  await assertPngSize("favicon-512x512.png", 512);
+  await assertPngSize("apple-touch-icon.png", 180);
+
+  const faviconSvg = await readFile(join(distDir, "favicon.svg"), "utf8");
+  assert(faviconSvg.includes('viewBox="0 0 512 512"'), "favicon.svg must be square");
+
+  const manifest = JSON.parse(await readFile(join(distDir, "site.webmanifest"), "utf8"));
+  const iconSrcs = manifest.icons?.map((icon) => icon.src) || [];
+  assert(iconSrcs.includes("/favicon-192x192.png"), "site.webmanifest is missing the 192px icon");
+  assert(iconSrcs.includes("/favicon-512x512.png"), "site.webmanifest is missing the 512px icon");
+};
+
 const auditSitemap = async () => {
   const { sitemap, pageUrls } = await readSitemapUrls();
   const { sitemap: basicSitemap, pageUrls: basicPageUrls } = await readBasicSitemapUrls();
@@ -201,7 +239,11 @@ const auditPage = async (path) => {
   assert(description.length >= 80, `${path} meta description is too short`);
   assert(robots === "index,follow", `${path} robots meta should be index,follow`);
   assert(html.includes(`<link rel="alternate" hreflang="uk-UA" href="${canonical}"`), `${path} is missing uk-UA hreflang`);
-  assert(html.includes(`<link rel="icon" href="/vr/nova-space-logo.svg"`), `${path} is missing SVG favicon`);
+  assert(html.includes(`href="/favicon.ico"`), `${path} is missing favicon.ico`);
+  assert(html.includes(`href="/favicon-48x48.png"`), `${path} is missing 48px favicon`);
+  assert(html.includes(`href="/apple-touch-icon.png"`), `${path} is missing apple-touch-icon`);
+  assert(html.includes(`href="/site.webmanifest"`), `${path} is missing web manifest`);
+  assert(!html.includes(`<link rel="icon" href="/vr/nova-space-logo`), `${path} still uses the wide Nova Space logo as a favicon`);
   assert(html.includes(`<meta name="theme-color" content="#050711"`), `${path} is missing theme-color`);
   assert(html.includes(`<meta property="og:image:alt"`), `${path} is missing og:image:alt`);
   assert(html.includes(`<meta name="geo.position" content="50.49937;30.77804"`), `${path} is missing geo.position`);
@@ -229,6 +271,7 @@ const auditPage = async (path) => {
 await auditRobots();
 await auditNginx();
 await auditIndexNow();
+await auditFavicons();
 await auditSitemap();
 const reports = [];
 

@@ -1,0 +1,21 @@
+{
+  "name": "Nova Space",
+  "short_name": "Nova Space",
+  "icons": [
+    {
+      "src": "/favicon-192x192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "/favicon-512x512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any"
+    }
+  ],
+  "theme_color": "#050711",
+  "background_color": "#020706",
+  "display": "standalone"
+}
