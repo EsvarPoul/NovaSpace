@@ -12,6 +12,7 @@ export const address = {
   streetAddress: "вул. Ярослава Мудрого, 28",
   addressLocality: "Бровари",
   addressRegion: "Київська область",
+  postalCode: "07401",
   addressCountry: "UA"
 };
 
@@ -279,7 +280,9 @@ export const novaVrSchema = {
   "@context": "https://schema.org",
   "@type": "LocalBusiness",
   "@id": `${siteUrl}/vr/#localbusiness`,
+  additionalType: "https://schema.org/EntertainmentBusiness",
   name: "NOVA VR | VR клуб Бровари",
+  slogan: "VR, PS5, дні народження та події у Броварах",
   description:
     "VR клуб у Броварах для ігор, днів народження, корпоративів, побачень і компаній до 6 гравців.",
   url: `${siteUrl}/vr/`,
@@ -291,6 +294,13 @@ export const novaVrSchema = {
   geo,
   hasMap: mapsUrl,
   currenciesAccepted: "UAH",
+  knowsAbout: [
+    "VR клуб Бровари",
+    "віртуальна реальність",
+    "день народження у VR",
+    "PlayStation 5 Бровари",
+    "корпоратив у VR"
+  ],
   contactPoint: [makeContactPoint("UA")],
   parentOrganization: {
     "@id": `${siteUrl}/#organization`
@@ -328,7 +338,9 @@ export const novaPhotoStudioSchema = {
   "@context": "https://schema.org",
   "@type": "LocalBusiness",
   "@id": `${siteUrl}/studio/#localbusiness`,
+  additionalType: "https://schema.org/ProfessionalService",
   name: "Nova PhotoStudio | Фотостудія Бровари",
+  slogan: "Світла фотостудія для портретів, сімейних фото та контенту",
   description:
     "Світла фотостудія у Броварах для портретів, сімейних зйомок, beauty-контенту та фото для брендів.",
   url: `${siteUrl}/studio/`,
@@ -340,6 +352,13 @@ export const novaPhotoStudioSchema = {
   geo,
   hasMap: mapsUrl,
   currenciesAccepted: "UAH",
+  knowsAbout: [
+    "фотостудія Бровари",
+    "оренда фотостудії",
+    "сімейна фотосесія",
+    "портретна фотосесія",
+    "контент зйомка"
+  ],
   contactPoint: [makeContactPoint("UA")],
   parentOrganization: {
     "@id": `${siteUrl}/#organization`

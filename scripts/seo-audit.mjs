@@ -89,6 +89,12 @@ const assertBreadcrumbIncludesBrovary = (path, schemas) => {
 const assertLocalBusinessesHaveGeo = (path, schemas) => {
   for (const business of findSchemas(schemas, "LocalBusiness")) {
     assert(business.geo?.latitude && business.geo?.longitude, `${path} LocalBusiness is missing geo coordinates`);
+    assert(business.address?.postalCode === "07401", `${path} LocalBusiness is missing the Brovary postal code`);
+    assert(business.telephone, `${path} LocalBusiness is missing telephone`);
+    assert(business.hasMap?.startsWith("https://www.google.com/maps/"), `${path} LocalBusiness is missing Google Maps link`);
+    assert(business.openingHoursSpecification?.length, `${path} LocalBusiness is missing opening hours`);
+    assert(business.additionalType?.startsWith("https://schema.org/"), `${path} LocalBusiness is missing additionalType`);
+    assert(business.knowsAbout?.length >= 3, `${path} LocalBusiness is missing local knowsAbout topics`);
   }
 };
 
@@ -199,6 +205,9 @@ const auditPage = async (path) => {
   assert(html.includes(`<meta name="theme-color" content="#050711"`), `${path} is missing theme-color`);
   assert(html.includes(`<meta property="og:image:alt"`), `${path} is missing og:image:alt`);
   assert(html.includes(`<meta name="geo.position" content="50.49937;30.77804"`), `${path} is missing geo.position`);
+  assert(html.includes(`<meta property="place:location:latitude" content="50.49937"`), `${path} is missing place latitude`);
+  assert(html.includes(`<meta property="business:contact_data:street_address" content="вул. Ярослава Мудрого, 28"`), `${path} is missing business street address`);
+  assert(html.includes(`<meta property="business:contact_data:postal_code" content="07401"`), `${path} is missing business postal code`);
   assert(!html.includes("Точну адресу можна додати"), `${path} contains old placeholder address FAQ text`);
   assert((html.match(/id="contacts"/g) || []).length <= 1, `${path} has duplicate contacts ids`);
 

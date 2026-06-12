@@ -1,5 +1,6 @@
 ---
 import "../styles/globals.css";
+import { address, geo, phone } from "../data/seo.js";
 
 interface Props {
   title: string;
@@ -43,9 +44,9 @@ const schemaJson = schema ? JSON.stringify(schema).replace(/</g, "\\u003c") : ""
     <title>{title}</title>
     <meta name="theme-color" content="#050711" />
     <meta name="geo.region" content="UA-32" />
-    <meta name="geo.placename" content="Бровари" />
-    <meta name="geo.position" content="50.49937;30.77804" />
-    <meta name="ICBM" content="50.49937, 30.77804" />
+    <meta name="geo.placename" content={address.addressLocality} />
+    <meta name="geo.position" content={`${geo.latitude};${geo.longitude}`} />
+    <meta name="ICBM" content={`${geo.latitude}, ${geo.longitude}`} />
     <meta property="og:locale" content="uk_UA" />
     <meta property="og:type" content="website" />
     <meta property="og:site_name" content="Nova Space" />
@@ -54,6 +55,14 @@ const schemaJson = schema ? JSON.stringify(schema).replace(/</g, "\\u003c") : ""
     <meta property="og:url" content={canonicalUrl} />
     <meta property="og:image" content={imageUrl} />
     <meta property="og:image:alt" content={socialImageAlt} />
+    <meta property="place:location:latitude" content={String(geo.latitude)} />
+    <meta property="place:location:longitude" content={String(geo.longitude)} />
+    <meta property="business:contact_data:street_address" content={address.streetAddress} />
+    <meta property="business:contact_data:locality" content={address.addressLocality} />
+    <meta property="business:contact_data:region" content={address.addressRegion} />
+    <meta property="business:contact_data:postal_code" content={address.postalCode} />
+    <meta property="business:contact_data:country_name" content="Ukraine" />
+    <meta property="business:contact_data:phone_number" content={phone} />
     <meta name="twitter:card" content="summary_large_image" />
     <meta name="twitter:title" content={title} />
     <meta name="twitter:description" content={description} />
