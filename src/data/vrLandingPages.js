@@ -12,6 +12,7 @@ export const vrLandingPages = [
     imageAlt: "Гравці у VR клубі NOVA VR у Броварах",
     primaryCta: "Забронювати VR",
     secondaryCta: "Подивитися ціни",
+    bookingServiceSlug: "vr-60",
     highlights: [
       "6 VR-зон для solo, co-op та online-форматів",
       "PlayStation 5 як окрема зона або пауза між VR-раундами",
@@ -37,7 +38,7 @@ export const vrLandingPages = [
     ],
     stats: [
       { label: "VR-зон", value: "6" },
-      { label: "Графік", value: "10:00-22:00" },
+      { label: "Графік", value: "10:00-21:00" },
       { label: "Місто", value: "Бровари" }
     ],
     faq: [
@@ -56,8 +57,7 @@ export const vrLandingPages = [
         answer:
           "У просторі є 6 VR-зон, тому можна організувати гру для однієї людини, пари, компанії або ротацію для більшої події."
       }
-    ],
-    related: ["den-narodzhennya-vr-brovary", "ps5-brovary", "vr-dlya-ditey-brovary"]
+    ]
   },
   {
     slug: "den-narodzhennya-vr-brovary",
@@ -72,6 +72,7 @@ export const vrLandingPages = [
     imageAlt: "День народження у VR клубі NOVA VR",
     primaryCta: "Забронювати день народження",
     secondaryCta: "Ціни на ДР",
+    bookingServiceSlug: "birthday-3h",
     highlights: [
       "Пакет на 3 години для свят",
       "Від 6 гостей можлива повна оренда VR клубу",
@@ -116,8 +117,7 @@ export const vrLandingPages = [
         answer:
           "Так, можна додати професійну зйомку у фотостудії при клубі. Орієнтовно гості отримують 20-30 фото."
       }
-    ],
-    related: ["vr-klub-brovary", "vr-dlya-ditey-brovary", "korporatyv-vr-brovary"]
+    ]
   },
   {
     slug: "korporatyv-vr-brovary",
@@ -132,6 +132,7 @@ export const vrLandingPages = [
     imageAlt: "Командна VR гра для корпоративу у Броварах",
     primaryCta: "Запланувати корпоратив",
     secondaryCta: "Формати і ціни",
+    bookingServiceSlug: "birthday-3h",
     highlights: [
       "Командні VR-ігри і змагальні раунди",
       "Ротація між 6 VR-зонами, PS5 та відпочинком",
@@ -176,8 +177,7 @@ export const vrLandingPages = [
         answer:
           "Ні. Адміністратор пояснює правила, допомагає з обладнанням і підбирає сценарій під рівень команди."
       }
-    ],
-    related: ["vr-klub-brovary", "den-narodzhennya-vr-brovary", "ps5-brovary"]
+    ]
   },
   {
     slug: "vr-dlya-ditey-brovary",
@@ -192,6 +192,7 @@ export const vrLandingPages = [
     imageAlt: "VR формат для дітей у NOVA VR Бровари",
     primaryCta: "Забронювати дитячий VR",
     secondaryCta: "День народження у VR",
+    bookingServiceSlug: "vr-60",
     highlights: [
       "Підбір ігор за віком і досвідом",
       "Інструктаж перед стартом і супровід адміністратора",
@@ -236,8 +237,7 @@ export const vrLandingPages = [
         answer:
           "Так. Для дитячих свят є формат на 3 години з VR, PS5, зоною відпочинку і можливістю додати фотографа."
       }
-    ],
-    related: ["den-narodzhennya-vr-brovary", "vr-klub-brovary", "ps5-brovary"]
+    ]
   },
   {
     slug: "ps5-brovary",
@@ -252,6 +252,7 @@ export const vrLandingPages = [
     imageAlt: "PlayStation 5 зона у NOVA VR Бровари",
     primaryCta: "Забронювати PS5",
     secondaryCta: "Дивитися VR формати",
+    bookingServiceSlug: "ps5-60-2",
     highlights: [
       "PS5-зона на два джойстики",
       "Можна бронювати окремо на 60 або 120 хвилин",
@@ -296,14 +297,8 @@ export const vrLandingPages = [
         answer:
           "Так, PS5 може входити у формат дня народження і допомагає робити паузи між VR-раундами."
       }
-    ],
-    related: ["vr-klub-brovary", "den-narodzhennya-vr-brovary", "korporatyv-vr-brovary"]
+    ]
   }
 ];
 
 export const getVrLandingPage = (slug) => vrLandingPages.find((page) => page.slug === slug);
-
-export const getRelatedVrLandingPages = (page) =>
-  (page.related || [])
-    .map((slug) => getVrLandingPage(slug))
-    .filter(Boolean);

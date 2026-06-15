@@ -1,7 +1,8 @@
 export const vrContacts = [
-  { label: "Instagram", value: "@novaspace_vr", href: "https://instagram.com/novaspace_vr" },
+  { label: "Instagram", value: "@novaspace_vr", href: "https://www.instagram.com/novaspace_vr/" },
+  { label: "TikTok", value: "@www.tiktok.novaspace_vr", href: "https://www.tiktok.com/@www.tiktok.novaspace_vr" },
   { label: "Телефон", value: "+380 66 009 7630", href: "tel:+380660097630" },
-  { label: "Графік", value: "Щодня 10:00-22:00" }
+  { label: "Графік", value: "Щодня 10:00-21:00" }
 ];
 
 export const vrNav = [

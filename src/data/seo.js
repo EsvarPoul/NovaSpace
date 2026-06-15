@@ -6,6 +6,9 @@ export const phone = "+380660097630";
 export const bookingUrl = `${siteUrl}/booking/`;
 export const mapsUrl =
   "https://www.google.com/maps/search/?api=1&query=%D0%BC.+%D0%91%D1%80%D0%BE%D0%B2%D0%B0%D1%80%D0%B8,+%D0%B2%D1%83%D0%BB.+%D0%AF%D1%80%D0%BE%D1%81%D0%BB%D0%B0%D0%B2%D0%B0+%D0%9C%D1%83%D0%B4%D1%80%D0%BE%D0%B3%D0%BE,+28";
+export const studioInstagramUrl = "https://www.instagram.com/nova_photostudio_/";
+export const vrInstagramUrl = "https://www.instagram.com/novaspace_vr/";
+export const vrTikTokUrl = "https://www.tiktok.com/@www.tiktok.novaspace_vr";
 
 export const address = {
   "@type": "PostalAddress",
@@ -252,10 +255,7 @@ export const organizationSchema = {
   telephone: phone,
   address,
   contactPoint: [makeContactPoint("UA")],
-  sameAs: [
-    "https://instagram.com/novaspace_vr",
-    "https://www.instagram.com/nova_photostudio_/"
-  ]
+  sameAs: [vrInstagramUrl, studioInstagramUrl, vrTikTokUrl]
 };
 
 export const webSiteSchema = {
@@ -313,13 +313,13 @@ export const novaVrSchema = {
     makeAmenity("Зона відпочинку для свят"),
     makeAmenity("Фотограф за потреби")
   ],
-  sameAs: ["https://instagram.com/novaspace_vr"],
+  sameAs: [vrInstagramUrl, vrTikTokUrl],
   openingHoursSpecification: [
     {
       "@type": "OpeningHoursSpecification",
       dayOfWeek: week,
       opens: "10:00",
-      closes: "22:00"
+      closes: "21:00"
     }
   ],
   areaServed: [
@@ -371,7 +371,7 @@ export const novaPhotoStudioSchema = {
     makeAmenity("Затишна зона"),
     makeAmenity("Фотограф за потреби")
   ],
-  sameAs: ["https://www.instagram.com/nova_photostudio_/"],
+  sameAs: [studioInstagramUrl],
   openingHoursSpecification: [
     {
       "@type": "OpeningHoursSpecification",

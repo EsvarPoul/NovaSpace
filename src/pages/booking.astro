@@ -12,7 +12,6 @@ const bookingPageSchema = makeWebPageSchema({
 });
 const breadcrumbSchema = makeBreadcrumbSchema([
   { name: "Nova Space", url: "/" },
-  { name: "Бровари", url: "/brovary/" },
   { name: "Бронювання", url: "/booking/" }
 ]);
 ---
@@ -30,9 +29,9 @@ const breadcrumbSchema = makeBreadcrumbSchema([
         <small>Booking calendar</small>
       </a>
       <div>
-        <span class="booking-kicker">VR price rules + manager confirmation</span>
-        <h1>Забронюйте Nova VR, PS5, NovaMix, ДР або Nova PhotoStudio в одному календарі.</h1>
-        <p>Оберіть формат, дату і слот. Форма підкаже денний або вечірній тариф, а менеджер підтвердить заявку та деталі за новими правилами.</p>
+        <span class="booking-kicker">Nova Space booking</span>
+        <h1>Оберіть формат і зручний час</h1>
+        <p>VR, PS5, день народження або фотостудія. Форма покаже тариф, а менеджер підтвердить деталі.</p>
       </div>
     </header>
 
@@ -43,7 +42,7 @@ const breadcrumbSchema = makeBreadcrumbSchema([
 
     <BookingWidget
       introTitle="Нове бронювання"
-      introText="Оберіть формат із актуального прайсу, дату і час. Для ДР, знижок або фотографа залиште деталі в коментарі."
+      introText="Оберіть формат, дату і слот. Для ДР або фотографа додайте деталі в коментарі."
     />
   </main>
 </BaseLayout>

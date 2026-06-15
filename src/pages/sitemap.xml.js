@@ -14,12 +14,6 @@ const basePages = [
     imageTitle: "Nova Space Бровари"
   },
   {
-    path: "/brovary/",
-    priority: "0.95",
-    image: "/vr/nova-space-logo.webp",
-    imageTitle: "Nova Space у Броварах"
-  },
-  {
     path: "/vr/",
     priority: "0.9",
     image: "/vr/nova-space-logo.webp",
@@ -27,7 +21,7 @@ const basePages = [
   },
   {
     path: "/studio/",
-    priority: "0.8",
+    priority: "0.9",
     image: "/studio/studio-hero.png",
     imageTitle: "Nova PhotoStudio Бровари"
   },
@@ -36,19 +30,25 @@ const basePages = [
     priority: "0.6",
     image: "/vr/nova-space-logo.webp",
     imageTitle: "Бронювання Nova Space"
+  },
+  {
+    path: "/brovary/",
+    priority: "0.75",
+    image: "/vr/nova-space-logo.webp",
+    imageTitle: "Nova Space у Броварах"
   }
 ];
 
 const landingPages = [
   ...vrLandingPages.map((page) => ({
     path: `/${page.slug}/`,
-    priority: page.slug === "vr-klub-brovary" || page.slug === "den-narodzhennya-vr-brovary" ? "0.85" : "0.8",
+    priority: page.slug === "vr-klub-brovary" || page.slug === "den-narodzhennya-vr-brovary" ? "0.55" : "0.5",
     image: page.image,
     imageTitle: page.h1
   })),
   ...studioLandingPages.map((page) => ({
     path: `/${page.slug}/`,
-    priority: page.slug === "fotostudiya-brovary" ? "0.85" : page.slug === "simeyna-fotosesiya-brovary" || page.slug === "kontent-zyomka-brovary" ? "0.75" : "0.8",
+    priority: page.slug === "fotostudiya-brovary" ? "0.55" : "0.5",
     image: page.image,
     imageTitle: page.h1
   }))

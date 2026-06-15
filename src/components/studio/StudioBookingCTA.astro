@@ -6,15 +6,15 @@ import BookingWidget from "../booking/BookingWidget.astro";
   <div class="studio-booking-intro">
     <div>
       <span class="eyebrow">Бронювання студії</span>
-      <h2>Залиште заявку на зручний час</h2>
+      <h2>Оберіть дату і час</h2>
     </div>
-    <p><strong>600 грн./год.</strong> У вартість входить лише студійний простір. Робота фотографа за потреби оплачується окремо. Комфортне розміщення на локації — до 5 осіб включно з фотографом.</p>
+    <p><strong>600 грн/год.</strong> У вартість входить студійний простір. Фотограф, якщо потрібен, оплачується окремо.</p>
   </div>
   <BookingWidget
     allowedServiceSlugs={["studio-rent"]}
     defaultServiceSlug="studio-rent"
     variant="studio"
     introTitle="Деталі бронювання"
-    introText="Оберіть дату, перевірте доступний час і залиште контакт. Менеджер зв'яжеться з вами для підтвердження."
+    introText="Оберіть дату, слот і залиште контакт. Менеджер підтвердить бронювання."
   />
 </section>

@@ -6,11 +6,16 @@ import Button from "../ui/Button.astro";
   <div class="hero__copy">
     <span class="eyebrow">Private photo studio</span>
     <h1>Nova PhotoStudio</h1>
-    <p>Світла фотостудія у Броварах для портретів, сімейних зйомок, beauty-контенту та фото для брендів.</p>
+    <p>Світла фотостудія у Броварах для портретів, сімейних фото, контенту і брендів.</p>
     <div class="actions">
-      <Button href="#booking" label="Забронювати студію" />
+      <Button href="/booking/?service=studio-rent" label="Забронювати студію" />
       <Button href="#portfolio" label="Побачити простір" variant="ghost" />
     </div>
+    <dl class="studio-hero__facts" aria-label="Коротко про Nova PhotoStudio">
+      <div><dt>Оренда</dt><dd>600 грн/год</dd></div>
+      <div><dt>Гостей</dt><dd>до 5</dd></div>
+      <div><dt>Графік</dt><dd>10:00-21:00</dd></div>
+    </dl>
   </div>
   <aside class="hero-visual studio-hero__visual" aria-label="Світла домашня фотостудія Nova PhotoStudio">
     <img src="/studio/studio-hero.png" alt="Світла домашня фотостудія з м'яким денним світлом" loading="eager" />

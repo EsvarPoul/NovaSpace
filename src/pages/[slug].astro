@@ -2,9 +2,9 @@
 import BaseLayout from "../layouts/BaseLayout.astro";
 import Header from "../components/layout/Header.astro";
 import MobileActionBar from "../components/layout/MobileActionBar.astro";
-import { address, bookingUrl, makeBreadcrumbSchema, makeItemListSchema, mapsUrl, novaPhotoStudioSchema, novaVrSchema, organizationSchema, phone, siteUrl, webSiteSchema } from "../data/seo.js";
+import { address, makeBreadcrumbSchema, mapsUrl, novaPhotoStudioSchema, novaVrSchema, organizationSchema, phone, siteUrl, webSiteSchema } from "../data/seo.js";
 import { studioLandingPages } from "../data/studioLandingPages.js";
-import { getRelatedVrLandingPages, vrLandingPages } from "../data/vrLandingPages.js";
+import { vrLandingPages } from "../data/vrLandingPages.js";
 
 interface VrLandingPage {
   type?: "vr" | "studio";
@@ -18,6 +18,7 @@ interface VrLandingPage {
   imageAlt: string;
   primaryCta: string;
   secondaryCta: string;
+  bookingServiceSlug?: string;
   highlights: string[];
   sections: Array<{
     title: string;
@@ -31,15 +32,7 @@ interface VrLandingPage {
     question: string;
     answer: string;
   }>;
-  related?: string[];
 }
-
-const landingPagesForRelated = [...(vrLandingPages as VrLandingPage[]), ...(studioLandingPages as VrLandingPage[])];
-const getLandingPage = (slug: string) => landingPagesForRelated.find((item) => item.slug === slug);
-const getRelatedLandingPages = (page: VrLandingPage) =>
-  (page.related || [])
-    .map((slug) => getLandingPage(slug))
-    .filter(Boolean) as VrLandingPage[];
 
 export function getStaticPaths() {
   return [...(vrLandingPages as VrLandingPage[]), ...(studioLandingPages as VrLandingPage[])].map((page) => ({
@@ -50,7 +43,16 @@ export function getStaticPaths() {
 
 const { page } = Astro.props as { page: VrLandingPage };
 const isStudioLanding = page.type === "studio";
-const relatedPages = isStudioLanding ? getRelatedLandingPages(page) : (getRelatedVrLandingPages(page) as VrLandingPage[]);
+const bookingServiceSlug =
+  page.bookingServiceSlug ||
+  (isStudioLanding
+    ? "studio-rent"
+    : page.slug === "den-narodzhennya-vr-brovary"
+      ? "birthday-3h"
+      : page.slug === "ps5-brovary"
+        ? "ps5-60-2"
+        : "vr-60");
+const bookingPath = `/booking/?service=${bookingServiceSlug}`;
 const pageUrl = `${siteUrl}/${page.slug}/`;
 const addressText = `${address.streetAddress}, ${address.addressLocality}`;
 const parentPage = isStudioLanding
@@ -58,31 +60,21 @@ const parentPage = isStudioLanding
   : { name: "NOVA VR", url: `${siteUrl}/vr/`, path: "/vr/" };
 const businessSchema = isStudioLanding ? novaPhotoStudioSchema : novaVrSchema;
 const providerId = `${siteUrl}/${isStudioLanding ? "studio" : "vr"}/#localbusiness`;
-const headerNav = isStudioLanding
-  ? [
-      { label: "Фотостудія", href: "/studio/" },
-      { label: "Оренда", href: "/orenda-fotostudiyi-brovary/" },
-      { label: "Фотосесія", href: "/fotosesiya-brovary/" },
-      { label: "Контакти", href: "#contacts" }
-    ]
-  : [
-      { label: "VR клуб", href: "/vr/" },
-      { label: "День народження", href: "/den-narodzhennya-vr-brovary/" },
-      { label: "PS5", href: "/ps5-brovary/" },
-      { label: "Контакти", href: "#contacts" }
-    ];
-const schedule = isStudioLanding ? "Щодня|10:00-21:00" : "Щодня|10:00-22:00";
-const instagramUrl = isStudioLanding ? "https://www.instagram.com/nova_photostudio_/" : "https://instagram.com/novaspace_vr";
+const schedule = "Щодня|10:00-21:00";
+const instagramUrl = isStudioLanding ? "https://www.instagram.com/nova_photostudio_/" : "https://www.instagram.com/novaspace_vr/";
 const instagramLabel = isStudioLanding ? "@nova_photostudio_" : "@novaspace_vr";
+const tiktokUrl = "https://www.tiktok.com/@www.tiktok.novaspace_vr";
 const contactTitle = isStudioLanding ? "Nova PhotoStudio у Броварах" : "NOVA VR у Броварах";
 const contactText = isStudioLanding
-  ? `Адреса: ${addressText}. Працюємо щодня з 10:00 до 21:00.`
-  : `Адреса: ${addressText}. Працюємо щодня з 10:00 до 22:00.`;
-const secondaryCtaHref = isStudioLanding ? parentPage.path : "/vr/#sessions";
+  ? `Адреса: ${addressText}. Світла студія для оренди та зйомок.`
+  : `Адреса: ${addressText}. VR, PS5, дні народження та компанії.`;
+const factHighlights = page.highlights.slice(0, 3);
+const faqPreview = page.faq.slice(0, 2);
+const keyStat = page.stats[0] ? `${page.stats[0].label}: ${page.stats[0].value}.` : "";
+const entryLead = `${page.eyebrow}: ${page.highlights[0]}. ${keyStat} Бронювання онлайн.`;
 
 const breadcrumbSchema = makeBreadcrumbSchema([
   { name: "Nova Space", url: "/" },
-  { name: "Бровари", url: "/brovary/" },
   { name: parentPage.name, url: parentPage.url },
   { name: page.h1, url: pageUrl }
 ]);
@@ -129,7 +121,7 @@ const serviceSchema = {
     name: page.primaryCta,
     target: {
       "@type": "EntryPoint",
-      urlTemplate: bookingUrl,
+      urlTemplate: new URL(bookingPath, siteUrl).toString(),
       inLanguage: "uk-UA",
       actionPlatform: [
         "http://schema.org/DesktopWebPlatform",
@@ -142,7 +134,7 @@ const serviceSchema = {
 const faqSchema = {
   "@context": "https://schema.org",
   "@type": "FAQPage",
-  mainEntity: page.faq.map((item) => ({
+  mainEntity: faqPreview.map((item) => ({
     "@type": "Question",
     name: item.question,
     acceptedAnswer: {
@@ -151,18 +143,6 @@ const faqSchema = {
     }
   }))
 };
-const relatedFormatsSchema = relatedPages.length
-  ? makeItemListSchema({
-      id: `/${page.slug}/#related-formats`,
-      name: isStudioLanding
-        ? "Схожі формати Nova PhotoStudio у Броварах"
-        : "Схожі формати NOVA VR у Броварах",
-      items: relatedPages.map((related) => ({
-        name: related.eyebrow,
-        url: `/${related.slug}/`
-      }))
-    })
-  : null;
 const schema = [
   organizationSchema,
   webSiteSchema,
@@ -170,8 +150,7 @@ const schema = [
   webPageSchema,
   serviceSchema,
   breadcrumbSchema,
-  faqSchema,
-  ...(relatedFormatsSchema ? [relatedFormatsSchema] : [])
+  ...(faqPreview.length ? [faqSchema] : [])
 ];
 ---
 
@@ -183,13 +162,17 @@ const schema = [
   favicon={isStudioLanding ? "studio" : "vr"}
   schema={schema}
 >
-  <div class={`vr-local-page${isStudioLanding ? " vr-local-page--studio" : ""}`}>
+  <div class={`vr-local-page vr-entry-page${isStudioLanding ? " vr-local-page--studio" : ""}`}>
     <Header
       brand="Nova Space"
       sub={parentPage.name}
-      nav={headerNav}
+      nav={[
+        { label: parentPage.name, href: parentPage.path },
+        { label: "Бронювання", href: bookingPath },
+        { label: "Контакти", href: "#contacts" }
+      ]}
       schedule={schedule}
-      ctaHref="/booking/"
+      ctaHref={bookingPath}
       ctaLabel="Забронювати"
     />
 
@@ -199,18 +182,16 @@ const schema = [
           <nav class="vr-local-breadcrumbs" aria-label="Навігаційний шлях">
             <a href="/">Nova Space</a>
             <span>/</span>
-            <a href="/brovary/">Бровари</a>
-            <span>/</span>
             <a href={parentPage.path}>{parentPage.name}</a>
             <span>/</span>
             <strong>{page.eyebrow}</strong>
           </nav>
           <span class="vr-local-kicker">{page.eyebrow}</span>
           <h1 id="vr-local-title">{page.h1}</h1>
-          <p>{page.lead}</p>
+          <p>{entryLead}</p>
           <div class="vr-local-actions">
-            <a class="vr-local-button vr-local-button--primary" href="/booking/">{page.primaryCta}</a>
-            <a class="vr-local-button" href={secondaryCtaHref}>{page.secondaryCta}</a>
+            <a class="vr-local-button vr-local-button--primary" href={bookingPath}>{page.primaryCta}</a>
+            <a class="vr-local-button" href={parentPage.path}>{page.secondaryCta}</a>
           </div>
         </div>
         <figure class="vr-local-hero__media">
@@ -223,7 +204,7 @@ const schema = [
       </section>
 
       <section class="vr-local-stats" aria-label="Ключові деталі">
-        {page.stats.map((stat) => (
+        {page.stats.slice(0, 3).map((stat) => (
           <article>
             <span>{stat.label}</span>
             <strong>{stat.value}</strong>
@@ -233,15 +214,12 @@ const schema = [
 
       <section class="vr-local-grid" aria-labelledby="vr-local-includes">
         <div>
-          <span class="vr-local-kicker">Що важливо знати</span>
-          <h2 id="vr-local-includes">Формат під конкретний запит у Броварах</h2>
-          <p>
-            Тут зібрали головні деталі формату: що входить, кому підходить, як проходить бронювання
-            і що варто уточнити перед візитом у NOVA VR.
-          </p>
+          <span class="vr-local-kicker">Коротко</span>
+          <h2 id="vr-local-includes">Чому цей формат зручний</h2>
+          <p>Це швидкий вхід зі сторінки пошуку. Основні деталі, ціна або доступний слот уточнюються у бронюванні.</p>
         </div>
         <div class="vr-local-points">
-          {page.highlights.map((item) => (
+          {factHighlights.map((item) => (
             <article>
               <span></span>
               <p>{item}</p>
@@ -250,43 +228,18 @@ const schema = [
         </div>
       </section>
 
-      <section class="vr-local-sections" aria-label="Деталі формату">
-        {page.sections.map((section) => (
-          <article>
-            <h2>{section.title}</h2>
-            <p>{section.text}</p>
-          </article>
-        ))}
-      </section>
-
-      <section class="vr-local-faq" aria-labelledby="vr-local-faq-title">
-        <div>
-          <span class="vr-local-kicker">FAQ</span>
-          <h2 id="vr-local-faq-title">Питання, які зазвичай уточнюють перед бронюванням</h2>
-        </div>
-        <div>
-          {page.faq.map((item) => (
-            <article>
-              <h3>{item.question}</h3>
-              <p>{item.answer}</p>
-            </article>
-          ))}
-        </div>
-      </section>
-
-      {relatedPages.length > 0 && (
-        <section class="vr-local-related" aria-labelledby="vr-local-related-title">
+      {faqPreview.length > 0 && (
+        <section class="vr-local-faq" aria-labelledby="vr-local-faq-title">
           <div>
-            <span class="vr-local-kicker">Інші формати</span>
-            <h2 id="vr-local-related-title">Ще кілька варіантів у NOVA VR</h2>
+            <span class="vr-local-kicker">FAQ</span>
+            <h2 id="vr-local-faq-title">Що уточнити перед візитом</h2>
           </div>
-          <div class="vr-local-related__grid">
-            {relatedPages.map((related) => (
-              <a href={`/${related.slug}/`}>
-                <span>{related.eyebrow}</span>
-                <strong>{related.h1}</strong>
-                <em>{related.description}</em>
-              </a>
+          <div>
+            {faqPreview.map((item) => (
+              <article>
+                <h3>{item.question}</h3>
+                <p>{item.answer}</p>
+              </article>
             ))}
           </div>
         </section>
@@ -300,15 +253,17 @@ const schema = [
         <p>{contactText}</p>
       </div>
       <div class="vr-local-contact__actions">
+        <a href={bookingPath}>Забронювати</a>
         <a href={`tel:${phone}`}>+380 66 009 7630</a>
-        <a href={mapsUrl} target="_blank" rel="noreferrer">Відкрити маршрут</a>
+        <a href={mapsUrl} target="_blank" rel="noreferrer">Маршрут</a>
         <a href={instagramUrl} target="_blank" rel="noreferrer">{instagramLabel}</a>
+        {!isStudioLanding && <a href={tiktokUrl} target="_blank" rel="noreferrer">TikTok VR</a>}
       </div>
     </footer>
   </div>
 
   <MobileActionBar
-    primaryHref="/booking/"
+    primaryHref={bookingPath}
     primaryLabel="Забронювати"
     secondaryHref="tel:+380660097630"
     secondaryLabel="Дзвінок"

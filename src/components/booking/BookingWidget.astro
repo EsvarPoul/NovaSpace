@@ -154,7 +154,18 @@ const selectedService = defaultServiceSlug || initialServices[0]?.slug || "";
     status?: string;
   }
 
+  const bookingWebhookUrl = import.meta.env.PUBLIC_BOOKING_WEBHOOK_URL ?? "";
   const bookingWebhookSecret = import.meta.env.PUBLIC_BOOKING_WEBHOOK_SECRET ?? "";
+  const serviceSlugAliases: Record<string, string[]> = {
+    "studio-rent": ["studio-light"]
+  };
+
+  const kyivDateKey = (date = new Date()) => new Intl.DateTimeFormat("en-CA", {
+    day: "2-digit",
+    month: "2-digit",
+    timeZone: "Europe/Kyiv",
+    year: "numeric"
+  }).format(date);
 
   const formatTime = (value: string) => new Intl.DateTimeFormat("uk-UA", {
     hour: "2-digit",
@@ -164,10 +175,66 @@ const selectedService = defaultServiceSlug || initialServices[0]?.slug || "";
 
   const describeSlotError = (message: string) => {
     if (message.includes("Unknown or inactive service")) {
-      return "У базі ще немає активної послуги з актуального прайсу. Застосуйте Supabase migration 0003_vr_pricing_services.sql, після цього слоти з'являться автоматично.";
+      return "Календар тимчасово не показує слоти для цього формату. Зателефонуйте нам - менеджер підбере час вручну.";
     }
 
-    return message || "Невідома помилка календаря.";
+    return "Календар тимчасово недоступний. Спробуйте оновити або зв'яжіться з менеджером.";
+  };
+
+  const describeBookingError = (message: string) => {
+    if (message.includes("Unknown or inactive service")) {
+      return "Цей формат ще не синхронізований у календарі. Зателефонуйте нам - менеджер забронює час вручну.";
+    }
+
+    if (message.includes("Party size is outside service limits")) {
+      return "Кількість гостей не підходить для вибраного формату. Перевірте поле з кількістю людей.";
+    }
+
+    if (message.includes("Customer name is required")) {
+      return "Вкажіть ім'я для бронювання.";
+    }
+
+    if (message.includes("Customer phone is required")) {
+      return "Вкажіть коректний номер телефону.";
+    }
+
+    if (message.includes("Cannot create a booking in the past")) {
+      return "Цей час уже минув. Оберіть інший слот.";
+    }
+
+    if (message.includes("Selected slot is no longer available")) {
+      return "Цей слот щойно зайняли. Оберіть інший час.";
+    }
+
+    if (message.includes("Selected slot is blocked by manager")) {
+      return "Цей час заблокований менеджером. Оберіть інший слот.";
+    }
+
+    return "Не вдалося створити бронювання. Спробуйте ще раз або зателефонуйте нам.";
+  };
+
+  const notifyBookingWebhook = async (bookingPayload: Record<string, unknown>) => {
+    if (!bookingWebhookUrl) {
+      return;
+    }
+
+    const headers: Record<string, string> = {
+      "content-type": "application/json"
+    };
+
+    if (bookingWebhookSecret) {
+      headers["x-booking-secret"] = bookingWebhookSecret;
+    }
+
+    const response = await fetch(bookingWebhookUrl, {
+      method: "POST",
+      headers,
+      body: JSON.stringify(bookingPayload)
+    });
+
+    if (!response.ok) {
+      console.warn("Booking notification webhook failed", response.status, await response.text());
+    }
   };
 
   const setupBookingWidget = async (root: HTMLElement) => {
@@ -182,6 +249,7 @@ const selectedService = defaultServiceSlug || initialServices[0]?.slug || "";
     const priceHint = root.querySelector<HTMLElement>("[data-booking-price]");
     const allowed = JSON.parse(root.dataset.allowedServices || "[]") as string[];
     const defaultService = root.dataset.defaultService || "";
+    const requestedService = new URLSearchParams(window.location.search).get("service") || "";
     const knownServiceSlugs = new Set(fallbackServices.map((service) => service.slug));
 
     const filterServices = (services: BookingService[]) => {
@@ -189,6 +257,11 @@ const selectedService = defaultServiceSlug || initialServices[0]?.slug || "";
       return allowed.length
         ? currentServices.filter((service) => allowed.includes(service.slug))
         : currentServices;
+    };
+
+    const getSelectedServiceSlug = () => {
+      const option = serviceSelect?.selectedOptions[0];
+      return option?.dataset.submitSlug || serviceSelect?.value || "";
     };
 
     const setStatus = (message: string, state = "idle") => {
@@ -302,9 +375,34 @@ const selectedService = defaultServiceSlug || initialServices[0]?.slug || "";
 
     const populateServices = (services: BookingService[]) => {
       if (!serviceSelect) return;
+      const availableServices = new Map(services.map((service) => [service.slug, service]));
       const filtered = filterServices(services);
       const fallbackFiltered = filterServices(fallbackServices);
-      const servicesToRender = filtered.length ? filtered : fallbackFiltered;
+      const hasLiveService = (service: BookingService) => availableServices.has(service.slug)
+        || (serviceSlugAliases[service.slug] || []).some((alias) => availableServices.has(alias));
+      const servicesToRender = [...filtered];
+
+      fallbackFiltered.forEach((service) => {
+        if (servicesToRender.some((renderedService) => renderedService.slug === service.slug)) return;
+        if (filtered.length && !hasLiveService(service)) return;
+        servicesToRender.push(service);
+      });
+
+      const addFallbackService = (slug: string) => {
+        if (!slug || servicesToRender.some((service) => service.slug === slug)) return;
+        if (allowed.length && !allowed.includes(slug)) return;
+        const fallbackService = fallbackFiltered.find((service) => service.slug === slug);
+        if (fallbackService) servicesToRender.push(fallbackService);
+      };
+
+      addFallbackService(requestedService);
+      addFallbackService(defaultService);
+
+      const preferredService = servicesToRender.some((service) => service.slug === requestedService)
+        ? requestedService
+        : servicesToRender.some((service) => service.slug === defaultService)
+          ? defaultService
+          : servicesToRender[0]?.slug || "";
 
       if (!servicesToRender.length) {
         serviceSelect.innerHTML = "";
@@ -313,6 +411,12 @@ const selectedService = defaultServiceSlug || initialServices[0]?.slug || "";
       }
 
       serviceSelect.innerHTML = servicesToRender.map((service) => {
+        const submitSlug = availableServices.has(service.slug)
+          ? service.slug
+          : (serviceSlugAliases[service.slug] || []).find((alias) => availableServices.has(alias)) || service.slug;
+        const submitService = availableServices.get(submitSlug);
+        const minPeople = submitService ? Math.max(service.min_people, submitService.min_people) : service.min_people;
+        const maxPeople = submitService ? Math.min(service.max_people, submitService.max_people) : service.max_people;
         const pricing = {
           ...((bookingServicePricing[service.slug] || {}) as Record<string, string>),
           price_day: service.price_day || (bookingServicePricing[service.slug] as any)?.price_day || "",
@@ -323,21 +427,22 @@ const selectedService = defaultServiceSlug || initialServices[0]?.slug || "";
         return `
         <option
           value="${escapeHtml(service.slug)}"
-          data-min="${escapeHtml(service.min_people)}"
-          data-max="${escapeHtml(service.max_people)}"
+          data-submit-slug="${escapeHtml(submitSlug)}"
+          data-min="${escapeHtml(minPeople)}"
+          data-max="${escapeHtml(maxPeople)}"
           data-duration="${escapeHtml(service.duration_minutes)}"
           data-price-day="${escapeHtml(pricing.price_day)}"
           data-price-evening="${escapeHtml(pricing.price_evening)}"
           data-price-note="${escapeHtml(pricing.price_note)}"
-          ${service.slug === defaultService ? "selected" : ""}
+          ${service.slug === preferredService ? "selected" : ""}
         >
           ${escapeHtml(service.name)}
         </option>
       `;
       }).join("");
 
-      if (defaultService && servicesToRender.some((service) => service.slug === defaultService)) {
-        serviceSelect.value = defaultService;
+      if (preferredService) {
+        serviceSelect.value = preferredService;
       }
 
       syncPartyBounds();
@@ -347,7 +452,7 @@ const selectedService = defaultServiceSlug || initialServices[0]?.slug || "";
     const loadServices = async () => {
       if (!isSupabaseConfigured || !supabase || !serviceSelect) {
         populateServices(fallbackServices);
-        setStatus("Supabase ще не налаштовано. Після додавання env-змінних і SQL migration тут з'являться живі слоти.", "warning");
+        setStatus("Онлайн-календар тимчасово недоступний. Можна уточнити час телефоном.", "warning");
         return;
       }
 
@@ -359,7 +464,7 @@ const selectedService = defaultServiceSlug || initialServices[0]?.slug || "";
 
       if (error || !data?.length) {
         populateServices(fallbackServices);
-        setStatus(error?.message || "Не вдалося завантажити послуги, показуємо локальний список.", "warning");
+        setStatus("Показуємо актуальний локальний прайс. Доступний час менеджер підтвердить окремо.", "warning");
         return;
       }
 
@@ -381,23 +486,23 @@ const selectedService = defaultServiceSlug || initialServices[0]?.slug || "";
       }
 
       if (!isSupabaseConfigured || !supabase) {
-        slotList.innerHTML = "<p>Живі слоти з'являться після підключення Supabase.</p>";
-        setStatus("Supabase ще не налаштовано. Форма готова, але календар поки працює без реальних слотів.", "warning");
+        slotList.innerHTML = '<p>Онлайн-календар тимчасово недоступний. Для швидкого бронювання зателефонуйте: <a href="tel:+380660097630">066 009 76 30</a>.</p>';
+        setStatus("Можна уточнити час телефоном або написати в Instagram.", "warning");
         return;
       }
 
       slotList.innerHTML = "<p>Завантажуємо слоти...</p>";
       setStatus("Перевіряємо доступний час...", "loading");
       const { data, error } = await supabase.rpc("get_available_slots", {
-        p_service_slug: serviceSelect.value,
+        p_service_slug: getSelectedServiceSlug(),
         p_date: dateInput.value,
         p_party_size: Number(partySizeInput.value),
         p_step_minutes: 30
       });
 
       if (error) {
-        slotList.innerHTML = `<p>Не вдалося завантажити слоти. ${describeSlotError(error.message)}</p>`;
-        setStatus("Не вдалося перевірити календар. Спробуйте ще раз або залиште контакт без вибору слоту.", "error");
+        slotList.innerHTML = `<p>${describeSlotError(error.message)} <a href="tel:+380660097630">066 009 76 30</a></p>`;
+        setStatus("Для цього формату краще підтвердити час з менеджером.", "warning");
         return;
       }
 
@@ -409,12 +514,12 @@ const selectedService = defaultServiceSlug || initialServices[0]?.slug || "";
       event.preventDefault();
 
       if (!isSupabaseConfigured || !supabase) {
-        setStatus("Спершу підключіть Supabase env-змінні.", "error");
+        setStatus("Онлайн-календар тимчасово недоступний. Зателефонуйте нам для бронювання.", "error");
         return;
       }
 
       if (!slotInput?.value) {
-        setStatus("Оберіть вільний слот.", "error");
+        setStatus("Оберіть вільний слот або зателефонуйте, якщо календар не показує час.", "error");
         return;
       }
 
@@ -426,6 +531,7 @@ const selectedService = defaultServiceSlug || initialServices[0]?.slug || "";
         id: "",
         service: serviceName,
         serviceSlug: String(formData.get("service")),
+        databaseServiceSlug: getSelectedServiceSlug(),
         name: String(formData.get("customer_name") || ""),
         phone: String(formData.get("customer_phone") || ""),
         partySize: Number(formData.get("party_size")),
@@ -437,7 +543,7 @@ const selectedService = defaultServiceSlug || initialServices[0]?.slug || "";
       };
 
       const { data: createdBooking, error } = await supabase.rpc("create_pending_booking", {
-        p_service_slug: String(formData.get("service")),
+        p_service_slug: getSelectedServiceSlug(),
         p_start_at: slotInput.value,
         p_customer_name: bookingPayload.name,
         p_customer_phone: bookingPayload.phone,
@@ -447,7 +553,7 @@ const selectedService = defaultServiceSlug || initialServices[0]?.slug || "";
       });
 
       if (error) {
-        setStatus(error.message, "error");
+        setStatus(describeBookingError(error.message), "error");
         await loadSlots();
         return;
       }
@@ -459,25 +565,9 @@ const selectedService = defaultServiceSlug || initialServices[0]?.slug || "";
       bookingPayload.status = createdBookingRecord?.status || bookingPayload.status;
 
       try {
-        const headers: Record<string, string> = {
-          "content-type": "application/json"
-        };
-
-        if (bookingWebhookSecret) {
-          headers["x-booking-secret"] = bookingWebhookSecret;
-        }
-
-        const response = await fetch("/api/booking", {
-          method: "POST",
-          headers,
-          body: JSON.stringify(bookingPayload)
-        });
-
-        if (!response.ok) {
-          console.warn("Telegram booking notification failed", response.status, await response.text());
-        }
+        await notifyBookingWebhook(bookingPayload);
       } catch (notificationError) {
-        console.warn("Telegram booking notification failed", notificationError);
+        console.warn("Booking notification webhook failed", notificationError);
       }
 
       form.reset();
@@ -486,11 +576,10 @@ const selectedService = defaultServiceSlug || initialServices[0]?.slug || "";
       setStatus("Заявку створено. Менеджер підтвердить бронювання.", "success");
     });
 
-    const today = new Date();
-    today.setMinutes(today.getMinutes() - today.getTimezoneOffset());
     if (dateInput) {
-      dateInput.min = today.toISOString().slice(0, 10);
-      dateInput.value = today.toISOString().slice(0, 10);
+      const today = kyivDateKey();
+      dateInput.min = today;
+      dateInput.value = today;
     }
 
     serviceSelect?.addEventListener("change", loadSlots);

@@ -73,13 +73,13 @@ const studioFaviconPages = new Set([
 
 const requiredSchemaTypes = {
   "/": ["Organization", "WebSite", "CollectionPage"],
-  "/brovary/": ["Organization", "WebSite", "LocalBusiness", "CollectionPage", "ItemList", "BreadcrumbList"],
+  "/brovary/": ["Organization", "WebSite", "LocalBusiness", "CollectionPage", "BreadcrumbList"],
   "/vr/": ["Organization", "WebSite", "LocalBusiness", "WebPage", "ItemList", "BreadcrumbList", "FAQPage"],
-  "/studio/": ["Organization", "WebSite", "LocalBusiness", "WebPage", "ItemList", "BreadcrumbList"],
+  "/studio/": ["Organization", "WebSite", "LocalBusiness", "WebPage", "BreadcrumbList"],
   "/booking/": ["Organization", "WebSite", "WebPage", "BreadcrumbList"]
 };
 
-const landingSchemaTypes = ["Organization", "WebSite", "LocalBusiness", "WebPage", "Service", "ItemList", "BreadcrumbList", "FAQPage"];
+const landingSchemaTypes = ["Organization", "WebSite", "LocalBusiness", "WebPage", "Service", "BreadcrumbList", "FAQPage"];
 
 const fail = (message) => {
   throw new Error(message);
@@ -124,11 +124,11 @@ const assertTypes = (path, schemas, expectedTypes) => {
   }
 };
 
-const assertBreadcrumbIncludesBrovary = (path, schemas) => {
+const assertBreadcrumbStartsAtHome = (path, schemas) => {
   const breadcrumb = findSchemas(schemas, "BreadcrumbList")[0];
   assert(breadcrumb, `${path} is missing BreadcrumbList schema`);
   const items = breadcrumb.itemListElement?.map((item) => item.item) || [];
-  assert(items.includes(`${siteUrl}/brovary/`), `${path} breadcrumb does not include /brovary/`);
+  assert(items[0] === `${siteUrl}/`, `${path} breadcrumb does not start at the homepage`);
 };
 
 const assertLocalBusinessesHaveGeo = (path, schemas) => {
@@ -158,7 +158,7 @@ const assertLocalBusinessesHaveMedia = (path, schemas) => {
 const assertItemListsHaveLocalUrls = (path, schemas) => {
   for (const itemList of findSchemas(schemas, "ItemList")) {
     const items = itemList.itemListElement || [];
-    assert(items.length >= 3, `${path} ItemList should expose at least three related URLs`);
+    assert(items.length >= 3, `${path} ItemList should expose at least three local service URLs`);
 
     for (const item of items) {
       assert(item.url?.startsWith(siteUrl), `${path} ItemList contains a non-local URL: ${item.url}`);
@@ -332,7 +332,7 @@ const auditPage = async (path) => {
   assertLocalBusinessesHaveMedia(path, schemas);
   if (expected.includes("ItemList")) assertItemListsHaveLocalUrls(path, schemas);
 
-  if (path !== "/") assertBreadcrumbIncludesBrovary(path, schemas);
+  if (path !== "/") assertBreadcrumbStartsAtHome(path, schemas);
   if (path.includes("fotostudiya")) assert(!html.includes('href="/vr/#sessions"'), `${path} studio CTA still links to VR sessions`);
 
   return {

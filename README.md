@@ -35,6 +35,8 @@ Add these environment variables in Vercel for both Production and Preview:
 - `SITE_URL`: the production URL, `https://nova-space.pp.ua`
 - `PUBLIC_SUPABASE_URL`: your Supabase project URL
 - `PUBLIC_SUPABASE_ANON_KEY`: your Supabase public anon key
+- `PUBLIC_BOOKING_WEBHOOK_URL`: optional booking bot endpoint, for example `https://bot.example.com/booking`
+- `PUBLIC_BOOKING_WEBHOOK_SECRET`: optional shared header value for the booking bot. This is bundled into public frontend code, so use it only as a light spam guard; keep real service-role secrets in the bot or Supabase only.
 
 Vercel also provides `VERCEL_PROJECT_PRODUCTION_URL`; if `SITE_URL` is missing, `astro.config.mjs` uses that value before falling back to `https://nova-space.pp.ua`.
 
@@ -49,6 +51,8 @@ SITE_URL=https://nova-space.pp.ua
 SITE_PORT=8080
 PUBLIC_SUPABASE_URL=https://your-project.supabase.co
 PUBLIC_SUPABASE_ANON_KEY=your-public-anon-key
+PUBLIC_BOOKING_WEBHOOK_URL=
+PUBLIC_BOOKING_WEBHOOK_SECRET=
 ```
 
 Then deploy or update:
@@ -63,10 +67,11 @@ By default the site is exposed on host port `8080`. Set `SITE_PORT=80` in `.env`
 ## Supabase checklist
 
 1. Run `supabase/migrations/0001_booking_core.sql` in the Supabase SQL editor or through the Supabase CLI.
-2. In Supabase Auth, add the Vercel production URL and any preview/custom domains that should be allowed for redirects.
-3. Create the manager user in Supabase Dashboard -> Authentication -> Users.
-4. Add that user's auth UUID to `public.manager_users`.
-5. Keep the `service_role` key out of frontend code and out of all `PUBLIC_*` variables.
+2. Run `supabase/migrations/0006_booking_services_sync.sql` to make `/booking/`, `/studio/`, and `/vr/` use the current studio, VR, PS5, NovaMix2, and birthday formats.
+3. In Supabase Auth, add the Vercel production URL and any preview/custom domains that should be allowed for redirects.
+4. Create the manager user in Supabase Dashboard -> Authentication -> Users.
+5. Add that user's auth UUID to `public.manager_users`.
+6. Keep the `service_role` key out of frontend code and out of all `PUBLIC_*` variables.
 
 Public users can read services and create bookings through the booking RPC. Manager actions require an authenticated user listed in `manager_users`.
 
@@ -82,7 +87,7 @@ Managers can edit the catalog at `/admin/vr-games` with the same Supabase Auth u
 
 ## VR pricing update
 
-Run `supabase/migrations/0003_vr_pricing_services.sql` after the booking core migration to replace the old demo VR services with the current VR, PS5, NovaMix2, and birthday booking formats.
+Run `supabase/migrations/0006_booking_services_sync.sql` after the booking core migration to replace the old demo VR services with the current studio, VR, PS5, NovaMix2, and birthday booking formats. It supersedes `0003_vr_pricing_services.sql` for booking service setup.
 
 ## Pre-deploy check
 
@@ -156,4 +161,4 @@ Example body:
 
 The `record.id` field must be the UUID from `public.bookings.id`. If the payload has no booking ID, the bot still sends the notification but skips the action buttons because it cannot safely update the status.
 
-For Supabase, create a Database Webhook on inserts into `public.bookings` and point it to the public URL of `/booking`. Add the same secret as the `X-Booking-Secret` header.
+For Supabase, create a Database Webhook on inserts into `public.bookings` and point it to the booking bot public URL, for example `https://bot.example.com/booking`. Add the same secret as the `X-Booking-Secret` header.

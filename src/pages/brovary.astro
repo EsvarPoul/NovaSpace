@@ -1,24 +1,65 @@
 ---
 import BaseLayout from "../layouts/BaseLayout.astro";
-import Header from "../components/layout/Header.astro";
 import Footer from "../components/layout/Footer.astro";
+import Header from "../components/layout/Header.astro";
 import MobileActionBar from "../components/layout/MobileActionBar.astro";
-import { address, makeBreadcrumbSchema, makeItemListSchema, mapsUrl, novaPhotoStudioSchema, novaVrSchema, organizationSchema, phone, siteUrl, webSiteSchema } from "../data/seo.js";
-import { studioLandingPages } from "../data/studioLandingPages.js";
-import { vrLandingPages } from "../data/vrLandingPages.js";
+import { bookingServices } from "../data/bookingServices.js";
+import { address, makeBreadcrumbSchema, mapsUrl, novaPhotoStudioSchema, novaVrSchema, organizationSchema, siteUrl, webSiteSchema } from "../data/seo.js";
 
-const vrHighlights = vrLandingPages.slice(0, 5);
-const studioHighlights = studioLandingPages.slice(0, 5);
 const pageUrl = `${siteUrl}/brovary/`;
-
+const phoneDisplay = "066 009 76 30";
+const studioInstagramUrl = "https://www.instagram.com/nova_photostudio_/";
+const vrInstagramUrl = "https://www.instagram.com/novaspace_vr/";
+const vrTikTokUrl = "https://www.tiktok.com/@www.tiktok.novaspace_vr";
+const serviceBySlug = Object.fromEntries(bookingServices.map((service) => [service.slug, service]));
+const infoServices = [
+  {
+    name: "Nova PhotoStudio",
+    label: "Фотостудія",
+    text: "Оренда світлої фотостудії у Броварах для портретів, сімейних фото, beauty-зйомок, контенту та зйомок для брендів.",
+    items: ["оренда студії", "портретна зйомка", "сімейна фотосесія", "контент-зйомка"]
+  },
+  {
+    name: "NOVA VR",
+    label: "VR клуб",
+    text: "VR клуб у Броварах для ігор у віртуальній реальності, PlayStation 5, днів народження, побачень, компаній і корпоративів.",
+    items: ["VR-ігри", "PlayStation 5", "дні народження", "корпоративи та події"]
+  }
+];
+const priceRows = [
+  {
+    name: "Оренда фотостудії",
+    price: "600 грн./год.",
+    note: "1 година оренди Nova PhotoStudio"
+  },
+  {
+    name: serviceBySlug["vr-30"].name,
+    price: `${serviceBySlug["vr-30"].price_day} / ${serviceBySlug["vr-30"].price_evening}`,
+    note: "30 хв за одну VR-зону: денний / вечірній тариф"
+  },
+  {
+    name: serviceBySlug["vr-60"].name,
+    price: `${serviceBySlug["vr-60"].price_day} / ${serviceBySlug["vr-60"].price_evening}`,
+    note: "60 хв за одну VR-зону: денний / вечірній тариф"
+  },
+  {
+    name: serviceBySlug["ps5-60-2"].name,
+    price: `${serviceBySlug["ps5-60-2"].price_day} / ${serviceBySlug["ps5-60-2"].price_evening}`,
+    note: "PS5-зона для двох: денний / вечірній тариф"
+  },
+  {
+    name: serviceBySlug["birthday-3h"].name,
+    price: `${serviceBySlug["birthday-3h"].price_day} / ${serviceBySlug["birthday-3h"].price_evening}`,
+    note: "пакет на 3 години, вартість залежить від кількості гостей"
+  }
+];
 const pageSchema = {
   "@context": "https://schema.org",
   "@type": "CollectionPage",
   "@id": `${pageUrl}#webpage`,
   url: pageUrl,
-  name: "Nova Space Бровари: VR клуб, PS5 і фотостудія",
-  description:
-    "Локальна сторінка Nova Space у Броварах з усіма напрямами: NOVA VR, PlayStation 5, дні народження, корпоративи, Nova PhotoStudio, оренда студії та фотосесії.",
+  name: "Nova Space Бровари",
+  description: "Nova Space у Броварах: Nova PhotoStudio, NOVA VR, послуги, ціни, адреса, телефон і соцмережі.",
   inLanguage: "uk-UA",
   isPartOf: {
     "@id": `${siteUrl}/#website`
@@ -27,73 +68,53 @@ const pageSchema = {
     "@id": `${siteUrl}/#organization`
   },
   about: [
-    {
-      "@id": `${siteUrl}/vr/#localbusiness`
-    },
-    {
-      "@id": `${siteUrl}/studio/#localbusiness`
-    }
+    { "@id": `${siteUrl}/vr/#localbusiness` },
+    { "@id": `${siteUrl}/studio/#localbusiness` }
   ],
   mainEntity: {
     "@type": "ItemList",
-    name: "Послуги Nova Space у Броварах",
+    name: "Напрями Nova Space у Броварах",
     itemListElement: [
-      ...vrHighlights.map((page, index) => ({
+      {
         "@type": "ListItem",
-        position: index + 1,
-        name: page.eyebrow,
-        url: `${siteUrl}/${page.slug}/`
-      })),
-      ...studioHighlights.map((page, index) => ({
+        position: 1,
+        name: "NOVA VR",
+        url: `${siteUrl}/vr/`
+      },
+      {
         "@type": "ListItem",
-        position: vrHighlights.length + index + 1,
-        name: page.eyebrow,
-        url: `${siteUrl}/${page.slug}/`
-      }))
+        position: 2,
+        name: "Nova PhotoStudio",
+        url: `${siteUrl}/studio/`
+      }
     ]
   }
 };
-
 const breadcrumbSchema = makeBreadcrumbSchema([
   { name: "Nova Space", url: "/" },
   { name: "Бровари", url: pageUrl }
 ]);
-const brovaryServicesSchema = makeItemListSchema({
-  id: "/brovary/#services",
-  name: "Послуги Nova Space у Броварах",
-  items: [
-    ...vrHighlights.map((page) => ({
-      name: page.eyebrow,
-      url: `/${page.slug}/`
-    })),
-    ...studioHighlights.map((page) => ({
-      name: page.eyebrow,
-      url: `/${page.slug}/`
-    }))
-  ]
-});
 ---
 
 <BaseLayout
-  title="Nova Space Бровари | VR, PS5, дні народження і фотостудія"
-  description="Nova Space у Броварах: NOVA VR, PS5, дні народження, корпоративи, фотостудія, оренда студії, портретні, сімейні та контент-зйомки."
+  title="Nova Space Бровари | Послуги, ціни і контакти"
+  description="Nova Space у Броварах: Nova PhotoStudio від 600 грн./год., NOVA VR, PS5, дні народження, адреса вул. Ярослава Мудрого, 28, телефон 066 009 76 30."
   canonicalPath="/brovary/"
   image="/vr/nova-space-logo.webp"
-  schema={[organizationSchema, webSiteSchema, novaVrSchema, novaPhotoStudioSchema, pageSchema, brovaryServicesSchema, breadcrumbSchema]}
+  schema={[organizationSchema, webSiteSchema, novaVrSchema, novaPhotoStudioSchema, pageSchema, breadcrumbSchema]}
 >
-  <div class="app-shell brovary-page">
+  <div class="app-shell brovary-page brovary-page--bridge">
     <Header
       brand="Nova Space"
       sub="Бровари"
       nav={[
-        { label: "NOVA VR", href: "/vr/" },
-        { label: "PhotoStudio", href: "/studio/" },
-        { label: "Бронювання", href: "/booking/" },
+        { label: "Послуги", href: "#services" },
+        { label: "Ціни", href: "#prices" },
         { label: "Контакти", href: "#contacts" }
       ]}
-      schedule="Щодня|10:00-22:00"
-      ctaHref="/booking/"
-      ctaLabel="Забронювати"
+      schedule="Щодня|10:00-21:00"
+      ctaHref="#services"
+      ctaLabel="Послуги"
     />
 
     <main>
@@ -105,68 +126,75 @@ const brovaryServicesSchema = makeItemListSchema({
             <strong>Бровари</strong>
           </nav>
           <span class="brovary-kicker">Локація у Броварах</span>
-          <h1 id="brovary-title">VR клуб, PS5 і фотостудія в одному просторі Nova Space</h1>
+          <h1 id="brovary-title">Nova Space Бровари</h1>
           <p>
-            Nova Space об'єднує NOVA VR для ігор, днів народження й компаній та Nova PhotoStudio для портретних,
-            сімейних і контент-зйомок. Усе знаходиться у Броварах за адресою {address.streetAddress}.
+            Nova Space - це Nova PhotoStudio та NOVA VR за адресою м. Бровари, {address.streetAddress}.
+            Тут можна орендувати фотостудію, провести зйомку, пограти у VR, забронювати PS5 або організувати день народження.
           </p>
           <div class="brovary-actions">
-            <a class="brovary-button brovary-button--primary" href="/booking/">Забронювати</a>
-            <a class="brovary-button" href={mapsUrl} target="_blank" rel="noreferrer">Відкрити маршрут</a>
+            <a class="brovary-button brovary-button--primary" href="#prices">Подивитися ціни</a>
+            <a class="brovary-button" href="#contacts">Контакти</a>
           </div>
         </div>
         <div class="brovary-hero__media" aria-label="Nova Space у Броварах">
-          <img src="/vr/nova-vr-about-players.webp" alt="Гравці у NOVA VR у Броварах" loading="eager" />
-          <img src="/studio/studio-hero.png" alt="Світла фотостудія Nova PhotoStudio у Броварах" loading="eager" />
-          <img src="/vr/nova-vr-about-ps5.webp" alt="PlayStation 5 зона у Nova Space Бровари" loading="lazy" />
+          <img src="/vr/nova-vr-about-players.webp" alt="NOVA VR у Броварах" loading="eager" />
+          <img src="/studio/studio-hero.png" alt="Nova PhotoStudio у Броварах" loading="eager" />
+          <img src="/vr/nova-vr-about-ps5.webp" alt="PS5 зона у Nova Space" loading="lazy" />
         </div>
       </section>
 
       <section class="brovary-stats" aria-label="Ключові деталі Nova Space">
         <article>
           <span>Адреса</span>
-          <strong>{address.streetAddress}</strong>
+          <strong>м. Бровари, {address.streetAddress}</strong>
+        </article>
+        <article>
+          <span>Фотостудія</span>
+          <strong>600 грн./год.</strong>
         </article>
         <article>
           <span>NOVA VR</span>
-          <strong>6 VR-зон + PS5</strong>
+          <strong>VR + PS5 + свята</strong>
         </article>
         <article>
-          <span>PhotoStudio</span>
-          <strong>від 600 грн/год</strong>
+          <span>Телефон</span>
+          <strong>{phoneDisplay}</strong>
         </article>
       </section>
 
-      <section class="brovary-section" aria-labelledby="brovary-vr-title">
+      <section id="services" class="brovary-section brovary-section--info" aria-labelledby="brovary-services-title">
         <div class="brovary-section__head">
-          <span class="brovary-kicker">NOVA VR</span>
-          <h2 id="brovary-vr-title">VR, PS5 і події у Броварах</h2>
-          <p>Для гри удвох, компанії друзів, дня народження, корпоративу або дитячого формату.</p>
+          <span class="brovary-kicker">Послуги</span>
+          <h2 id="brovary-services-title">Назва і послуги</h2>
+          <p>У Nova Space працюють два напрями: фотостудія для зйомок та VR клуб для ігор і подій.</p>
         </div>
-        <div class="brovary-link-grid">
-          {vrHighlights.map((page) => (
-            <a href={`/${page.slug}/`}>
-              <span>{page.eyebrow}</span>
-              <strong>{page.h1}</strong>
-              <em>{page.description}</em>
-            </a>
+        <div class="brovary-link-grid brovary-link-grid--info">
+          {infoServices.map((service) => (
+            <article>
+              <span>{service.label}</span>
+              <h3>{service.name}</h3>
+              <p>{service.text}</p>
+              <ul>
+                {service.items.map((item) => <li>{item}</li>)}
+              </ul>
+            </article>
           ))}
         </div>
       </section>
 
-      <section class="brovary-section brovary-section--studio" aria-labelledby="brovary-studio-title">
+      <section id="prices" class="brovary-section brovary-section--prices" aria-labelledby="brovary-prices-title">
         <div class="brovary-section__head">
-          <span class="brovary-kicker">Nova PhotoStudio</span>
-          <h2 id="brovary-studio-title">Фотостудія і зйомки у Броварах</h2>
-          <p>Світла студія для оренди, портретів, сімейних історій, контенту і брендів.</p>
+          <span class="brovary-kicker">Ціни</span>
+          <h2 id="brovary-prices-title">Базові ціни</h2>
+          <p>Ціни вказані звичайним текстом. Для VR денний тариф діє у будні до 17:00, вечірній - після 17:00 та у п'ятницю-неділю.</p>
         </div>
-        <div class="brovary-link-grid">
-          {studioHighlights.map((page) => (
-            <a href={`/${page.slug}/`}>
-              <span>{page.eyebrow}</span>
-              <strong>{page.h1}</strong>
-              <em>{page.description}</em>
-            </a>
+        <div class="brovary-link-grid brovary-link-grid--prices">
+          {priceRows.map((row) => (
+            <article>
+              <span>{row.name}</span>
+              <strong>{row.price}</strong>
+              <em>{row.note}</em>
+            </article>
           ))}
         </div>
       </section>
@@ -174,15 +202,19 @@ const brovaryServicesSchema = makeItemListSchema({
       <section id="contacts" class="brovary-contact" aria-labelledby="brovary-contact-title">
         <div>
           <span class="brovary-kicker">Контакти</span>
-          <h2 id="brovary-contact-title">Nova Space у Броварах</h2>
+          <h2 id="brovary-contact-title">Контакти Nova Space</h2>
           <p>
-            Адреса: {address.streetAddress}, {address.addressLocality}. Для бронювання VR, PS5 або фотостудії
-            можна написати в Instagram чи зателефонувати.
+            Адреса: м. {address.addressLocality}, {address.streetAddress}. Моб. телефон: {phoneDisplay}.
+            Instagram фотостудії: @nova_photostudio_, Instagram VR: @novaspace_vr, TikTok VR: @www.tiktok.novaspace_vr.
           </p>
         </div>
         <div class="brovary-contact__actions">
-          <a href={`tel:${phone}`}>+380 66 009 7630</a>
-          <a href="/booking/">Онлайн-бронювання</a>
+          <a href="/studio/">Nova PhotoStudio</a>
+          <a href="/vr/">NOVA VR</a>
+          <a href="tel:+380660097630">066 009 76 30</a>
+          <a href={studioInstagramUrl} target="_blank" rel="noreferrer">Instagram студії</a>
+          <a href={vrInstagramUrl} target="_blank" rel="noreferrer">Instagram VR</a>
+          <a href={vrTikTokUrl} target="_blank" rel="noreferrer">TikTok VR</a>
           <a href={mapsUrl} target="_blank" rel="noreferrer">Google Maps</a>
         </div>
       </section>
@@ -192,9 +224,9 @@ const brovaryServicesSchema = makeItemListSchema({
   </div>
 
   <MobileActionBar
-    primaryHref="/booking/"
-    primaryLabel="Забронювати"
-    secondaryHref="tel:+380660097630"
-    secondaryLabel="Дзвінок"
+    primaryHref="/vr/"
+    primaryLabel="NOVA VR"
+    secondaryHref="/studio/"
+    secondaryLabel="PhotoStudio"
   />
 </BaseLayout>

@@ -6,7 +6,7 @@ export const prerender = true;
 
 const lastmod = "2026-06-12";
 
-const basePages = ["/", "/brovary/", "/vr/", "/studio/", "/booking/"];
+const basePages = ["/", "/vr/", "/studio/", "/booking/", "/brovary/"];
 const landingPages = [
   ...vrLandingPages.map((page) => `/${page.slug}/`),
   ...studioLandingPages.map((page) => `/${page.slug}/`)

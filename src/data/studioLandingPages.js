@@ -13,6 +13,7 @@ export const studioLandingPages = [
     imageAlt: "Світла фотостудія Nova PhotoStudio у Броварах",
     primaryCta: "Забронювати фотостудію",
     secondaryCta: "Подивитися простір",
+    bookingServiceSlug: "studio-rent",
     highlights: [
       "Світлий приватний простір з м'яким денним світлом",
       "Паперові фони, затишна зона і фактурна зона з деревом",
@@ -57,8 +58,7 @@ export const studioLandingPages = [
         answer:
           "Найчастіше у студії проводять портретні, сімейні, love story, beauty, контентні та бренд-зйомки."
       }
-    ],
-    related: ["orenda-fotostudiyi-brovary", "fotosesiya-brovary", "kontent-zyomka-brovary"]
+    ]
   },
   {
     type: "studio",
@@ -74,6 +74,7 @@ export const studioLandingPages = [
     imageAlt: "Паперові фони для оренди фотостудії у Броварах",
     primaryCta: "Забронювати оренду",
     secondaryCta: "Повернутися до студії",
+    bookingServiceSlug: "studio-rent",
     highlights: [
       "Оренда студії — 600 грн/год",
       "До 5 осіб разом із фотографом",
@@ -118,8 +119,7 @@ export const studioLandingPages = [
         answer:
           "Базовий формат оренди розрахований до 5 осіб разом із фотографом. Якщо гостей більше, краще узгодити це заздалегідь."
       }
-    ],
-    related: ["fotostudiya-brovary", "fotosesiya-brovary", "kontent-zyomka-brovary"]
+    ]
   },
   {
     type: "studio",
@@ -135,6 +135,7 @@ export const studioLandingPages = [
     imageAlt: "Портретна зона Nova PhotoStudio для фотосесії у Броварах",
     primaryCta: "Записатися на фотосесію",
     secondaryCta: "Оренда студії",
+    bookingServiceSlug: "studio-rent",
     highlights: [
       "Портретна, сімейна, love story і beauty-зйомка",
       "Фотограф допомагає з позуванням і темпом",
@@ -179,8 +180,7 @@ export const studioLandingPages = [
         answer:
           "Для короткого портретного формату часто достатньо години, а для сімейної або зйомки з кількома образами краще закладати більше часу."
       }
-    ],
-    related: ["fotostudiya-brovary", "orenda-fotostudiyi-brovary", "simeyna-fotosesiya-brovary"]
+    ]
   },
   {
     type: "studio",
@@ -196,6 +196,7 @@ export const studioLandingPages = [
     imageAlt: "Затишна зона для сімейної фотосесії у Броварах",
     primaryCta: "Забронювати сімейну зйомку",
     secondaryCta: "Усі формати студії",
+    bookingServiceSlug: "studio-rent",
     highlights: [
       "Затишна зона для родинних і парних фото",
       "Спокійний темп без сторонніх людей у просторі",
@@ -240,8 +241,7 @@ export const studioLandingPages = [
         answer:
           "Базово достатньо продумати одяг і настрій зйомки. Якщо потрібні особисті деталі або реквізит, їх можна взяти з собою."
       }
-    ],
-    related: ["fotosesiya-brovary", "fotostudiya-brovary", "orenda-fotostudiyi-brovary"]
+    ]
   },
   {
     type: "studio",
@@ -257,6 +257,7 @@ export const studioLandingPages = [
     imageAlt: "Контент зйомка для брендів у Nova PhotoStudio Бровари",
     primaryCta: "Забронювати контент зйомку",
     secondaryCta: "Оренда студії",
+    bookingServiceSlug: "studio-rent",
     highlights: [
       "Фото для Instagram, сайту, експертного профілю або запуску",
       "Можна зняти портрети, деталі, процес і предметні кадри",
@@ -301,7 +302,6 @@ export const studioLandingPages = [
         answer:
           "Так, можна забронювати погодинну оренду студії й провести контент-зйомку зі своїм фотографом або командою."
       }
-    ],
-    related: ["fotostudiya-brovary", "orenda-fotostudiyi-brovary", "fotosesiya-brovary"]
+    ]
   }
 ];
