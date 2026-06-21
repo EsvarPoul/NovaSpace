@@ -322,6 +322,7 @@ const auditPage = async (path) => {
   for (const label of googleAdsConversionLabels) {
     assert(html.includes(label), `${path} is missing Google Ads conversion label ${label}`);
   }
+  assert(html.includes("event_callback"), `${path} is missing Google Ads click callback handling`);
   assert(html.includes(`<link rel="alternate" hreflang="uk-UA" href="${canonical}"`), `${path} is missing uk-UA hreflang`);
   const faviconSet = expectedFaviconSet(path);
   assert(html.includes(`href="${faviconSet.ico}"`), `${path} is missing ${faviconSet.ico}`);

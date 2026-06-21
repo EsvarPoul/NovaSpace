@@ -122,9 +122,15 @@ const shouldLoadGoogleAds = !robots.toLowerCase().includes("noindex");
             submit_form: "AW-18188518715/l25FCPSricMcELuK--BD"
           };
 
-          const trackConversion = (actionName, eventParams = {}) => {
+          const trackConversion = (actionName, eventParams = {}, callback) => {
             const sendTo = conversionLabels[actionName];
             if (!sendTo) return;
+            let callbackComplete = false;
+            const runCallback = () => {
+              if (callbackComplete) return;
+              callbackComplete = true;
+              callback?.();
+            };
 
             const payload = {
               send_to: sendTo,
@@ -135,13 +141,20 @@ const shouldLoadGoogleAds = !robots.toLowerCase().includes("noindex");
               ...eventParams
             };
 
+            if (callback) {
+              payload.event_callback = runCallback;
+              payload.event_timeout = 800;
+            }
+
             if (typeof window.gtag === "function") {
               window.gtag("event", "conversion", payload);
+              if (callback) window.setTimeout(runCallback, 900);
               return;
             }
 
             window.dataLayer = window.dataLayer || [];
             window.dataLayer.push(["event", "conversion", payload]);
+            if (callback) window.setTimeout(runCallback, 0);
           };
 
           window.novaTrackAdsConversion = trackConversion;
@@ -152,10 +165,28 @@ const shouldLoadGoogleAds = !robots.toLowerCase().includes("noindex");
             if (!link) return;
 
             const href = link.getAttribute("href") || "";
+            const shouldDelayNavigation = event instanceof MouseEvent
+              && event.button === 0
+              && !event.defaultPrevented
+              && !event.metaKey
+              && !event.ctrlKey
+              && !event.shiftKey
+              && !event.altKey
+              && !link.target
+              && !link.hasAttribute("download");
+
             if (href.startsWith("tel:")) {
-              trackConversion("click_phone", {
-                link_url: href
-              });
+              if (shouldDelayNavigation) {
+                event.preventDefault();
+                trackConversion("click_phone", {
+                  link_url: href
+                }, () => {
+                  window.location.href = href;
+                });
+                return;
+              }
+
+              trackConversion("click_phone", { link_url: href });
               return;
             }
 
@@ -167,10 +198,20 @@ const shouldLoadGoogleAds = !robots.toLowerCase().includes("noindex");
             }
 
             if (url.pathname === "/booking/" || url.pathname === "/booking") {
-              trackConversion("click_booking", {
+              const eventParams = {
                 link_url: url.href,
                 service: url.searchParams.get("service") || ""
-              });
+              };
+
+              if (shouldDelayNavigation) {
+                event.preventDefault();
+                trackConversion("click_booking", eventParams, () => {
+                  window.location.href = url.href;
+                });
+                return;
+              }
+
+              trackConversion("click_booking", eventParams);
             }
           }, true);
         })();
