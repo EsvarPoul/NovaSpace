@@ -12,10 +12,10 @@ const pageTitle = "NOVA VR | VR клуб Бровари, ігри, дні нар
 const pageDescription = "NOVA VR у Броварах: 6 VR-зон, PlayStation 5, ігри для дітей і дорослих, дні народження та онлайн-бронювання.";
 const bookingHref = "/booking/?service=vr-60";
 const birthdayHref = "/booking/?service=birthday-3h";
-const ps5Href = "/booking/?service=ps5-60-2";
+const ps5Href = "/booking/?service=ps5-60-1";
 const mapsUrl = "https://www.google.com/maps/search/?api=1&query=%D0%BC.+%D0%91%D1%80%D0%BE%D0%B2%D0%B0%D1%80%D0%B8,+%D0%B2%D1%83%D0%BB.+%D0%AF%D1%80%D0%BE%D1%81%D0%BB%D0%B0%D0%B2%D0%B0+%D0%9C%D1%83%D0%B4%D1%80%D0%BE%D0%B3%D0%BE,+28";
 const designerUrl = "https://app.esvarpoul.pp.ua/";
-const quickFormatSlugs = ["vr-60", "ps5-60-2", "novamix2-60", "birthday-3h"];
+const quickFormatSlugs = ["vr-60", "ps5-60-1", "novamix2-60", "birthday-3h"];
 const quickFormats = quickFormatSlugs
   .map((slug) => bookingServices.find((service) => service.slug === slug))
   .filter(Boolean) as typeof bookingServices;
@@ -26,7 +26,7 @@ const scenarioPreview = [
 const faqPreview = faqItems.slice(0, 3);
 const formatNotes: Record<string, string> = {
   "vr-60": "Класичний старт для 1-6 гравців.",
-  "ps5-60-2": "PS5-зона для двох або паузи між VR.",
+  "ps5-60-1": "PS5-зона від 1 людини або пауза між VR.",
   "novamix2-60": "VR + PS5 в одному візиті для двох.",
   "birthday-3h": "3 години, VR, PS5 і зона відпочинку."
 };
@@ -188,7 +188,7 @@ const faqSchema = {
           <h2 id="events-title">День народження або компанія</h2>
           <p>Підкажемо сценарій, час і ротацію між VR, PS5 та відпочинком.</p>
           <div class="vr-lite-actions">
-            <a class="vr-lite-button vr-lite-button--primary" href={birthdayHref}>Забронювати ДР</a>
+            <a class="vr-lite-button vr-lite-button--primary" href={birthdayHref}>Забронювати</a>
             <a class="vr-lite-button" href={ps5Href}>PS5 окремо</a>
           </div>
         </div>

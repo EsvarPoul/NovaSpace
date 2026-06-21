@@ -50,7 +50,7 @@ const bookingServiceSlug =
     : page.slug === "den-narodzhennya-vr-brovary"
       ? "birthday-3h"
       : page.slug === "ps5-brovary"
-        ? "ps5-60-2"
+        ? "ps5-60-1"
         : "vr-60");
 const bookingPath = `/booking/?service=${bookingServiceSlug}`;
 const pageUrl = `${siteUrl}/${page.slug}/`;
@@ -216,7 +216,7 @@ const schema = [
         <div>
           <span class="vr-local-kicker">Коротко</span>
           <h2 id="vr-local-includes">Чому цей формат зручний</h2>
-          <p>Це швидкий вхід зі сторінки пошуку. Основні деталі, ціна або доступний слот уточнюються у бронюванні.</p>
+          <p>Це швидкий вхід зі сторінки пошуку. Основні деталі та доступний слот уточнюються у бронюванні.</p>
         </div>
         <div class="vr-local-points">
           {factHighlights.map((item) => (

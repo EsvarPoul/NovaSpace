@@ -252,12 +252,12 @@ export const vrLandingPages = [
     imageAlt: "PlayStation 5 зона у NOVA VR Бровари",
     primaryCta: "Забронювати PS5",
     secondaryCta: "Дивитися VR формати",
-    bookingServiceSlug: "ps5-60-2",
+    bookingServiceSlug: "ps5-60-1",
     highlights: [
       "PS5-зона на два джойстики",
       "Можна бронювати окремо на 60 або 120 хвилин",
       "Підходить як пауза під час VR-свята",
-      "Зручно для двох, друзів або ротації гостей"
+      "Зручно від 1 людини, для друзів або ротації гостей"
     ],
     sections: [
       {

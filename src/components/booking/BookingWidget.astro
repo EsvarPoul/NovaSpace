@@ -24,6 +24,8 @@ const initialServices = allowedServiceSlugs.length
   : fallbackServices;
 
 const selectedService = defaultServiceSlug || initialServices[0]?.slug || "";
+const getServiceLabel = (service: { slug: string; name: string }) =>
+  service.slug === "studio-rent" ? "Оренда студії" : service.name;
 ---
 
 <section
@@ -33,6 +35,7 @@ const selectedService = defaultServiceSlug || initialServices[0]?.slug || "";
   data-booking-widget
   data-allowed-services={JSON.stringify(allowedServiceSlugs)}
   data-default-service={selectedService}
+  data-booking-variant={variant}
 >
   <form class="booking-panel booking-form" data-booking-form>
     <div class="booking-panel__head">
@@ -51,17 +54,13 @@ const selectedService = defaultServiceSlug || initialServices[0]?.slug || "";
             data-max={service.max_people}
             data-area={service.area}
             data-duration={service.duration_minutes}
-            data-price-day={service.price_day}
-            data-price-evening={service.price_evening}
-            data-price-note={service.price_note}
             selected={service.slug === selectedService}
           >
-            {service.name}
+            {getServiceLabel(service)}
           </option>
         ))}
       </select>
     </label>
-    <p class="booking-price-note" data-booking-price>Оберіть формат і слот, щоб побачити актуальний тариф.</p>
 
     <div class="booking-grid">
       <label class="booking-field">
@@ -114,12 +113,12 @@ const selectedService = defaultServiceSlug || initialServices[0]?.slug || "";
     <aside class="booking-panel booking-summary">
       <div class="booking-panel__head">
         <span>Як це працює</span>
-        <h2>Менеджер підтвердить час, тариф і формат.</h2>
+        <h2>Для VR менеджер підтвердить час і формат.</h2>
       </div>
       <ol>
         <li>День — Пн-Чт до 17:00. Вечір — після 17:00 та весь Пт-Нд.</li>
         <li>ДР бронюється на 3 години. Від 6 гостей це повна оренда VR клубу з 6 шоломами, PS5 і двома адміністраторами.</li>
-        <li>УБД мають -20% на свою гру при показі посвідчення. На ДР знижки не діють.</li>
+        <li>УБД мають -10% на свою гру при показі посвідчення. На ДР знижки не діють.</li>
         <li>Скретч-карти після гри у Пн-Ср працюють на наступний візит протягом місяця.</li>
       </ol>
     </aside>
@@ -127,7 +126,7 @@ const selectedService = defaultServiceSlug || initialServices[0]?.slug || "";
 </section>
 
 <script>
-  import { bookingServicePricing, bookingServices as fallbackServices } from "../../data/bookingServices.js";
+  import { bookingServices as fallbackServices } from "../../data/bookingServices.js";
   import { isSupabaseConfigured, supabase } from "../../lib/supabaseClient";
 
   interface BookingService {
@@ -249,9 +248,9 @@ const selectedService = defaultServiceSlug || initialServices[0]?.slug || "";
     const slotList = root.querySelector<HTMLElement>("[data-slot-list]");
     const status = root.querySelector<HTMLElement>("[data-booking-status]");
     const refreshButton = root.querySelector<HTMLButtonElement>("[data-refresh-slots]");
-    const priceHint = root.querySelector<HTMLElement>("[data-booking-price]");
     const allowed = JSON.parse(root.dataset.allowedServices || "[]") as string[];
     const defaultService = root.dataset.defaultService || "";
+    const isStudioVariant = root.dataset.bookingVariant === "studio";
     const requestedService = new URLSearchParams(window.location.search).get("service") || "";
     const knownServiceSlugs = new Set(fallbackServices.map((service) => service.slug));
 
@@ -280,64 +279,13 @@ const selectedService = defaultServiceSlug || initialServices[0]?.slug || "";
       .replaceAll('"', "&quot;")
       .replaceAll("'", "&#039;");
 
-    const getServicePricing = (option?: HTMLOptionElement | null) => {
-      const meta = (option ? bookingServicePricing[option.value] || {} : {}) as {
-        price_day?: string;
-        price_evening?: string;
-        price_note?: string;
-      };
-      return {
-        day: option?.dataset.priceDay || meta.price_day || "",
-        evening: option?.dataset.priceEvening || meta.price_evening || "",
-        note: option?.dataset.priceNote || meta.price_note || ""
-      };
-    };
-
-    const getSlotTariff = (slotValue: string) => {
-      if (!slotValue) return "";
-      const slotDate = new Date(slotValue);
-      const weekday = new Intl.DateTimeFormat("en-US", {
-        weekday: "short",
-        timeZone: "Europe/Kyiv"
-      }).format(slotDate);
-      const hour = Number(new Intl.DateTimeFormat("en-GB", {
-        hour: "2-digit",
-        hour12: false,
-        timeZone: "Europe/Kyiv"
-      }).format(slotDate));
-
-      return ["Fri", "Sat", "Sun"].includes(weekday) || hour >= 17 ? "evening" : "day";
-    };
-
-    const renderPriceHint = (slotValue = "") => {
-      if (!priceHint || !serviceSelect) return;
-      const pricing = getServicePricing(serviceSelect.selectedOptions[0]);
-      const note = pricing.note ? ` · ${pricing.note}` : "";
-
-      if (!pricing.day && !pricing.evening) {
-        priceHint.textContent = "Менеджер уточнить вартість після заявки.";
-        return;
-      }
-
-      const tariff = getSlotTariff(slotValue);
-      if (tariff === "day") {
-        priceHint.textContent = `Денний тариф: ${pricing.day}${note}`;
-        return;
-      }
-
-      if (tariff === "evening") {
-        priceHint.textContent = `Вечірній тариф: ${pricing.evening}${note}`;
-        return;
-      }
-
-      priceHint.textContent = `День: ${pricing.day} · Вечір / Пт-Нд: ${pricing.evening}${note}`;
-    };
+    const getServiceLabel = (service: Pick<BookingService, "slug" | "name">) =>
+      service.slug === "studio-rent" ? "Оренда студії" : service.name;
 
     const setSelectedSlot = (button: HTMLButtonElement) => {
       root.querySelectorAll("[data-slot]").forEach((item) => item.classList.remove("is-selected"));
       button.classList.add("is-selected");
       if (slotInput) slotInput.value = button.dataset.slot || "";
-      renderPriceHint(button.dataset.slot || "");
     };
 
     const shouldShowSlotCapacity = (slot: Slot) => {
@@ -350,7 +298,6 @@ const selectedService = defaultServiceSlug || initialServices[0]?.slug || "";
     const renderSlots = (slots: Slot[]) => {
       if (!slotList) return;
       if (slotInput) slotInput.value = "";
-      renderPriceHint("");
 
       if (!slots.length) {
         slotList.innerHTML = "<p>На цю дату немає вільних слотів для вибраної послуги.</p>";
@@ -381,7 +328,6 @@ const selectedService = defaultServiceSlug || initialServices[0]?.slug || "";
 
       const current = Number(partySizeInput.value || min);
       partySizeInput.value = String(Math.min(Math.max(current, Number(min)), Number(max)));
-      renderPriceHint(slotInput?.value || "");
     };
 
     const populateServices = (services: BookingService[]) => {
@@ -428,13 +374,6 @@ const selectedService = defaultServiceSlug || initialServices[0]?.slug || "";
         const submitService = availableServices.get(submitSlug);
         const minPeople = submitService ? Math.max(service.min_people, submitService.min_people) : service.min_people;
         const maxPeople = submitService ? Math.min(service.max_people, submitService.max_people) : service.max_people;
-        const pricing = {
-          ...((bookingServicePricing[service.slug] || {}) as Record<string, string>),
-          price_day: service.price_day || (bookingServicePricing[service.slug] as any)?.price_day || "",
-          price_evening: service.price_evening || (bookingServicePricing[service.slug] as any)?.price_evening || "",
-          price_note: service.price_note || (bookingServicePricing[service.slug] as any)?.price_note || ""
-        };
-
         return `
         <option
           value="${escapeHtml(service.slug)}"
@@ -443,12 +382,9 @@ const selectedService = defaultServiceSlug || initialServices[0]?.slug || "";
           data-max="${escapeHtml(maxPeople)}"
           data-area="${escapeHtml(service.area)}"
           data-duration="${escapeHtml(service.duration_minutes)}"
-          data-price-day="${escapeHtml(pricing.price_day)}"
-          data-price-evening="${escapeHtml(pricing.price_evening)}"
-          data-price-note="${escapeHtml(pricing.price_note)}"
           ${service.slug === preferredService ? "selected" : ""}
         >
-          ${escapeHtml(service.name)}
+          ${escapeHtml(getServiceLabel(service))}
         </option>
       `;
       }).join("");
@@ -458,7 +394,6 @@ const selectedService = defaultServiceSlug || initialServices[0]?.slug || "";
       }
 
       syncPartyBounds();
-      renderPriceHint(slotInput?.value || "");
     };
 
     const loadServices = async () => {
@@ -476,7 +411,7 @@ const selectedService = defaultServiceSlug || initialServices[0]?.slug || "";
 
       if (error || !data?.length) {
         populateServices(fallbackServices);
-        setStatus("Показуємо актуальний локальний прайс. Доступний час менеджер підтвердить окремо.", "warning");
+        setStatus("Показуємо локальний список послуг. Доступний час можна уточнити телефоном.", "warning");
         return;
       }
 
@@ -488,7 +423,6 @@ const selectedService = defaultServiceSlug || initialServices[0]?.slug || "";
       syncPartyBounds();
       if (slotInput) slotInput.value = "";
       root.querySelectorAll("[data-slot]").forEach((item) => item.classList.remove("is-selected"));
-      renderPriceHint("");
 
       if (!slotList || !serviceSelect || !dateInput || !partySizeInput) return;
       if (!dateInput.value) {
@@ -585,7 +519,7 @@ const selectedService = defaultServiceSlug || initialServices[0]?.slug || "";
       form.reset();
       syncPartyBounds();
       await loadSlots();
-      setStatus("Заявку створено. Менеджер підтвердить бронювання.", "success");
+      setStatus(isStudioVariant ? "Заявку створено." : "Заявку створено. Менеджер підтвердить VR-бронювання.", "success");
     });
 
     if (dateInput) {

@@ -100,7 +100,7 @@ export const bookingServices = [
   },
   {
     slug: "studio-rent",
-    name: "Оренда студії · 600 грн./год.",
+    name: "Оренда студії",
     area: "studio",
     duration_minutes: 60,
     min_people: 1,
