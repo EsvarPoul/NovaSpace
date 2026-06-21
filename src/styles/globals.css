@@ -5337,6 +5337,10 @@ p {
   gap: 16px;
 }
 
+.booking-summary {
+  min-width: 0;
+}
+
 .booking-grid {
   display: grid;
   grid-template-columns: repeat(2, minmax(0, 1fr));
@@ -5507,6 +5511,17 @@ p {
   padding-left: 20px;
   color: rgba(245, 247, 251, 0.75);
   line-height: 1.55;
+}
+
+.booking-summary .booking-panel__head h2 {
+  font-size: clamp(24px, 2.1vw, 32px);
+  line-height: 1.08;
+  overflow-wrap: break-word;
+}
+
+.booking-summary li {
+  min-width: 0;
+  overflow-wrap: break-word;
 }
 
 .booking-admin-link {
