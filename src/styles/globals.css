@@ -8153,6 +8153,10 @@ body:has(.vr-local-page--studio)::before {
     min-height: 52px;
   }
 
+  .booking-grid--booking-context .booking-field input {
+    min-height: 46px;
+  }
+
   .booking-slot-list {
     grid-template-columns: repeat(2, minmax(0, 1fr));
   }
