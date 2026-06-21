@@ -77,8 +77,8 @@ const formatPartySizeHelp = (min: number, max: number) =>
     <div class="booking-grid booking-grid--booking-context">
       <label class="booking-field">
         <span>Кількість людей</span>
-        <input name="party_size" type="number" min={selectedMinPeople} max={selectedMaxPeople} value={selectedPartySize} data-party-size required />
         <small data-party-size-help>{formatPartySizeHelp(selectedMinPeople, selectedMaxPeople)}</small>
+        <input name="party_size" type="number" min={selectedMinPeople} max={selectedMaxPeople} value={selectedPartySize} data-party-size required />
       </label>
       <label class="booking-field">
         <span>Дата</span>
