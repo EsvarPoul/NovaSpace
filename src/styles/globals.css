@@ -7317,7 +7317,9 @@ body:has(.vr-local-page--studio)::before {
 }
 
 .studio-page .hero {
-  grid-template-columns: minmax(0, 0.82fr) minmax(420px, 1.18fr);
+  grid-template-columns: minmax(0, 1fr) minmax(320px, 430px);
+  gap: clamp(28px, 4vw, 54px);
+  align-items: center;
   min-height: min(720px, calc(100svh - 130px));
   border-radius: 22px;
 }
@@ -7328,9 +7330,10 @@ body:has(.vr-local-page--studio)::before {
 }
 
 .studio-page .hero h1 {
-  max-width: 9ch;
+  max-width: 8.4ch;
   color: var(--studio-ink);
-  font-size: clamp(56px, 7.4vw, 108px);
+  font-size: clamp(54px, 6.1vw, 88px);
+  line-height: 0.94;
 }
 
 .studio-page .hero p {
@@ -7339,7 +7342,11 @@ body:has(.vr-local-page--studio)::before {
 }
 
 .studio-hero__visual {
-  min-height: 560px;
+  justify-self: end;
+  width: min(100%, 430px);
+  min-height: 0;
+  max-height: min(680px, calc(100svh - 220px));
+  aspect-ratio: 2 / 3;
   border-color: rgba(81, 64, 49, 0.12);
   border-radius: 18px;
   background: #ede4d7;
@@ -7351,6 +7358,10 @@ body:has(.vr-local-page--studio)::before {
   height: 100%;
   display: block;
   object-fit: cover;
+}
+
+.studio-hero__visual img {
+  object-position: center 58%;
 }
 
 .studio-hero__visual::after {
@@ -7801,7 +7812,11 @@ body:has(.vr-local-page--studio)::before {
   }
 
   .studio-hero__visual {
-    min-height: 420px;
+    justify-self: start;
+    width: min(100%, 440px);
+    min-height: 0;
+    max-height: none;
+    aspect-ratio: 16 / 11;
   }
 }
 
@@ -7848,7 +7863,13 @@ body:has(.vr-local-page--studio)::before {
   }
 
   .studio-hero__visual {
-    min-height: 320px;
+    width: 100%;
+    min-height: 0;
+    aspect-ratio: 4 / 3;
+  }
+
+  .studio-hero__visual img {
+    object-position: center 64%;
   }
 
   .studio-mood-grid,
@@ -8313,7 +8334,7 @@ body:has(.vr-local-page--studio)::before {
   }
 
   .studio-hero__visual {
-    min-height: 260px;
+    min-height: 0;
   }
 
   .studio-hero__note {
@@ -8429,8 +8450,8 @@ body:has(.vr-local-page--studio)::before {
   }
 
   .studio-page .hero {
-    grid-template-columns: minmax(0, 0.9fr) minmax(240px, 1.1fr);
-    min-height: calc(100svh - 136px);
+    grid-template-columns: 1fr;
+    min-height: auto;
     gap: 14px;
     margin-top: 10px;
     padding: 16px;
@@ -8451,7 +8472,9 @@ body:has(.vr-local-page--studio)::before {
   }
 
   .studio-hero__visual {
-    min-height: 210px;
+    width: min(100%, 300px);
+    min-height: 0;
+    max-height: 46svh;
   }
 
   .studio-hero__note {
