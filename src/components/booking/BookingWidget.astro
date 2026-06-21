@@ -54,6 +54,9 @@ const getServiceLabel = (service: { slug: string; name: string }) =>
             data-max={service.max_people}
             data-area={service.area}
             data-duration={service.duration_minutes}
+            data-price-day={service.price_day}
+            data-price-evening={service.price_evening}
+            data-price-note={service.price_note}
             selected={service.slug === selectedService}
           >
             {getServiceLabel(service)}
@@ -61,6 +64,7 @@ const getServiceLabel = (service: { slug: string; name: string }) =>
         ))}
       </select>
     </label>
+    <p class="booking-price-note" data-booking-price hidden></p>
 
     <div class="booking-grid">
       <label class="booking-field">
@@ -126,7 +130,7 @@ const getServiceLabel = (service: { slug: string; name: string }) =>
 </section>
 
 <script>
-  import { bookingServices as fallbackServices } from "../../data/bookingServices.js";
+  import { bookingServicePricing, bookingServices as fallbackServices } from "../../data/bookingServices.js";
   import { isSupabaseConfigured, supabase } from "../../lib/supabaseClient";
 
   interface BookingService {
@@ -248,11 +252,13 @@ const getServiceLabel = (service: { slug: string; name: string }) =>
     const slotList = root.querySelector<HTMLElement>("[data-slot-list]");
     const status = root.querySelector<HTMLElement>("[data-booking-status]");
     const refreshButton = root.querySelector<HTMLButtonElement>("[data-refresh-slots]");
+    const priceHint = root.querySelector<HTMLElement>("[data-booking-price]");
     const allowed = JSON.parse(root.dataset.allowedServices || "[]") as string[];
     const defaultService = root.dataset.defaultService || "";
     const isStudioVariant = root.dataset.bookingVariant === "studio";
     const requestedService = new URLSearchParams(window.location.search).get("service") || "";
     const knownServiceSlugs = new Set(fallbackServices.map((service) => service.slug));
+    const servicesWithoutPriceHint = new Set(["birthday-3h", "studio-rent"]);
 
     const filterServices = (services: BookingService[]) => {
       const currentServices = services.filter((service) => knownServiceSlugs.has(service.slug));
@@ -279,6 +285,70 @@ const getServiceLabel = (service: { slug: string; name: string }) =>
       .replaceAll('"', "&quot;")
       .replaceAll("'", "&#039;");
 
+    const getServicePricing = (option?: HTMLOptionElement | null) => {
+      const meta = (option ? bookingServicePricing[option.value] || {} : {}) as {
+        price_day?: string;
+        price_evening?: string;
+        price_note?: string;
+      };
+      return {
+        day: option?.dataset.priceDay || meta.price_day || "",
+        evening: option?.dataset.priceEvening || meta.price_evening || "",
+        note: option?.dataset.priceNote || meta.price_note || ""
+      };
+    };
+
+    const getSlotTariff = (slotValue: string) => {
+      if (!slotValue) return "";
+      const slotDate = new Date(slotValue);
+      const weekday = new Intl.DateTimeFormat("en-US", {
+        weekday: "short",
+        timeZone: "Europe/Kyiv"
+      }).format(slotDate);
+      const hour = Number(new Intl.DateTimeFormat("en-GB", {
+        hour: "2-digit",
+        hour12: false,
+        timeZone: "Europe/Kyiv"
+      }).format(slotDate));
+
+      return ["Fri", "Sat", "Sun"].includes(weekday) || hour >= 17 ? "evening" : "day";
+    };
+
+    const shouldHidePriceHint = (option?: HTMLOptionElement | null) =>
+      !option || servicesWithoutPriceHint.has(option.value) || option.dataset.area === "studio";
+
+    const renderPriceHint = (slotValue = "") => {
+      if (!priceHint || !serviceSelect) return;
+      const option = serviceSelect.selectedOptions[0];
+      if (shouldHidePriceHint(option)) {
+        priceHint.hidden = true;
+        priceHint.textContent = "";
+        return;
+      }
+
+      const pricing = getServicePricing(option);
+      const note = pricing.note ? ` · ${pricing.note}` : "";
+      priceHint.hidden = false;
+
+      if (!pricing.day && !pricing.evening) {
+        priceHint.textContent = "Менеджер уточнить вартість після заявки.";
+        return;
+      }
+
+      const tariff = getSlotTariff(slotValue);
+      if (tariff === "day") {
+        priceHint.textContent = `Денний тариф: ${pricing.day}${note}`;
+        return;
+      }
+
+      if (tariff === "evening") {
+        priceHint.textContent = `Вечірній тариф: ${pricing.evening}${note}`;
+        return;
+      }
+
+      priceHint.textContent = `День: ${pricing.day} · Вечір / Пт-Нд: ${pricing.evening}${note}`;
+    };
+
     const trackAdsConversion = (actionName: string, eventParams: Record<string, unknown> = {}) => {
       const tracker = (window as typeof window & {
         novaTrackAdsConversion?: (actionName: string, eventParams?: Record<string, unknown>) => void;
@@ -294,6 +364,7 @@ const getServiceLabel = (service: { slug: string; name: string }) =>
       root.querySelectorAll("[data-slot]").forEach((item) => item.classList.remove("is-selected"));
       button.classList.add("is-selected");
       if (slotInput) slotInput.value = button.dataset.slot || "";
+      renderPriceHint(button.dataset.slot || "");
     };
 
     const shouldShowSlotCapacity = (slot: Slot) => {
@@ -306,6 +377,7 @@ const getServiceLabel = (service: { slug: string; name: string }) =>
     const renderSlots = (slots: Slot[]) => {
       if (!slotList) return;
       if (slotInput) slotInput.value = "";
+      renderPriceHint("");
 
       if (!slots.length) {
         slotList.innerHTML = "<p>На цю дату немає вільних слотів для вибраної послуги.</p>";
@@ -336,6 +408,7 @@ const getServiceLabel = (service: { slug: string; name: string }) =>
 
       const current = Number(partySizeInput.value || min);
       partySizeInput.value = String(Math.min(Math.max(current, Number(min)), Number(max)));
+      renderPriceHint(slotInput?.value || "");
     };
 
     const populateServices = (services: BookingService[]) => {
@@ -382,6 +455,12 @@ const getServiceLabel = (service: { slug: string; name: string }) =>
         const submitService = availableServices.get(submitSlug);
         const minPeople = submitService ? Math.max(service.min_people, submitService.min_people) : service.min_people;
         const maxPeople = submitService ? Math.min(service.max_people, submitService.max_people) : service.max_people;
+        const pricing = {
+          ...((bookingServicePricing[service.slug] || {}) as Record<string, string>),
+          price_day: service.price_day || (bookingServicePricing[service.slug] as any)?.price_day || "",
+          price_evening: service.price_evening || (bookingServicePricing[service.slug] as any)?.price_evening || "",
+          price_note: service.price_note || (bookingServicePricing[service.slug] as any)?.price_note || ""
+        };
         return `
         <option
           value="${escapeHtml(service.slug)}"
@@ -390,6 +469,9 @@ const getServiceLabel = (service: { slug: string; name: string }) =>
           data-max="${escapeHtml(maxPeople)}"
           data-area="${escapeHtml(service.area)}"
           data-duration="${escapeHtml(service.duration_minutes)}"
+          data-price-day="${escapeHtml(pricing.price_day)}"
+          data-price-evening="${escapeHtml(pricing.price_evening)}"
+          data-price-note="${escapeHtml(pricing.price_note)}"
           ${service.slug === preferredService ? "selected" : ""}
         >
           ${escapeHtml(getServiceLabel(service))}
@@ -402,6 +484,7 @@ const getServiceLabel = (service: { slug: string; name: string }) =>
       }
 
       syncPartyBounds();
+      renderPriceHint(slotInput?.value || "");
     };
 
     const loadServices = async () => {
