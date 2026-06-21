@@ -89,9 +89,9 @@ const vrImages = [
 ];
 
 const studioImages = [
-  imageObject("/studio/studio-hero.png", "Nova PhotoStudio у Броварах"),
+  imageObject("/studio/studio-hero-floral-1066.webp", "Nova PhotoStudio у Броварах"),
   imageObject("/studio/studio-paper-backdrops.jpg", "Паперові фони Nova PhotoStudio"),
-  imageObject("/studio/studio-cozy-zone.jpg", "Затишна зона Nova PhotoStudio"),
+  imageObject("/studio/studio-cozy-zone-bright-900.webp", "Затишна зона Nova PhotoStudio"),
   imageObject("/studio/studio-wood-backdrop.jpg", "Фактурна зона Nova PhotoStudio")
 ];
 

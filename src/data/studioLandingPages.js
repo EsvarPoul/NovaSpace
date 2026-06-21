@@ -9,7 +9,7 @@ export const studioLandingPages = [
     h1: "Фотостудія у Броварах для портретів, сімейних історій і контенту",
     lead:
       "Nova PhotoStudio — приватний світлий простір у Броварах для спокійної зйомки без поспіху: можна орендувати студію або прийти на зйомку з фотографом.",
-    image: "/studio/studio-hero.png",
+    image: "/studio/studio-hero-floral-1066.webp",
     imageAlt: "Світла фотостудія Nova PhotoStudio у Броварах",
     primaryCta: "Забронювати фотостудію",
     secondaryCta: "Подивитися простір",
@@ -39,7 +39,7 @@ export const studioLandingPages = [
     ],
     stats: [
       { label: "Оренда", value: "600 грн/год" },
-      { label: "Графік", value: "10:00-21:00" },
+      { label: "Графік", value: "10-21" },
       { label: "Місто", value: "Бровари" }
     ],
     faq: [

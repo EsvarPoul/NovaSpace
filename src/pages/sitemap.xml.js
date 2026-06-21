@@ -22,7 +22,7 @@ const basePages = [
   {
     path: "/studio/",
     priority: "0.9",
-    image: "/studio/studio-hero.png",
+    image: "/studio/studio-hero-floral-1066.webp",
     imageTitle: "Nova PhotoStudio Бровари"
   },
   {

@@ -35,7 +35,7 @@ export const studioPortfolio = [
   {
     title: "Затишна зона",
     type: "Product light",
-    image: "/studio/studio-cozy-zone.jpg",
+    image: "/studio/studio-cozy-zone-bright-900.webp",
     accent: "sage",
     text: "Текстиль, дзеркало і м'який домашній настрій."
   },

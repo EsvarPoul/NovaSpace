@@ -14,11 +14,21 @@ import Button from "../ui/Button.astro";
     <dl class="studio-hero__facts" aria-label="Коротко про Nova PhotoStudio">
       <div><dt>Оренда</dt><dd>600 грн/год</dd></div>
       <div><dt>Гостей</dt><dd>до 5</dd></div>
-      <div><dt>Графік</dt><dd>10:00-21:00</dd></div>
+      <div><dt>Графік</dt><dd>10-21</dd></div>
     </dl>
   </div>
   <aside class="hero-visual studio-hero__visual" aria-label="Світла домашня фотостудія Nova PhotoStudio">
-    <img src="/studio/studio-hero.png" alt="Світла домашня фотостудія з м'яким денним світлом" loading="eager" />
+    <img
+      src="/studio/studio-hero-floral-1066.webp"
+      srcset="/studio/studio-hero-floral-640.webp 640w, /studio/studio-hero-floral-1066.webp 1066w"
+      sizes="(max-width: 760px) 100vw, min(42vw, 560px)"
+      alt="Світла зона Nova PhotoStudio з рожевими та білими квітами"
+      width="1066"
+      height="1600"
+      loading="eager"
+      decoding="async"
+      fetchpriority="high"
+    />
     <div class="studio-hero__note">
       <strong>Приватний простір, м’яке світло, допомога з позуванням</strong>
     </div>

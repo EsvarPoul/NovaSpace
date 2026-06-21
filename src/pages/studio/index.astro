@@ -16,7 +16,7 @@ const studioPageSchema = makeWebPageSchema({
   path: "/studio/",
   name: pageTitle,
   description: pageDescription,
-  image: "/studio/studio-hero.png",
+  image: "/studio/studio-hero-floral-1066.webp",
   about: { "@id": `${siteUrl}/studio/#localbusiness` },
   mainEntity: { "@id": `${siteUrl}/studio/#localbusiness` }
 });
@@ -30,12 +30,12 @@ const breadcrumbSchema = makeBreadcrumbSchema([
   title={pageTitle}
   description={pageDescription}
   canonicalPath="/studio/"
-  image="/studio/studio-hero.png"
+  image="/studio/studio-hero-floral-1066.webp"
   favicon="studio"
   schema={[organizationSchema, webSiteSchema, novaPhotoStudioSchema, studioPageSchema, breadcrumbSchema]}
 >
   <div class="app-shell studio-page">
-    <Header brand="Nova Space" sub="Nova PhotoStudio" nav={studioNav} schedule="Понеділок-Неділя|10:00-21:00" ctaHref="#booking" ctaLabel="Забронювати" />
+    <Header brand="Nova Space" sub="Nova PhotoStudio" nav={studioNav} schedule="Щодня|10-21" ctaHref="#booking" ctaLabel="Забронювати" />
     <main>
       <StudioHero />
       <StudioServices />

@@ -352,6 +352,11 @@ const auditPage = async (path) => {
   if (path === "/studio/") {
     assert(html.includes('href="#booking"'), `${path} should keep booking CTAs on the studio page`);
     assert(!html.includes("/booking/?service=studio-rent"), `${path} should not send studio booking CTAs to the global booking page`);
+    assert(html.includes("/studio/studio-hero-floral-1066.webp"), `${path} should use the optimized floral studio hero image`);
+    assert(html.includes("/studio/studio-hero-floral-640.webp 640w"), `${path} should expose the mobile studio hero srcset`);
+    assert(html.includes("/studio/studio-cozy-zone-bright-900.webp"), `${path} should use the brighter second studio tile image`);
+    assert(!html.includes("/studio/studio-hero.png"), `${path} should not reference the old heavy studio hero PNG`);
+    assert(!html.includes("10:00-21:00"), `${path} should show the short 10-21 schedule`);
   }
   if (path === "/vr/") {
     assert(html.includes('id="booking"') && html.includes("data-booking-widget"), `${path} is missing the local VR booking widget`);
