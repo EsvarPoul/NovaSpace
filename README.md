@@ -68,10 +68,11 @@ By default the site is exposed on host port `8080`. Set `SITE_PORT=80` in `.env`
 
 1. Run `supabase/migrations/0001_booking_core.sql` in the Supabase SQL editor or through the Supabase CLI.
 2. Run `supabase/migrations/0006_booking_services_sync.sql` to make `/booking/`, `/studio/`, and `/vr/` use the current studio, VR, PS5, NovaMix2, and birthday formats.
-3. In Supabase Auth, add the Vercel production URL and any preview/custom domains that should be allowed for redirects.
-4. Create the manager user in Supabase Dashboard -> Authentication -> Users.
-5. Add that user's auth UUID to `public.manager_users`.
-6. Keep the `service_role` key out of frontend code and out of all `PUBLIC_*` variables.
+3. Run `supabase/migrations/0007_booking_capacity_slots.sql` so VR slots use the 6-place capacity model instead of closing the whole slot after one booking.
+4. In Supabase Auth, add the Vercel production URL and any preview/custom domains that should be allowed for redirects.
+5. Create the manager user in Supabase Dashboard -> Authentication -> Users.
+6. Add that user's auth UUID to `public.manager_users`.
+7. Keep the `service_role` key out of frontend code and out of all `PUBLIC_*` variables.
 
 Public users can read services and create bookings through the booking RPC. Manager actions require an authenticated user listed in `manager_users`.
 
@@ -88,6 +89,8 @@ Managers can edit the catalog at `/admin/vr-games` with the same Supabase Auth u
 ## VR pricing update
 
 Run `supabase/migrations/0006_booking_services_sync.sql` after the booking core migration to replace the old demo VR services with the current studio, VR, PS5, NovaMix2, and birthday booking formats. It supersedes `0003_vr_pricing_services.sql` for booking service setup.
+
+Then run `supabase/migrations/0007_booking_capacity_slots.sql` to add resource capacity tracking. VR services consume `party_size`, so a booking for 2 guests leaves 4 of 6 VR places available for the same time.
 
 ## Pre-deploy check
 

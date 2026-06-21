@@ -49,6 +49,7 @@ const selectedService = defaultServiceSlug || initialServices[0]?.slug || "";
             value={service.slug}
             data-min={service.min_people}
             data-max={service.max_people}
+            data-area={service.area}
             data-duration={service.duration_minutes}
             data-price-day={service.price_day}
             data-price-evening={service.price_evening}
@@ -145,6 +146,8 @@ const selectedService = defaultServiceSlug || initialServices[0]?.slug || "";
   interface Slot {
     slot_start: string;
     slot_end: string;
+    available_places?: number;
+    total_places?: number;
   }
 
   interface CreatedBooking {
@@ -203,7 +206,7 @@ const selectedService = defaultServiceSlug || initialServices[0]?.slug || "";
     }
 
     if (message.includes("Selected slot is no longer available")) {
-      return "Цей слот щойно зайняли. Оберіть інший час.";
+      return "У цьому слоті вже недостатньо місць для вибраної кількості гостей. Оберіть інший час або зменшіть кількість людей.";
     }
 
     if (message.includes("Selected slot is blocked by manager")) {
@@ -337,6 +340,13 @@ const selectedService = defaultServiceSlug || initialServices[0]?.slug || "";
       renderPriceHint(button.dataset.slot || "");
     };
 
+    const shouldShowSlotCapacity = (slot: Slot) => {
+      const selectedSlug = serviceSelect?.selectedOptions[0]?.value || "";
+      const totalPlaces = Number(slot.total_places || 0);
+      const availablePlaces = Number(slot.available_places || 0);
+      return selectedSlug.startsWith("vr-") && totalPlaces > 1 && availablePlaces >= 0;
+    };
+
     const renderSlots = (slots: Slot[]) => {
       if (!slotList) return;
       if (slotInput) slotInput.value = "";
@@ -351,6 +361,7 @@ const selectedService = defaultServiceSlug || initialServices[0]?.slug || "";
         <button type="button" data-slot="${slot.slot_start}">
           <strong>${formatTime(slot.slot_start)}</strong>
           <span>${formatTime(slot.slot_end)}</span>
+          ${shouldShowSlotCapacity(slot) ? `<small>Доступно ${escapeHtml(slot.available_places)} з ${escapeHtml(slot.total_places)} місць</small>` : ""}
         </button>
       `).join("");
 
@@ -430,6 +441,7 @@ const selectedService = defaultServiceSlug || initialServices[0]?.slug || "";
           data-submit-slug="${escapeHtml(submitSlug)}"
           data-min="${escapeHtml(minPeople)}"
           data-max="${escapeHtml(maxPeople)}"
+          data-area="${escapeHtml(service.area)}"
           data-duration="${escapeHtml(service.duration_minutes)}"
           data-price-day="${escapeHtml(pricing.price_day)}"
           data-price-evening="${escapeHtml(pricing.price_evening)}"

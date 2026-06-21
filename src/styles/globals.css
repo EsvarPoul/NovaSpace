@@ -5459,6 +5459,13 @@ p {
   font-size: 12px;
 }
 
+.booking-slot-list button small {
+  color: rgba(100, 240, 185, 0.86);
+  font-size: 11px;
+  font-weight: 800;
+  line-height: 1.25;
+}
+
 .booking-slot-list button.is-selected {
   border-color: #64f0b9;
   background: rgba(100, 240, 185, 0.16);
@@ -7736,6 +7743,7 @@ body:has(.vr-local-page--studio)::before {
 
 .booking-widget--studio .booking-slot-list p,
 .booking-widget--studio .booking-slot-list button span,
+.booking-widget--studio .booking-slot-list button small,
 .booking-widget--studio .booking-summary ol,
 .booking-widget--studio .booking-status {
   color: rgba(36, 31, 27, 0.68);

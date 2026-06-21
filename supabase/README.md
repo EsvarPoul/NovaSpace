@@ -1,7 +1,7 @@
 # NOVA Booking Supabase Setup
 
 1. Create a Supabase project.
-2. Run `supabase/migrations/0001_booking_core.sql` in the SQL editor or through the Supabase CLI.
+2. Run the SQL files in `supabase/migrations/` in numeric order. For the current booking flow, `0006_booking_services_sync.sql` syncs the live VR/PS5/studio services and `0007_booking_capacity_slots.sql` makes VR availability count open places instead of closing the whole slot.
 3. Copy `.env.example` to `.env` and fill:
    - `PUBLIC_SUPABASE_URL`
    - `PUBLIC_SUPABASE_ANON_KEY`
