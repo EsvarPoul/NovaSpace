@@ -35,7 +35,7 @@ const breadcrumbSchema = makeBreadcrumbSchema([
   schema={[organizationSchema, webSiteSchema, novaPhotoStudioSchema, studioPageSchema, breadcrumbSchema]}
 >
   <div class="app-shell studio-page">
-    <Header brand="Nova Space" sub="Nova PhotoStudio" nav={studioNav} schedule="Понеділок-Неділя|10:00-21:00" ctaHref="/booking/?service=studio-rent" ctaLabel="Забронювати" />
+    <Header brand="Nova Space" sub="Nova PhotoStudio" nav={studioNav} schedule="Понеділок-Неділя|10:00-21:00" ctaHref="#booking" ctaLabel="Забронювати" />
     <main>
       <StudioHero />
       <StudioServices />
@@ -45,7 +45,7 @@ const breadcrumbSchema = makeBreadcrumbSchema([
     <Footer brand="Nova Space" mode="Nova PhotoStudio" />
   </div>
   <MobileActionBar
-    primaryHref="/booking/?service=studio-rent"
+    primaryHref="#booking"
     primaryLabel="Забронювати"
     secondaryHref="tel:+380660097630"
     secondaryLabel="Дзвінок"

@@ -197,7 +197,7 @@ const shouldLoadGoogleAds = !robots.toLowerCase().includes("noindex");
               return;
             }
 
-            if (url.pathname === "/booking/" || url.pathname === "/booking") {
+            if (url.pathname === "/booking/" || url.pathname === "/booking" || url.hash === "#booking") {
               const eventParams = {
                 link_url: url.href,
                 service: url.searchParams.get("service") || ""

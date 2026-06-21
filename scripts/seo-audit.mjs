@@ -349,6 +349,16 @@ const auditPage = async (path) => {
 
   if (path !== "/") assertBreadcrumbStartsAtHome(path, schemas);
   if (path.includes("fotostudiya")) assert(!html.includes('href="/vr/#sessions"'), `${path} studio CTA still links to VR sessions`);
+  if (path === "/studio/") {
+    assert(html.includes('href="#booking"'), `${path} should keep booking CTAs on the studio page`);
+    assert(!html.includes("/booking/?service=studio-rent"), `${path} should not send studio booking CTAs to the global booking page`);
+  }
+  if (path === "/vr/") {
+    assert(html.includes('id="booking"') && html.includes("data-booking-widget"), `${path} is missing the local VR booking widget`);
+    assert(html.includes("?service=vr-60#booking"), `${path} should keep VR format booking links on the VR page`);
+    assert(!html.includes('value="studio-rent"'), `${path} should not render studio booking options`);
+    assert(!html.includes("PS5 окремо"), `${path} should not show the secondary PS5 CTA in the events block`);
+  }
 
   return {
     path,
