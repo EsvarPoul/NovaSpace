@@ -32,13 +32,13 @@ Import this repository into Vercel. The deployment settings are committed in `ve
 
 Add these environment variables in Vercel for both Production and Preview:
 
-- `SITE_URL`: the production URL, `https://nova-space.pp.ua`
+- `SITE_URL`: the canonical production URL, `https://nova-space.pp.ua`
 - `PUBLIC_SUPABASE_URL`: your Supabase project URL
 - `PUBLIC_SUPABASE_ANON_KEY`: your Supabase public anon key
 - `PUBLIC_BOOKING_WEBHOOK_URL`: optional booking bot endpoint, for example `https://bot.example.com/booking`
 - `PUBLIC_BOOKING_WEBHOOK_SECRET`: optional shared header value for the booking bot. This is bundled into public frontend code, so use it only as a light spam guard; keep real service-role secrets in the bot or Supabase only.
 
-Vercel also provides `VERCEL_PROJECT_PRODUCTION_URL`; if `SITE_URL` is missing, `astro.config.mjs` uses that value before falling back to `https://nova-space.pp.ua`.
+If `SITE_URL` is missing, `astro.config.mjs` still defaults to `https://nova-space.pp.ua` so Vercel preview or project hostnames do not become canonical URLs.
 
 ## Docker deployment
 

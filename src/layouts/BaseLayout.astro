@@ -54,6 +54,7 @@ const canonicalUrl = new URL(canonicalPath ?? Astro.url.pathname, site).toString
 const imageUrl = new URL(image, site).toString();
 const socialImageAlt = imageAlt || title;
 const schemaJson = schema ? JSON.stringify(schema).replace(/</g, "\\u003c") : "";
+const shouldLoadGoogleAds = !robots.toLowerCase().includes("noindex");
 ---
 
 <!doctype html>
@@ -102,6 +103,16 @@ const schemaJson = schema ? JSON.stringify(schema).replace(/</g, "\\u003c") : ""
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Cormorant+Garamond:wght@500;600;700&display=swap" rel="stylesheet" />
+    {shouldLoadGoogleAds && <script is:inline async src="https://www.googletagmanager.com/gtag/js?id=AW-18188518715"></script>}
+    {shouldLoadGoogleAds && (
+      <script is:inline>
+        window.dataLayer = window.dataLayer || [];
+        function gtag(){dataLayer.push(arguments);}
+        gtag("js", new Date());
+
+        gtag("config", "AW-18188518715");
+      </script>
+    )}
     {schemaJson && <script is:inline type="application/ld+json" set:html={schemaJson}></script>}
   </head>
   <body>

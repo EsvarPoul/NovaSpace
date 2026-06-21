@@ -3,6 +3,8 @@ import { existsSync } from "node:fs";
 import { join, resolve } from "node:path";
 
 const siteUrl = "https://nova-space.pp.ua";
+const googleAdsId = "AW-18188518715";
+const googleTagManagerUrl = `https://www.googletagmanager.com/gtag/js?id=${googleAdsId}`;
 const distDir = resolve("dist");
 const expectedUrlCount = 15;
 const indexNowKey = "04329b1562807a21488f46f4ce417551";
@@ -294,6 +296,8 @@ const auditAdminPage = async (path) => {
 
   assert(canonical === absoluteUrl(path), `${path} canonical mismatch: ${canonical}`);
   assert(robots === "noindex,nofollow", `${path} robots meta should be noindex,nofollow`);
+  assert(!html.includes(googleAdsId), `${path} should not load the Google Ads tag`);
+  assert(!html.includes("googletagmanager.com"), `${path} should not load Google Tag Manager`);
   assert(!html.includes("FAQPage"), `${path} should not expose public FAQ schema`);
   assert(!html.includes("LocalBusiness"), `${path} should not expose public LocalBusiness schema`);
 };
@@ -308,6 +312,8 @@ const auditPage = async (path) => {
   assert(canonical === absoluteUrl(path), `${path} canonical mismatch: ${canonical}`);
   assert(description.length >= 80, `${path} meta description is too short`);
   assert(robots === "index,follow", `${path} robots meta should be index,follow`);
+  assert(html.includes(googleAdsId), `${path} is missing the Google Ads tag`);
+  assert(html.includes(googleTagManagerUrl), `${path} is missing the Google Tag Manager script URL`);
   assert(html.includes(`<link rel="alternate" hreflang="uk-UA" href="${canonical}"`), `${path} is missing uk-UA hreflang`);
   const faviconSet = expectedFaviconSet(path);
   assert(html.includes(`href="${faviconSet.ico}"`), `${path} is missing ${faviconSet.ico}`);
