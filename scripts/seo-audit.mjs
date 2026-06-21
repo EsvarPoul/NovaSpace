@@ -5,6 +5,11 @@ import { join, resolve } from "node:path";
 const siteUrl = "https://nova-space.pp.ua";
 const googleAdsId = "AW-18188518715";
 const googleTagManagerUrl = `https://www.googletagmanager.com/gtag/js?id=${googleAdsId}`;
+const googleAdsConversionLabels = [
+  "AW-18188518715/UQDSCOW7j8McELuK--BD",
+  "AW-18188518715/AcDdCOi7j8McELuK--BD",
+  "AW-18188518715/l25FCPSricMcELuK--BD"
+];
 const distDir = resolve("dist");
 const expectedUrlCount = 15;
 const indexNowKey = "04329b1562807a21488f46f4ce417551";
@@ -314,6 +319,9 @@ const auditPage = async (path) => {
   assert(robots === "index,follow", `${path} robots meta should be index,follow`);
   assert(html.includes(googleAdsId), `${path} is missing the Google Ads tag`);
   assert(html.includes(googleTagManagerUrl), `${path} is missing the Google Tag Manager script URL`);
+  for (const label of googleAdsConversionLabels) {
+    assert(html.includes(label), `${path} is missing Google Ads conversion label ${label}`);
+  }
   assert(html.includes(`<link rel="alternate" hreflang="uk-UA" href="${canonical}"`), `${path} is missing uk-UA hreflang`);
   const faviconSet = expectedFaviconSet(path);
   assert(html.includes(`href="${faviconSet.ico}"`), `${path} is missing ${faviconSet.ico}`);

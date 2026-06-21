@@ -279,6 +279,14 @@ const getServiceLabel = (service: { slug: string; name: string }) =>
       .replaceAll('"', "&quot;")
       .replaceAll("'", "&#039;");
 
+    const trackAdsConversion = (actionName: string, eventParams: Record<string, unknown> = {}) => {
+      const tracker = (window as typeof window & {
+        novaTrackAdsConversion?: (actionName: string, eventParams?: Record<string, unknown>) => void;
+      }).novaTrackAdsConversion;
+
+      if (tracker) tracker(actionName, eventParams);
+    };
+
     const getServiceLabel = (service: Pick<BookingService, "slug" | "name">) =>
       service.slug === "studio-rent" ? "Оренда студії" : service.name;
 
@@ -519,6 +527,10 @@ const getServiceLabel = (service: { slug: string; name: string }) =>
       form.reset();
       syncPartyBounds();
       await loadSlots();
+      trackAdsConversion("submit_form", {
+        service: bookingPayload.serviceSlug,
+        database_service: bookingPayload.databaseServiceSlug
+      });
       setStatus(isStudioVariant ? "Заявку створено." : "Заявку створено. Менеджер підтвердить VR-бронювання.", "success");
     });
 

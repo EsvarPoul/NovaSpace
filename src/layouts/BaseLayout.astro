@@ -113,6 +113,69 @@ const shouldLoadGoogleAds = !robots.toLowerCase().includes("noindex");
         gtag("config", "AW-18188518715");
       </script>
     )}
+    {shouldLoadGoogleAds && (
+      <script is:inline>
+        (() => {
+          const conversionLabels = {
+            click_phone: "AW-18188518715/UQDSCOW7j8McELuK--BD",
+            click_booking: "AW-18188518715/AcDdCOi7j8McELuK--BD",
+            submit_form: "AW-18188518715/l25FCPSricMcELuK--BD"
+          };
+
+          const trackConversion = (actionName, eventParams = {}) => {
+            const sendTo = conversionLabels[actionName];
+            if (!sendTo) return;
+
+            const payload = {
+              send_to: sendTo,
+              event_category: "lead",
+              event_label: actionName,
+              page_location: window.location.href,
+              page_path: window.location.pathname,
+              ...eventParams
+            };
+
+            if (typeof window.gtag === "function") {
+              window.gtag("event", "conversion", payload);
+              return;
+            }
+
+            window.dataLayer = window.dataLayer || [];
+            window.dataLayer.push(["event", "conversion", payload]);
+          };
+
+          window.novaTrackAdsConversion = trackConversion;
+
+          document.addEventListener("click", (event) => {
+            const target = event.target instanceof Element ? event.target : event.target?.parentElement;
+            const link = target?.closest?.("a[href]");
+            if (!link) return;
+
+            const href = link.getAttribute("href") || "";
+            if (href.startsWith("tel:")) {
+              trackConversion("click_phone", {
+                link_url: href
+              });
+              return;
+            }
+
+            let url;
+            try {
+              url = new URL(href, window.location.href);
+            } catch {
+              return;
+            }
+
+            if (url.pathname === "/booking/" || url.pathname === "/booking") {
+              trackConversion("click_booking", {
+                link_url: url.href,
+                service: url.searchParams.get("service") || ""
+              });
+            }
+          }, true);
+        })();
+      </script>
+    )}
     {schemaJson && <script is:inline type="application/ld+json" set:html={schemaJson}></script>}
   </head>
   <body>
