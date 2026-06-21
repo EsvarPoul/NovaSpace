@@ -5359,6 +5359,17 @@ p {
   font-weight: 700;
 }
 
+.booking-field small {
+  color: rgba(245, 247, 251, 0.58);
+  font-size: 12px;
+  font-weight: 700;
+  line-height: 1.35;
+}
+
+.booking-field small:empty {
+  display: none;
+}
+
 .booking-field input,
 .booking-field select,
 .booking-field textarea,

@@ -24,8 +24,16 @@ const initialServices = allowedServiceSlugs.length
   : fallbackServices;
 
 const selectedService = defaultServiceSlug || initialServices[0]?.slug || "";
+const selectedServiceMeta = initialServices.find((service) => service.slug === selectedService) || initialServices[0];
+const selectedMinPeople = selectedServiceMeta?.min_people ?? 1;
+const selectedMaxPeople = selectedServiceMeta?.max_people ?? 12;
+const selectedPartySize = Math.min(Math.max(2, selectedMinPeople), selectedMaxPeople);
 const getServiceLabel = (service: { slug: string; name: string }) =>
   service.slug === "studio-rent" ? "Оренда студії" : service.name;
+const formatPartySizeHelp = (min: number, max: number) =>
+  min === max
+    ? `Для цього формату: ${min} ${min === 1 ? "людина" : "людей"}`
+    : `Для цього формату: від ${min} до ${max} людей`;
 ---
 
 <section
@@ -66,14 +74,15 @@ const getServiceLabel = (service: { slug: string; name: string }) =>
     </label>
     <p class="booking-price-note" data-booking-price hidden></p>
 
-    <div class="booking-grid">
+    <div class="booking-grid booking-grid--booking-context">
+      <label class="booking-field">
+        <span>Кількість людей</span>
+        <input name="party_size" type="number" min={selectedMinPeople} max={selectedMaxPeople} value={selectedPartySize} data-party-size required />
+        <small data-party-size-help>{formatPartySizeHelp(selectedMinPeople, selectedMaxPeople)}</small>
+      </label>
       <label class="booking-field">
         <span>Дата</span>
         <input name="date" type="date" data-booking-date required />
-      </label>
-      <label class="booking-field">
-        <span>Кількість людей</span>
-        <input name="party_size" type="number" min="1" max="12" value="2" data-party-size required />
       </label>
     </div>
 
@@ -166,18 +175,41 @@ const getServiceLabel = (service: { slug: string; name: string }) =>
     "studio-rent": ["studio-light"]
   };
 
-  const kyivDateKey = (date = new Date()) => new Intl.DateTimeFormat("en-CA", {
-    day: "2-digit",
-    month: "2-digit",
-    timeZone: "Europe/Kyiv",
-    year: "numeric"
-  }).format(date);
+  const hasIntl = () => typeof Intl !== "undefined";
 
-  const formatTime = (value: string) => new Intl.DateTimeFormat("uk-UA", {
-    hour: "2-digit",
-    minute: "2-digit",
-    timeZone: "Europe/Kyiv"
-  }).format(new Date(value));
+  const kyivDateKey = (date = new Date()) => {
+    if (hasIntl()) {
+      try {
+        return new Intl.DateTimeFormat("en-CA", {
+          day: "2-digit",
+          month: "2-digit",
+          timeZone: "Europe/Kyiv",
+          year: "numeric"
+        }).format(date);
+      } catch {
+        // Fall through to UTC date below.
+      }
+    }
+
+    return date.toISOString().slice(0, 10);
+  };
+
+  const formatTime = (value: string) => {
+    const date = new Date(value);
+    if (hasIntl()) {
+      try {
+        return new Intl.DateTimeFormat("uk-UA", {
+          hour: "2-digit",
+          minute: "2-digit",
+          timeZone: "Europe/Kyiv"
+        }).format(date);
+      } catch {
+        // Fall through to HH:mm below.
+      }
+    }
+
+    return date.toISOString().slice(11, 16);
+  };
 
   const describeSlotError = (message: string) => {
     if (message.includes("Unknown or inactive service")) {
@@ -248,6 +280,7 @@ const getServiceLabel = (service: { slug: string; name: string }) =>
     const serviceSelect = root.querySelector<HTMLSelectElement>("[data-service-select]");
     const dateInput = root.querySelector<HTMLInputElement>("[data-booking-date]");
     const partySizeInput = root.querySelector<HTMLInputElement>("[data-party-size]");
+    const partySizeHelp = root.querySelector<HTMLElement>("[data-party-size-help]");
     const slotInput = root.querySelector<HTMLInputElement>("[data-selected-slot]");
     const slotList = root.querySelector<HTMLElement>("[data-slot-list]");
     const status = root.querySelector<HTMLElement>("[data-booking-status]");
@@ -301,15 +334,24 @@ const getServiceLabel = (service: { slug: string; name: string }) =>
     const getSlotTariff = (slotValue: string) => {
       if (!slotValue) return "";
       const slotDate = new Date(slotValue);
-      const weekday = new Intl.DateTimeFormat("en-US", {
-        weekday: "short",
-        timeZone: "Europe/Kyiv"
-      }).format(slotDate);
-      const hour = Number(new Intl.DateTimeFormat("en-GB", {
-        hour: "2-digit",
-        hour12: false,
-        timeZone: "Europe/Kyiv"
-      }).format(slotDate));
+      let weekday = "";
+      let hour = slotDate.getUTCHours();
+
+      if (hasIntl()) {
+        try {
+          weekday = new Intl.DateTimeFormat("en-US", {
+            weekday: "short",
+            timeZone: "Europe/Kyiv"
+          }).format(slotDate);
+          hour = Number(new Intl.DateTimeFormat("en-GB", {
+            hour: "2-digit",
+            hour12: false,
+            timeZone: "Europe/Kyiv"
+          }).format(slotDate));
+        } catch {
+          weekday = "";
+        }
+      }
 
       return ["Fri", "Sat", "Sun"].includes(weekday) || hour >= 17 ? "evening" : "day";
     };
@@ -408,6 +450,11 @@ const getServiceLabel = (service: { slug: string; name: string }) =>
 
       const current = Number(partySizeInput.value || min);
       partySizeInput.value = String(Math.min(Math.max(current, Number(min)), Number(max)));
+      if (partySizeHelp) {
+        partySizeHelp.textContent = min === max
+          ? `Для цього формату: ${min} ${Number(min) === 1 ? "людина" : "людей"}`
+          : `Для цього формату: від ${min} до ${max} людей`;
+      }
       renderPriceHint(slotInput?.value || "");
     };
 
